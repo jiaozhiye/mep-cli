@@ -1,0 +1,56 @@
+/*
+ * @Author: 焦质晔
+ * @Date: 2020-02-28 22:02:54
+ * @Last Modified by: 焦质晔
+ * @Last Modified time: 2020-06-03 10:23:38
+ */
+%boxSizing {
+  box-sizing: border-box;
+}
+
+[class*='v-'] {
+  @extend %boxSizing;
+  *:after,
+  *:before {
+    @extend %boxSizing;
+  }
+}
+
+@mixin reset-component() {
+  margin: 0;
+  padding: 0;
+  @extend %boxSizing;
+}
+
+@mixin button-align($height) {
+  display: flex;
+  height: $height;
+  align-items: center;
+  @extend %boxSizing;
+}
+
+@mixin text-overflow-cut {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin fl {
+  float: left;
+}
+
+@mixin fr {
+  float: right;
+}
+
+@mixin clearfix {
+  zoom: 1;
+  &::before,
+  &::after {
+    display: table;
+    content: '';
+  }
+  &::after {
+    clear: both;
+  }
+}

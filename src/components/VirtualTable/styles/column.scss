@@ -1,0 +1,82 @@
+/*
+ * @Author: 焦质晔
+ * @Date: 2020-02-28 22:13:50
+ * @Last Modified by: 焦质晔
+ * @Last Modified time: 2020-07-09 10:36:39
+ */
+.v-column-filter {
+  display: inline-block;
+  margin-left: 3px;
+  .text {
+    @include button-align(32px);
+    position: relative;
+    padding-left: 18px;
+    font-size: $v-font-size;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    i {
+      position: absolute;
+      left: 0;
+      font-size: $v-font-size + 2;
+    }
+    &:hover,
+    &.selected {
+      color: $v-primary-color;
+    }
+  }
+  &.size--mini {
+    .text {
+      @include button-align(28px);
+      font-size: $v-font-size-mini;
+      i {
+        font-size: $v-font-size;
+      }
+    }
+  }
+}
+.v-column-filter--wrap {
+  max-width: 175px;
+  padding: 2px $v-module-distance;
+  li.item {
+    position: relative;
+    height: 26px;
+    line-height: 26px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    .v-handle {
+      padding: 2px 4px;
+      cursor: s-resize;
+    }
+    .fixed {
+      position: absolute;
+      right: 0;
+      i {
+        cursor: pointer;
+      }
+    }
+  }
+  .left {
+    li {
+      padding-right: 15px;
+    }
+  }
+  .main {
+    li {
+      padding-right: 30px;
+    }
+  }
+  .right {
+    li {
+      padding-right: 15px;
+    }
+  }
+  .divider {
+    height: 0;
+    border-top: 1px solid $v-table-resizable-color;
+    margin: 4px 0;
+  }
+  &.size--mini {
+    font-size: $v-font-size-mini;
+  }
+}

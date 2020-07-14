@@ -1,0 +1,16 @@
+{
+  "presets": [["@babel/preset-env", { "modules": false, "corejs": 3, "useBuiltIns": "usage" }], "@vue/babel-preset-jsx"],
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-class-properties",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
+    // [
+    //   "component",
+    //   {
+    //     "libraryName": "element-ui",
+    //     "styleLibraryName": "~theme"
+    //   }
+    // ]
+  ]
+}

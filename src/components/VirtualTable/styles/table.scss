@@ -1,0 +1,395 @@
+/*
+ * @Author: 焦质晔
+ * @Date: 2020-03-01 23:27:04
+ * @Last Modified by: 焦质晔
+ * @Last Modified time: 2020-07-09 21:48:35
+ */
+@import './common.scss';
+
+%DefaultColumnHeight {
+  height: $v-table-row-height-default;
+}
+
+%MediumColumnHeight {
+  height: $v-table-row-height-medium;
+}
+
+%SmallColumnHeight {
+  height: $v-table-row-height-small;
+}
+
+%MiniColumnHeight {
+  height: $v-table-row-height-mini;
+}
+
+%CellEllipsis {
+  .v-cell {
+    @include text-overflow-cut;
+  }
+}
+
+.v-table--body-wrapper {
+  @include reset-component();
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.v-table--borders {
+  .v-table-border-top,
+  .v-table-border-right,
+  .v-table-border-bottom,
+  .v-table-border-left {
+    position: absolute;
+    background-color: $v-primary-color;
+  }
+}
+
+/* 顶部信息 */
+.v-top-info {
+  display: flex;
+  margin-bottom: $v-module-distance;
+  .v-space {
+    flex: 1;
+    .v-slot {
+      display: inline-flex;
+      margin-right: $v-module-distance;
+    }
+  }
+  .v-actions {
+    display: inherit;
+    align-items: center;
+  }
+}
+
+/* table 样式 */
+.v-table {
+  position: relative;
+  color: $v-font-color;
+  font-size: $v-font-size;
+  font-family: $v-font-family;
+  background-color: $v-table-background-color;
+  clear: both;
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 0;
+    z-index: 3;
+  }
+  &:before {
+    top: 0;
+    border-top: 1px solid $v-table-border-color;
+  }
+  &:after {
+    bottom: 0;
+    border-bottom: 1px solid $v-table-border-color;
+  }
+
+  .v-table--header,
+  .v-table--body,
+  .v-table--footer {
+    border: 0;
+    border-spacing: 0;
+    border-collapse: separate;
+    table-layout: fixed;
+  }
+
+  .v-table--header-wrapper,
+  .v-table--footer-wrapper {
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  &:not(.is--empty) {
+    &.show--foot {
+      &.scroll--x {
+        .v-table--body-wrapper {
+          overflow-x: scroll;
+        }
+      }
+    }
+  }
+
+  &.c--resize {
+    * {
+      cursor: col-resize;
+    }
+  }
+
+  .v-header--column {
+    background-color: $v-table-header-background-color;
+  }
+
+  .v-body--column {
+    transition: background-color 0.3s ease;
+    background-color: $v-table-background-color;
+  }
+
+  .v-footer--column {
+    background-color: $v-table-footer-background-color;
+    border-bottom: 0;
+  }
+
+  .v-body--row:hover {
+    .v-body--column {
+      background-color: $v-table-row-hover-background-color;
+    }
+  }
+
+  .v-body--row-selected {
+    .v-body--column {
+      background-color: $v-table-row-selected-background-color;
+    }
+  }
+
+  .v-body--expanded-row {
+    .v-body--expanded-column {
+      background-color: $v-table-row-expanded-background-color;
+    }
+  }
+
+  .v-header--column,
+  .v-body--column,
+  .v-body--expanded-column,
+  .v-footer--column {
+    position: relative;
+    line-height: $v-table-row-line-height;
+    text-align: left;
+    &:not(.col--ellipsis) {
+      padding: #{floor(($v-table-row-height-default - $v-table-row-line-height) / 2)} 0;
+    }
+    &.col--center {
+      text-align: center;
+    }
+    &.col--right {
+      text-align: right;
+    }
+  }
+
+  // 自定义
+  &.is--fixed {
+    .v-cell-fix-left,
+    .v-cell-fix-right {
+      position: sticky;
+      z-index: 2;
+    }
+    .v-cell-fix-left-last {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 20px;
+        transform: translateX(100%);
+        transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
+        pointer-events: none;
+      }
+    }
+    .v-cell-fix-right-first {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 20px;
+        transform: translateX(-100%);
+        transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
+        pointer-events: none;
+      }
+    }
+    &.ping--left .v-cell-fix-left-last::after {
+      box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.15);
+    }
+    &.ping--right .v-cell-fix-right-first::after {
+      box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &.is--sortable {
+    .v-column-has-sorter {
+      padding-right: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      &:hover {
+        background-color: $v-table-column-sort-hover-color;
+      }
+      &.v-column--sort {
+        background-color: $v-table-column-sorted-color;
+      }
+    }
+    .v-column--sort {
+      background-color: $v-table-header-background-color;
+    }
+  }
+
+  &.is--filterable {
+    .v-column-has-filter {
+      padding-right: 10px;
+    }
+  }
+
+  &.is--sortable.is--filterable {
+    .v-column-has-sorter.v-column-has-filter {
+      padding-right: 26px !important;
+      .v-cell--sort {
+        right: 20px !important;
+      }
+    }
+  }
+
+  &.is--border {
+    .v-header--column,
+    .v-body--column,
+    .v-body--expanded-column,
+    .v-footer--column {
+      border-bottom: 1px solid $v-table-border-color;
+      border-right: 1px solid $v-table-border-color;
+    }
+  }
+
+  &:not(.is--border) {
+    &:before,
+    &:after {
+      border: 0;
+    }
+    .v-header--column,
+    .v-body--column,
+    .v-body--expanded-column,
+    .v-footer--column {
+      border-bottom: 1px solid $v-table-border-color;
+    }
+  }
+
+  .v-cell {
+    word-break: break-all;
+    /* 保留空白字符 */
+    white-space: pre !important;
+    padding: 0 $v-module-distance;
+    .v-cell--indent {
+      float: left;
+      height: 1px;
+      visibility: hidden;
+    }
+  }
+
+  /* body 填充元素 */
+  .v-body--x-space {
+    width: 100%;
+    height: 0;
+    visibility: hidden;
+    &::after {
+      content: '.';
+    }
+  }
+  .v-body--y-space {
+    width: 0;
+    float: left;
+  }
+
+  /* 列宽线 */
+  .v-table--resizable-bar {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    z-index: 4;
+    &:before {
+      content: '';
+      display: block;
+      height: 100%;
+      background-color: $v-table-resizable-color;
+    }
+  }
+
+  /* 边框线 */
+  .v-table--border-line {
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 100%;
+      z-index: 3;
+    }
+    &:before {
+      left: 0;
+      border-left: 1px solid $v-table-border-color;
+    }
+    &:after {
+      right: 0;
+      border-right: 1px solid $v-table-border-color;
+    }
+  }
+
+  /* 溢出列 */
+  .v-header--column,
+  .v-body--column,
+  .v-body--expanded-column,
+  .v-footer--column {
+    &.col--ellipsis {
+      @extend %DefaultColumnHeight;
+      @extend %CellEllipsis;
+    }
+  }
+  &.virtual--y {
+    .col--ellipsis {
+      .v-cell {
+        max-height: $v-table-row-height-default;
+      }
+    }
+  }
+
+  /* 暂无数据 */
+  .v-table--empty-placeholder,
+  .v-table--empty-block {
+    min-height: 60px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    width: 100%;
+    pointer-events: none;
+  }
+  .v-table--empty-block {
+    display: none;
+    visibility: hidden;
+  }
+  .v-table--empty-placeholder {
+    display: none;
+    position: absolute;
+    top: 0;
+  }
+  .v-table--empty-content {
+    display: block;
+    color: $v-font-secondary-color;
+    pointer-events: none;
+  }
+  &.is--empty {
+    .v-table--empty-block,
+    .v-table--empty-placeholder {
+      display: flex;
+    }
+  }
+}
+
+/* 全屏 */
+.v-is--maximize {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  z-index: 100;
+  overflow-y: auto;
+  padding: $v-module-distance;
+  padding-bottom: 0;
+  background-color: $v-table-background-color;
+  box-sizing: border-box;
+}
