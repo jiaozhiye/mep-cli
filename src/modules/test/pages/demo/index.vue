@@ -255,8 +255,16 @@ export default {
           request: {
             fetchApi: () => {},
             params: {},
-            datakey: 'items',
-            valueKey: 'name'
+            datakey: 'items'
+          },
+          options: {
+            columns: [
+              { dataIndex: 'name', title: '姓名' },
+              { dataIndex: 'price', title: '价格' }
+            ],
+            fieldAliasMap: () => {
+              return { f: 'name' };
+            }
           }
         },
         {
@@ -603,11 +611,11 @@ export default {
     },
     // 新建按钮
     addInfoHandle() {
-      this.actions = Object.assign({}, this.actions, { visible: true, title: '新建信息' });
+      this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '新建信息', data: null });
     },
     // 表格编辑按钮
     editInfoHandle(row) {
-      this.actions = Object.assign({}, this.actions, { visible: true, title: '编辑信息', data: row });
+      this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '编辑信息', data: row });
     },
     // 表格查看按钮
     showInfoHandle(row) {
@@ -626,8 +634,8 @@ export default {
     },
     // 抽屉组件子组件的关闭事件
     innerCloseHandle(visible, isReload) {
+      this.actions.visible = visible;
       // 重置 actions 的值
-      this.actions = Object.assign({}, { type: 'default', visible, data: null });
       if (isReload) {
         // 执行表格刷新
         this.$table.DO_REFRESH();

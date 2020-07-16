@@ -34,7 +34,8 @@ $ npm run build
 2. system - 系统
 3. sales - 销售
 4. service - 服务 + 备件 + 工具
-5. others - 其他
+5. usedcar - 二手车
+6. others - 其他
 
 注意：npm 依赖需要统一管理，不允许私自安装；公共的表单校验规则统一管理
 ```
@@ -57,6 +58,7 @@ $ npm run build
 - MultiuseButton 多功能按钮的组件，可实现权限控制及 ajax 防止重复提交
 - Pinyin 中文字符转换成拼音插件
 - PortalPage 对接大众 portal 系统组件
+- SearchHelper 搜索帮助组件
 - Spin 加载中组件
 - SuperTabs 选项卡组件，支持动画切换及顶部插槽扩展功能
 - Tinymce 富文本编辑器组件
@@ -66,7 +68,6 @@ $ npm run build
 - VirtualScroll 虚拟滚动组件
 - VirtualTable 新的表格组件，可支持 20w 数据渲染
 - WebPrint 浏览器的 pdf 打印组件
-- SearchHelper 搜索帮助组件
 ```
 
 ## 目录结构
@@ -90,7 +91,8 @@ $ npm run build
 │   ├── layout                 # 全局 layout
 │   ├── mixins                 # 全局混入
 │   ├── mock                   # 项目 mock 模拟数据
-│   ├── pages                  # 所有页面
+│   ├── modules                # 微前端模块
+│   ├── pages                  # 非业务页面
 │   ├── routes                 # 路由
 │   ├── store                  # 全局 store 管理
 │   ├── utils                  # 全局公用方法

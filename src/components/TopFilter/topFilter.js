@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 15:28:38
+ * @Last Modified time: 2020-07-15 18:44:30
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isUndefined, isFunction } from 'lodash';
 import moment from 'moment';
@@ -50,17 +50,23 @@ export default {
   },
   computed: {
     formItemList() {
-      const res = [];
+      const result = [];
       this.list
         .filter(x => x.fieldName)
         .forEach(x => {
           if (x.type === 'BREAK_SPACE') return;
           if (isObject(x.labelOptions) && x.labelOptions.fieldName) {
-            res.push(x.labelOptions);
+            result.push(x.labelOptions);
           }
-          res.push(x);
+          result.push(x);
         });
-      return res;
+      result.forEach(x => {
+        this.$set(x, 'disabled', x.disabled);
+        this.$set(x, 'hidden', x.hidden);
+        this.$set(x, 'rules', x.rules);
+        delete x.labelOptions;
+      });
+      return result;
     },
     fieldNames() {
       return this.formItemList.map(x => x.fieldName);
@@ -167,7 +173,7 @@ export default {
       return (
         <div slot="label" class="label-wrap" style={{ ...style }}>
           {type === 'SELECT' && (
-            <el-select v-model={form[fieldName]} placeholder={''} disabled={disabled} onChange={onChange}>
+            <el-select v-model={form[fieldName]} placeholder="" disabled={disabled} onChange={onChange}>
               {itemList.map(x => (
                 <el-option key={x.value} label={x.text} value={x.value} disabled={x.disabled} />
               ))}
@@ -286,7 +292,7 @@ export default {
             title={form[fieldName]}
             minlength={minlength}
             maxlength={maxlength}
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
@@ -341,7 +347,7 @@ export default {
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input-number
             v-model={form[fieldName]}
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             controls-position="right"
@@ -375,9 +381,9 @@ export default {
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input
             v-model={form[fieldName][0]}
+            placeholder={!disabled ? this.t('form.startValue') : ''}
             readonly={readonly}
             disabled={disabled}
-            placeholder={this.t('form.startValue')}
             style={{ width: `calc(50% - 7px)` }}
             clearable
             onChange={() => onChange({ [startFieldName]: form[fieldName][0] })}
@@ -385,9 +391,9 @@ export default {
           <span style="display: inline-block; text-align: center; width: 14px;">-</span>
           <el-input
             v-model={form[fieldName][1]}
+            placeholder={!disabled ? this.t('form.endValue') : ''}
             readonly={readonly}
             disabled={disabled}
-            placeholder={this.t('form.endValue')}
             style={{ width: `calc(50% - 7px)` }}
             clearable
             onChange={() => onChange({ [endFieldName]: form[fieldName][1] })}
@@ -410,9 +416,9 @@ export default {
             max={endVal}
             step={step}
             precision={precision}
+            placeholder={!disabled ? this.t('form.startValue') : ''}
             readonly={readonly}
             disabled={disabled}
-            placeholder={this.t('form.startValue')}
             controls={false}
             style={{ width: `calc(50% - 7px)` }}
             clearable
@@ -426,9 +432,9 @@ export default {
             max={max}
             step={step}
             precision={precision}
+            placeholder={!disabled ? this.t('form.endValue') : ''}
             readonly={readonly}
             disabled={disabled}
-            placeholder={this.t('form.endValue')}
             controls={false}
             style={{ width: `calc(50% - 7px)` }}
             clearable
@@ -487,7 +493,7 @@ export default {
             <el-input
               slot="reference"
               value={this.createInputTreeValue(fieldName, itemList)}
-              placeholder={placeholder}
+              placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
               clearable
@@ -531,7 +537,7 @@ export default {
             <el-input
               slot="reference"
               value={this[`${fieldName}CascaderTexts`]}
-              placeholder={placeholder}
+              placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
               clearable
@@ -547,19 +553,47 @@ export default {
     },
     SEARCH_HELPER(option) {
       const { form } = this;
-      const { label, fieldName, labelWidth, labelOptions, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
+      const { columns = [], fieldAliasMap, onlySelect = true } = options;
+      if (!isFunction(fieldAliasMap)) {
+        console.error('[SEARCH_HELPER] 类型的 `fieldAliasMap` 参数不正确');
+      }
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-autocomplete
             v-model={form[fieldName]}
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
+            popperClass="search-helper-popper"
             style={{ ...style }}
             clearable
+            onSelect={val => {
+              const alias = fieldAliasMap();
+              for (let key in alias) {
+                form[key] = val[alias[key]];
+              }
+              if (onlySelect) {
+                this[`${fieldName}PrevValue`] = form[fieldName];
+              }
+            }}
+            onBlur={ev => {
+              if (!onlySelect) return;
+              if (ev.target.value) {
+                form[fieldName] = this[`${fieldName}PrevValue`];
+              } else {
+                this[`${fieldName}PrevValue`] = '';
+              }
+            }}
             onChange={onChange}
             nativeOnKeydown={this.enterEventHandle}
-            fetchSuggestions={(queryString, cb) => this.querySearchAsync(request, fieldName, queryString, cb)}
+            fetchSuggestions={(queryString, cb) => this.querySearchAsync(request, fieldName, columns, queryString, cb)}
+            scopedSlots={{
+              default: ({ item }) => {
+                const single = columns.length === 1;
+                return columns.map(x => <td key={x.dataIndex}>{single ? <span>{item[x.dataIndex]}</span> : <span>{`${x.title}：${item[x.dataIndex]}`}</span>}</td>);
+              }
+            }}
           />
         </el-form-item>
       );
@@ -574,7 +608,7 @@ export default {
           <el-autocomplete
             v-model={form[fieldName]}
             valueKey="text"
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             clearable
@@ -582,8 +616,7 @@ export default {
             nativeOnKeydown={this.enterEventHandle}
             fetchSuggestions={(queryString, cb) => this.querySearchHandle(fieldName, itemList, queryString, cb)}
             scopedSlots={{
-              default: props => {
-                const { item } = props;
+              default: ({ item }) => {
                 return <span>{item.text}</span>;
               }
             }}
@@ -667,7 +700,7 @@ export default {
               form[fieldName] = this.formatDate(val, conf[dateType].valueFormat, dateType === 'datetime');
             }}
             value-format={conf[dateType].valueFormat}
-            placeholder={conf[dateType].placeholder}
+            placeholder={!disabled ? conf[dateType].placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             picker-options={{
@@ -785,7 +818,7 @@ export default {
               }}
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
-              placeholder={conf[dateType].placeholder[0]}
+              placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
               disabled={disabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -832,7 +865,7 @@ export default {
               }}
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
-              placeholder={conf[dateType].placeholder[1]}
+              placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
               disabled={disabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -926,7 +959,7 @@ export default {
           <el-input
             type="textarea"
             v-model={form[fieldName]}
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             clearable
@@ -979,7 +1012,7 @@ export default {
                 setTimeout(() => (form[fieldName] = val), 20);
               }
             }}
-            placeholder={placeholder}
+            placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             clearable={clearable}
@@ -1042,24 +1075,30 @@ export default {
       this.$forceUpdate();
     },
     // 获取搜索帮助数据
-    async querySearchAsync(request, fieldName, queryString = '', cb) {
-      const { fetchApi, params = {}, datakey = '', valueKey } = request;
+    async querySearchAsync(request, fieldName, columns, queryString = '', cb) {
+      const { fetchApi, params = {}, datakey = '' } = request;
       if (process.env.MOCK_DATA === 'true') {
         const res = require('@/mock/sHelperData').default;
         setTimeout(() => {
-          cb(this.createSerachHelperList(res.data, valueKey));
+          cb(this.createSerachHelperList(res.data, columns));
         }, 500);
       } else {
         const res = await fetchApi({ ...{ [fieldName]: queryString }, ...params });
         if (res.code === 200) {
           const dataList = !datakey ? res.data : get(res.data, datakey, []);
-          cb(this.createSerachHelperList(dataList, valueKey));
+          cb(this.createSerachHelperList(dataList, columns));
         }
       }
     },
     // 创建搜索帮助数据列表
-    createSerachHelperList(list, valueKey) {
-      return list.map(x => ({ value: x[valueKey] }));
+    createSerachHelperList(list, columns) {
+      return list.map(x => {
+        const item = {};
+        columns.forEach(k => {
+          item[k.dataIndex] = x[k.dataIndex];
+        });
+        return item;
+      });
     },
     querySearchHandle(fieldName, itemList = [], queryString = '', cb) {
       const res = queryString ? itemList.filter(this.createSearchHelpFilter(queryString)) : itemList;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 13:49:28
+ * @Last Modified time: 2020-07-15 13:04:15
  */
 import localforage from 'localforage';
 import { stringify, array_format, isBracketBalance } from '../filter-sql';
@@ -140,8 +140,7 @@ export default {
                 }
               }
             };
-          },
-          dictItems: this.fieldDicts
+          }
         },
         {
           title: '运算',

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-09 20:12:28
+ * @Last Modified time: 2020-07-15 11:05:36
  */
 @import '../../style/index.scss';
 
@@ -225,6 +225,23 @@ $prefix-cls: '#{$v-prefix}-top-filter';
       cursor: not-allowed;
       .is-leaf {
         pointer-events: none;
+      }
+    }
+  }
+}
+.search-helper-popper {
+  .el-autocomplete-suggestion__wrap {
+    ul {
+      width: 100%;
+      display: table;
+      li {
+        display: table-row;
+        td {
+          line-height: 28px;
+          span {
+            padding: 0 $padding-base;
+          }
+        }
       }
     }
   }

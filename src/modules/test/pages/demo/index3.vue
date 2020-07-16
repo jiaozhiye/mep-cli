@@ -70,7 +70,26 @@ export default {
           filter: true,
           filterType: 'input',
           editable: true,
-          editType: 'text'
+          editType: 'text',
+          editRequired: true,
+          searchHelper: {
+            fetchApi: () => {},
+            params: {},
+            // key -> 数据字段名
+            // value -> json 对象，dataIndex 的值就是 column 的 dataIndex
+            aliasKey: {
+              name: {
+                // 注意：当前列（column）的 dataIndex 必须配置在 aliasKey 中，最好放在一项
+                dataIndex: 'person.name'
+              },
+              number: {
+                dataIndex: 'num'
+              },
+              price: {
+                dataIndex: 'price'
+              }
+            }
+          }
         },
         {
           title: '性别',

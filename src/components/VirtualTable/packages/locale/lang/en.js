@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:18:31
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 13:39:45
+ * @Last Modified time: 2020-07-15 15:17:15
  */
 export default {
   table: {
@@ -78,11 +78,11 @@ export default {
       removeText: 'remove',
       configText: 'config name',
       resultText: 'summary result',
-      sumText: '列值汇总',
-      maxText: '列最大值',
-      minText: '列最小值',
-      avgText: '列平均值',
-      countText: '条数汇总'
+      sumText: 'summary value',
+      maxText: 'maximum value',
+      minText: 'minimum value',
+      avgText: 'average value',
+      countText: 'records total'
     },
     highSearch: {
       text: 'advanced search',
@@ -96,11 +96,11 @@ export default {
       ltText: '小于',
       gteText: '大于等于',
       lteText: '小于等于',
-      eqText: '等于',
-      neqText: '不等于',
-      inText: '包含',
-      ninText: '不包含',
-      likeText: '模糊匹配',
+      eqText: 'equal',
+      neqText: 'not equal',
+      inText: 'contain',
+      ninText: 'not contain',
+      likeText: 'fuzzy match',
       configText: 'config name',
       saveButton: 'save',
       savedSetting: 'saved advanced search setting'

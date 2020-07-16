@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 12:30:37
+ * @Last Modified time: 2020-07-15 19:53:10
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -179,7 +179,12 @@ const actions = {
     } else {
       const res = await getAllDict();
       if (res.code === 200) {
-        data = { ...localDict, ...res.data.dict, dealerBranch: res.data.branch.map(x => ({ value: x.ID, cnText: x.VBranchName })) };
+        data = {
+          ...localDict,
+          ...res.data.dict,
+          dealerBranch: res.data.branch?.map(x => ({ value: x.ID, cnText: x.VBranchName })) ?? [],
+          userBranch: res.data.userbranch?.map(x => ({ value: x.ID, cnText: x.VBranchName })) ?? []
+        };
       }
     }
     // 数据字典本地存储

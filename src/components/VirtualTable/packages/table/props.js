@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 22:13:53
+ * @Last Modified time: 2020-07-15 08:36:59
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -19,19 +19,25 @@ const columnItem = {
   sorter: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]), // 列排序
   // 列筛选
   filter: PropTypes.shape({
-    type: PropTypes.oneOf(['text', 'checkbox', 'radio', 'number', 'range-number', 'date', 'range-date']).isRequired, // 列筛选类型
-    items: PropTypes.array // 筛选列表项
+    type: PropTypes.oneOf(['text', 'checkbox', 'radio', 'number', 'date']).isRequired, // 列筛选类型
+    // 筛选字典项
+    items: PropTypes.arrayOf(
+      PropTypes.shape({
+        text: PropTypes.string,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      }).loose
+    )
   }),
   precision: PropTypes.number, // 数值类型字段的精度
   formatType: PropTypes.oneOf(['date', 'datetime', 'finance', 'secret-name', 'secret-phone', 'secret-IDnumber']), // 字段的格式化类型
   required: PropTypes.bool, // 可编辑列是否必填
   editRender: PropTypes.func, // 可编辑单元格，参数: row, column; 返回值类型: object
-  // 数据字典配置
+  // 数据字典项
   dictItems: PropTypes.arrayOf(
     PropTypes.shape({
       text: PropTypes.string,
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    })
+    }).loose
   ),
   // 底部合计
   summation: PropTypes.shape({

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-02 16:04:33
+ * @Last Modified time: 2020-07-15 16:31:22
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -254,9 +254,11 @@ export default {
                 <span class="el-upload-list__item-dot">
                   <i class="el-icon-zoom-in" onClick={() => this.handlePreview(index)} />
                 </span>
-                <span class="el-upload-list__item-dot">
-                  <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
-                </span>
+                {!disabled && (
+                  <span class="el-upload-list__item-dot">
+                    <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
+                  </span>
+                )}
                 <span class="el-upload-list__item-dot">
                   <i class="el-icon-download" onClick={() => this.downloadHandle(index)} />
                 </span>

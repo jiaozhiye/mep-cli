@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 21:38:22
+ * @Last Modified time: 2020-07-14 15:39:53
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -232,10 +232,6 @@ export default {
         </div>
       );
     },
-    // 处理兼容
-    [`range-numberHandle`](column) {
-      return this.numberHandle(column);
-    },
     radioHandle(column) {
       const { filter } = column;
       const { dataKey } = this;
@@ -355,10 +351,6 @@ export default {
           </ul>
         </div>
       );
-    },
-    // 处理兼容
-    [`range-dateHandle`](column) {
-      return this.dateHandle(column);
     }
   },
   render() {
