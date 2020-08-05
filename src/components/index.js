@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 11:48:57
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 13:45:49
+ * @Last Modified time: 2020-08-01 16:00:24
  */
 import './style';
 import locale from './locale';
@@ -10,6 +10,7 @@ import locale from './locale';
 import { default as Anchor } from './Anchor';
 import { default as BaseDialog } from './BaseDialog';
 import { default as BasePrint } from './BasePrint';
+import { default as ClientPrint } from './ClientPrint';
 import { default as BaseTable } from './BaseTable';
 import { default as BreakSpace } from './BreakSpace';
 import { default as ButtonArea } from './ButtonArea';
@@ -36,6 +37,7 @@ const components = [
   Anchor,
   BaseDialog,
   BasePrint,
+  ClientPrint,
   BaseTable,
   BreakSpace,
   ButtonArea,
@@ -85,6 +87,7 @@ export default {
   Anchor,
   BaseDialog,
   BasePrint,
+  ClientPrint,
   BaseTable,
   BreakSpace,
   ButtonArea,

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-12 17:26:34
+ * @Last Modified time: 2020-07-21 11:52:03
  */
 import { isFormEmpty } from './index';
 
@@ -80,8 +80,9 @@ export const licensePlateValidate = (rule, value, callback) => {
   if (rule.required && isFormEmpty(value)) {
     return callback(new Error('车牌号不能为空'));
   }
-  let regExp = /^(([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-Z](([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-Z][A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳使领]))$/;
-  if (isFormEmpty(value) || regExp.test(value)) {
+  let regExp1 = /^[\u4e00-\u9fa5]{1}[A-Z]{0,1}[-]{0,1}[A-Z0-9]{0,5}[挂学警港澳台使领]{0,1}$/;
+  let regExp2 = /^[W][J][\u4e00-\u9fa5]{0,1}[A-Z0-9-]{5,10}$/;
+  if (isFormEmpty(value) || regExp1.test(value) || regExp2.test(value)) {
     return callback();
   }
   callback(new Error('车牌号格式不正确'));

@@ -49,6 +49,7 @@ $ npm run build
 - BaseTable 表格组件
 - BreakSpace 功能模块的分隔符组件
 - ButtonArea 功能按钮区的容器组件
+- ClientPrint 客户端打印组件
 - CountUp 数字计数动画组件
 - DownloadFile 文件导出及下载组件
 - Drawer 抽屉组件，支持子组件的销毁

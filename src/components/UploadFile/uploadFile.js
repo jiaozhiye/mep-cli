@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-01 19:37:16
+ * @Last Modified time: 2020-07-17 10:04:38
  **/
 import axios from 'axios';
 import { cloneDeep } from 'lodash';
@@ -123,6 +123,9 @@ export default {
       on: $listeners
     };
     const btnProps = {
+      props: {
+        disabled: $props.disabled
+      },
       attrs: {
         icon: 'iconfont icon-upload',
         ...$attrs

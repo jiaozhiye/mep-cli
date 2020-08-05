@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-02 09:16:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 17:27:17
+ * @Last Modified time: 2020-07-31 08:46:51
  */
 export default {
   app: {
@@ -29,6 +29,7 @@ export default {
   },
   settings: {
     usercenter: '个人中心',
+    clearcache: '清理缓存',
     logout: '退出登录'
   },
   dreadcrumb: {

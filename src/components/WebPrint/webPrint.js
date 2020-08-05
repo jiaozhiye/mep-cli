@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-15 14:03:56
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-25 17:10:34
+ * @Last Modified time: 2020-08-01 16:18:52
  */
 import { Message } from 'element-ui';
 import PropTypes from '../_utils/vue-types';
@@ -56,7 +56,7 @@ export default {
     }
   },
   render() {
-    const { $props, $listeners, $attrs, $slots, visible, loading, filePath } = this;
+    const { $props, $attrs, $slots, visible, loading, filePath } = this;
     const btnProps = {
       props: {
         ...$props,

@@ -3,7 +3,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-29 08:42:09
+ * @Last Modified time: 2020-07-27 09:30:12
  **/
 export default {
   name: 'MenuFold',
@@ -37,10 +37,11 @@ export default {
 
 <style lang="scss" scoped>
 .menu-fold {
-  display: inline-block;
-  font-size: 24px;
-  line-height: 56px;
+  display: flex;
+  align-items: center;
+  height: 100%;
   padding: 0 15px;
+  font-size: 24px;
   cursor: pointer;
   transition: color 0.3s ease;
   &:hover {

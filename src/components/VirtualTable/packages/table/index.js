@@ -2,14 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 10:14:10
+ * @Last Modified time: 2020-07-25 20:13:09
  */
 import baseProps from './props';
 import Store from '../store';
 import config from '../config';
-import { isEqual, isUndefined } from 'lodash';
+import { isEqual } from 'lodash';
 
-import { columnsFlatMap, getAllColumns, getAllRowKeys, getScrollBarSize, createWhereSQL, parseHeight, debounce, browse } from '../utils';
+import { columnsFlatMap, getAllColumns, getAllRowKeys, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
@@ -57,6 +57,8 @@ export default {
     this.pageTableData = [];
     // 高级检索的条件
     this.superSearchQuery = '';
+    // 列汇总条件
+    this.columnSummaryQuery = this.createColumnSummary();
     return {
       // 组件 store 仓库
       store: new Store(),
@@ -64,8 +66,6 @@ export default {
       tableData: [],
       // 完整数据 - 重要
       tableFullData: [],
-      // 表格列
-      tableColumns: this.createTableColumns(this.columns),
       // 表头筛选
       filters: {},
       // 表头排序
@@ -118,7 +118,9 @@ export default {
         footerHeight: 0
       },
       // 选择列，已选中行的 keys
-      selectionKeys: [],
+      selectionKeys: this.createSelectionKeys(),
+      // 行高亮，已选中的 key
+      highlightKey: this.rowHighlight?.currentRowKey ?? '',
       // 已展开行的 keys
       rowExpandedKeys: [],
       // X 滚动条是否离开左边界
@@ -144,6 +146,9 @@ export default {
     },
     $$tableBody() {
       return this.$refs[`tableBody`];
+    },
+    tableColumns() {
+      return this.createTableColumns(this.columns);
     },
     flattenColumns() {
       return columnsFlatMap(this.tableColumns);
@@ -175,6 +180,12 @@ export default {
     isHeadFilter() {
       return this.flattenColumns.some(column => column.filter);
     },
+    isServerSummation() {
+      return this.flattenColumns.some(x => !!x.summation?.dataKey);
+    },
+    isSuperSearch() {
+      return this.showSuperSearch && this.isHeadFilter;
+    },
     isGroupSummary() {
       return this.flattenColumns.some(column => !!column.groupSummary);
     },
@@ -185,12 +196,16 @@ export default {
       return !!this.fetch;
     },
     fetchParams() {
-      const params = this.isFetch ? this.fetch.params : null;
+      const orderby = createOrderBy(this.sorter);
       const query = createWhereSQL(this.filters) || this.superSearchQuery || '';
-      const where = query ? { where: query } : null;
+      const params = this.isFetch ? this.fetch.params : null;
+      const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
+      const filter = query ? { [config.filterFieldName]: query } : null;
+      const summary = this.columnSummaryQuery ? { [config.groupSummary.summaryFieldName]: this.columnSummaryQuery, usedJH: 1 } : null;
       return {
-        ...this.sorter,
-        ...where,
+        ...sorter,
+        ...filter,
+        ...summary,
         ...params,
         ...this.pagination
       };
@@ -230,6 +245,7 @@ export default {
   },
   watch: {
     dataSource(next) {
+      if (isEqual(next, this.tableFullData)) return;
       this.createTableData(next);
     },
     tableFullData() {
@@ -243,7 +259,6 @@ export default {
       debounce(this.dataChangeHandle)();
     },
     columns(next) {
-      this.tableColumns = this.createTableColumns(next);
       this.setLocalColumns(next);
     },
     tableColumns() {
@@ -262,6 +277,8 @@ export default {
       deep: true
     },
     [`fetch.params`]() {
+      this.clearTableSorter();
+      this.clearTableFilter();
       this.clearSuperSearch();
     },
     fetchParams(next, prev) {
@@ -273,20 +290,25 @@ export default {
         debounce(this.getTableData)();
       }
     },
-    expandable() {
-      this.tableColumns = this.createTableColumns(this.columns);
-    },
-    rowSelection() {
-      this.tableColumns = this.createTableColumns(this.columns);
-    },
     selectionKeys(next, prev) {
       if (!this.rowSelection || isEqual(next, prev)) return;
       const { onChange = noop } = this.rowSelection;
       const selectedRows = this.tableFullData.filter(record => next.includes(this.getRowKey(record, record.index)));
       onChange(next, selectedRows);
     },
-    [`rowSelection.selectedRowKeys`]() {
+    [`rowSelection.selectedRowKeys`](next) {
+      this.$$tableBody.setClickedValues([next[0], 'index']);
       this.selectionKeys = this.createSelectionKeys();
+    },
+    highlightKey(next) {
+      if (!this.rowHighlight) return;
+      const { onChange = noop } = this.rowHighlight;
+      const currentRow = this.tableFullData.find(record => this.getRowKey(record, record.index) === next);
+      onChange(next, currentRow || null);
+    },
+    [`rowHighlight.currentRowKey`](next) {
+      this.$$tableBody.setClickedValues([next, 'index']);
+      this.highlightKey = this.rowHighlight?.currentRowKey ?? this.highlightKey;
     },
     [`layout.viewportHeight`](next) {
       const visibleYSize = Math.ceil(next / this.scrollYStore.rowHeight);
@@ -309,8 +331,6 @@ export default {
     } else {
       this.getTableData();
     }
-    // 设置选择列
-    this.selectionKeys = this.createSelectionKeys();
     // 设置展开行
     this.rowExpandedKeys = this.createRowExpandedKeys();
     // 加载表格数据
@@ -327,8 +347,8 @@ export default {
     this.destroy();
   },
   methods: {
-    ...layoutMethods,
     ...coreMethods,
+    ...layoutMethods,
     ...interfaceMethods,
     getRowKey(row, index) {
       const { rowKey } = this;
@@ -381,6 +401,7 @@ export default {
       showRefresh,
       tablePrint,
       exportExcel,
+      isSuperSearch,
       isGroupSummary,
       showColumnDefine
     } = this;
@@ -402,13 +423,6 @@ export default {
         [`scroll--x`]: scrollX,
         [`scroll--y`]: scrollY,
         [`virtual--y`]: scrollYLoad
-      }
-    ];
-    const spaceSlotCls = [
-      `v-slot`,
-      {
-        [`fl`]: topSpaceAlign === 'left',
-        [`fr`]: topSpaceAlign === 'right'
       }
     ];
     const tableHeaderProps = {
@@ -447,7 +461,7 @@ export default {
             flattenColumns,
             showHeader,
             showFooter,
-            showLogo: isUndefined(tablePrint.showLogo) ? true : tablePrint.showLogo
+            showLogo: tablePrint.showLogo ?? !0
           }
         }
       : null;
@@ -484,10 +498,10 @@ export default {
     return (
       <div class={vWrapperCls}>
         <div ref="v-top-info" class="v-top-info">
-          <div class="v-space clearfix">
+          <div class="v-space">
             {/* 顶部信息 */}
-            {showAlert && alertPosition === 'top' && <Alert class="fl" {...alertProps} />}
-            <div class={spaceSlotCls}>
+            {showAlert && alertPosition === 'top' && <Alert {...alertProps} />}
+            <div class="v-slot" style={{ textAlign: topSpaceAlign }}>
               {/* 默认槽口 */}
               {this.$slots[`default`]}
             </div>
@@ -502,7 +516,7 @@ export default {
             {/* 导出 */}
             {exportExcel && <Export {...exportProps} />}
             {/* 高级检索 */}
-            {isHeadFilter && <HighSearch columns={flattenColumns} />}
+            {isSuperSearch && <HighSearch columns={flattenColumns} />}
             {/* 分组汇总 */}
             {isGroupSummary && <GroupSummary columns={flattenColumns} />}
             {/* 列定义 */}

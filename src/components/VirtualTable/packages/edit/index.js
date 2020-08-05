@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 16:40:56
+ * @Last Modified time: 2020-08-04 20:46:08
  */
 import { isEqual, isUndefined, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -29,15 +29,15 @@ export default {
     store() {
       return this.$$table.store;
     },
+    size() {
+      return this.$$table.tableSize !== 'mini' ? 'small' : 'mini';
+    },
     options() {
       return this.column.editRender(this.record, this.column);
     },
     editable() {
       const { editable, disabled } = this.options;
       return (editable || isEqual(this.clicked, [this.rowKey, this.columnKey])) && !disabled;
-    },
-    size() {
-      return this.$$table.tableSize !== 'mini' ? 'small' : 'mini';
     },
     dataKey() {
       return `${this.rowKey}|${this.columnKey}`;
@@ -53,6 +53,9 @@ export default {
     },
     validateText() {
       return this.store.state.validate.find(({ x, y }) => x === this.rowKey && y === this.columnKey)?.text;
+    },
+    isEditing() {
+      return this.editable || !this.passValidate;
     }
   },
   watch: {
@@ -60,7 +63,7 @@ export default {
       if (!this.editable) return;
       const { type } = this.options;
       const { currentKey } = this;
-      if ((type === 'text' || type === 'number') && currentKey) {
+      if ((type === 'text' || type === 'number' || type === 'search-helper') && currentKey) {
         setTimeout(() => {
           this.$refs[`${type}-${currentKey}`]?.select();
         });
@@ -370,7 +373,6 @@ export default {
     }
   },
   render() {
-    const { editable, passValidate } = this;
-    return editable || !passValidate ? this.renderEditCell() : this.renderCell();
+    return this.isEditing ? this.renderEditCell() : this.renderCell();
   }
 };

@@ -18,11 +18,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 20:12:04
+ * @Last Modified time: 2020-07-27 19:52:52
  **/
 import { mapState } from 'vuex';
 import { size } from '@/mixins/sizeMixin';
 import config from '@/config';
+
 import Logo from './Logo';
 import AllMenu from './AllMenu';
 import MenuList from './MenuList';
@@ -69,7 +70,7 @@ export default {
   box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   z-index: 5;
   .scroll {
-    height: calc(100% - 56px - 40px);
+    height: calc(100% - 52px - 36px);
     background-color: $menuBg;
     overflow-x: hidden;
     .inner {
@@ -142,6 +143,18 @@ export default {
     }
   }
   &-lg {
+    /deep/ .logo {
+      height: 56px;
+    }
+    /deep/ .all-menu {
+      height: 40px;
+      .title {
+        line-height: 40px;
+      }
+    }
+    .scroll {
+      height: calc(100% - 56px - 40px);
+    }
     /deep/ .el-menu {
       .el-menu-item {
         height: 40px;
@@ -156,6 +169,18 @@ export default {
     }
   }
   &-sm {
+    /deep/ .logo {
+      height: 48px;
+    }
+    /deep/ .all-menu {
+      height: 32px;
+      .title {
+        line-height: 32px;
+      }
+    }
+    .scroll {
+      height: calc(100% - 48px - 32px);
+    }
     /deep/ .el-menu {
       .el-menu-item {
         height: 32px;

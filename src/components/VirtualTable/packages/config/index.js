@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 13:21:11
+ * @Last Modified time: 2020-07-20 11:03:02
  */
 import i18n from '../locale';
 
@@ -30,7 +30,9 @@ const config = {
   },
   // 汇总
   groupSummary: {
-    total: { text: '记录数', value: '*' }
+    total: { text: '记录数', value: '*' },
+    summaryFieldName: 'tsummary',
+    groupbyFieldName: 'tgroupby'
   },
   // 高级检索
   highSearch: {
@@ -48,6 +50,8 @@ const config = {
   virtualScrollY: 150,
   // 表头排序的参数名
   sorterFieldName: 'tsortby',
+  // 表头筛选的参数名
+  filterFieldName: 'twhere',
   // 打印纸的宽度 A4 -> 1040px
   printWidth: 1040,
   // 可选择列

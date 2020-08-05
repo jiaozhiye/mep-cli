@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-10 15:42:04
+ * @Last Modified time: 2020-07-17 08:26:55
  */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -47,13 +47,13 @@ export const constantRouterMap = [
       {
         path: '/redirect/:path(.*)',
         component: Redirect
+      },
+      {
+        path: '/404',
+        meta: { title: '404' },
+        component: Nomatch
       }
     ]
-  },
-  {
-    path: '/404',
-    hidden: true,
-    component: Nomatch
   },
   {
     path: '*',

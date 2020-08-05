@@ -2,19 +2,15 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 10:51:24
+ * @Last Modified time: 2020-07-22 11:13:07
  */
 import { deepMapColumns, createFilterColumns, deepFindColumn, findFirstColumn, findLastColumn } from '../utils';
-import { isUndefined } from 'lodash';
 import config from '../config';
 
 const columnsMixin = {
   methods: {
     createTableColumns(columns) {
-      const baseColumns = deepMapColumns(columns, x => {
-        isUndefined(x.renderWidth) && this.$set(x, 'renderWidth', x.width || null);
-        isUndefined(x.orderBy) && this.$set(x, 'orderBy', null);
-      });
+      const baseColumns = deepMapColumns(columns);
       const expandableColumn = this.createExpandableColumn(this.expandable);
       const selectionColumn = this.createSelectionColumn(this.rowSelection);
       return createFilterColumns([...(expandableColumn ? [expandableColumn] : []), ...(selectionColumn ? [selectionColumn] : []), ...baseColumns]);
@@ -119,11 +115,6 @@ const columnsMixin = {
         r += column.width || column.renderWidth;
       }
       return r;
-    },
-    resetColumns() {
-      deepMapColumns(this.tableColumns, x => {
-        delete x.orderBy;
-      });
     }
   }
 };

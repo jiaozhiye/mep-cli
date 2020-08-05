@@ -2,17 +2,60 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-12 15:49:10
+ * @Last Modified time: 2020-07-27 08:05:59
  */
 import { isUndefined } from 'lodash';
 
 const keyboardMixin = {
   methods: {
     keyboardEvent(ev) {
-      if (!this.editableColumns.length) return;
-      // 至少一个单元格获得焦点
-      if (!this.clicked.length) return;
       const { keyCode } = ev;
+      // Esc
+      if (keyCode === 27) {
+        this.setClickedValues([]);
+        this.setHighlightKey('');
+      }
+      // table-body 被点击，获得焦点
+      if (!this.clicked.length) return;
+      const { rowSelection, rowHighlight } = this.$$table;
+      // Enter
+      if (keyCode === 13) {
+        ev.preventDefault();
+        if (rowSelection?.type === 'radio' || rowHighlight) {
+          const { tableFullData, getRowKey, selectionKeys, highlightKey } = this.$$table;
+          const rowKey = selectionKeys[0] || highlightKey || null;
+          const row = tableFullData.find(record => getRowKey(record, record.index) === rowKey) || null;
+          this.$$table.$emit('rowEnter', row, ev);
+        }
+      }
+      // 上  下
+      if (keyCode === 38 || keyCode === 40) {
+        ev.preventDefault();
+        const { allRowKeys, tableFullData, getRowKey } = this.$$table;
+        const total = allRowKeys.length;
+        let index = allRowKeys.findIndex(x => x === this.clicked[0]);
+        // let xIndex = keyCode === 38 ? (--index + total) % total : ++index % total;
+        let xIndex = keyCode === 38 ? --index : ++index;
+        if (!(index < 0 || index > total - 1)) {
+          const rowKey = allRowKeys[xIndex];
+          const row = tableFullData.find(record => getRowKey(record, record.index) === rowKey);
+          // 行单选
+          if (rowSelection?.type === 'radio' && !rowSelection.disabled?.(row)) {
+            this.setSelectionKeys([rowKey]);
+          }
+          // 行高亮
+          if (rowHighlight && !rowHighlight.disabled?.(row)) {
+            this.setHighlightKey(rowKey);
+          }
+          // 滚动条定位
+          if (!this.rowInViewport(rowKey, xIndex)) {
+            keyCode === 38 ? this.scrollYToRecord(rowKey, xIndex) : this.scrollYToRecord(rowKey, xIndex - (this.$$table.scrollYStore.visibleSize - 2));
+          }
+          this.setClickedValues([rowKey, this.clicked[1]]);
+        }
+      }
+      // 可编辑单元格
+      if (!this.editableColumns.length) return;
       // Tab
       if (keyCode === 9) {
         ev.preventDefault();
@@ -33,21 +76,18 @@ const keyboardMixin = {
       //   this.setClickedValues([this.clicked[0], dataIndex]);
       //   this.scrollXToColumn(dataIndex);
       // }
-      // 上  下
-      if (keyCode === 38 || keyCode === 40) {
-        ev.preventDefault();
-        const { allRowKeys } = this.$$table;
-        const total = allRowKeys.length;
-        let index = allRowKeys.findIndex(x => x === this.clicked[0]);
-        let xIndex = keyCode === 38 ? (--index + total) % total : ++index % total;
-        const rowKey = allRowKeys[xIndex];
-        this.setClickedValues([rowKey, this.clicked[1]]);
-        this.scrollYToRecord(rowKey, xIndex);
+    },
+    rowInViewport(rowKey, index) {
+      const { scrollYStore, allRowKeys } = this.$$table;
+      const { rowHeight, visibleSize } = scrollYStore;
+      const v = isUndefined(index) ? allRowKeys.findIndex(x => x === rowKey) : index;
+      if (v < 0) return;
+      const st = v * rowHeight;
+      // 不在 tableBody 视口范围
+      if (st < this.$el.scrollTop || st > this.$el.scrollTop + (visibleSize - 2) * rowHeight) {
+        return !1;
       }
-      // Esc
-      if (keyCode === 27) {
-        this.setClickedValues([]);
-      }
+      return !0;
     },
     scrollXToColumn(dataIndex, index) {
       const { leftFixedColumns } = this.$$table;

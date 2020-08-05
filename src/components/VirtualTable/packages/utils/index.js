@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 14:23:48
+ * @Last Modified time: 2020-07-22 10:39:49
  */
 import { get, set, transform, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -417,6 +417,17 @@ export const createUidKey = (key = '') => {
   return key + uuid;
 };
 
+// 生成排序的 sql 片段
+export const createOrderBy = sorter => {
+  const result = [];
+  Object.keys(sorter).forEach(dataIndex => {
+    if (sorter[dataIndex] !== null) {
+      result.push(`${dataIndex}|${sorter[dataIndex]}`);
+    }
+  });
+  return result.join(',');
+};
+
 // 生成查询条件的 sql 片段
 export const createWhereSQL = filters => {
   let __query__ = ``;
@@ -425,14 +436,14 @@ export const createWhereSQL = filters => {
     const property = key.includes('|') ? key.split('|')[1] : key;
     const filterVal = filters[key];
     for (let mark in filterVal) {
-      let val = Array.isArray(filterVal[mark]) ? array_format(filterVal[mark]) : stringify(filterVal[mark]);
+      let val = Array.isArray(filterVal[mark]) ? array_format(filterVal[mark]) : stringify(filterVal[mark], '^');
       if (val === "''" || val === '[]') continue;
       __query__ += `${property} ${mark} ${val} and `;
     }
   }
   __query__ = __query__.slice(0, -1 * cutStep);
   // console.log('where:', __query__);
-  return __query__;
+  return __query__.replace(/\s+/g, ' ').trim();
 };
 
 // 多列分组聚合

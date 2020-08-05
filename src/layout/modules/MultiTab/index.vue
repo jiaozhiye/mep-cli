@@ -3,17 +3,21 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 17:01:06
+ * @Last Modified time: 2020-07-31 09:43:29
  **/
 import { mapActions } from 'vuex';
 import addEventListener from 'add-dom-event-listener';
+import { uniqBy } from 'lodash';
+import { size } from '@/mixins/sizeMixin';
 
 export default {
   name: 'MultiTab',
+  mixins: [size],
   data() {
+    const localRoutes = this.getLocalTabNav().map(x => this.getRouteByPath(x.key));
     return {
       activeKey: this.$route.path,
-      pages: this.$route.path === '/home' ? [this.getHomeRoute('/home')] : [this.getHomeRoute('/home'), this.$route],
+      pages: uniqBy([...localRoutes, ...(this.$route.path === '/home' ? [this.$route] : [this.getRouteByPath('/home'), this.$route])], 'path'),
       visible: false,
       currentKey: '',
       position: { x: 0, y: 0 }
@@ -58,11 +62,21 @@ export default {
   },
   methods: {
     ...mapActions('app', ['addKeepAliveCache', 'removeKeepAliveCache', 'createTabNavList', 'createIframeList', 'refreshView']),
-    getHomeRoute(path) {
+    getRouteByPath(path) {
       return this.deepMapRoutes(this.$router.options.routes, path);
     },
     getRouteComponent(route) {
       return route.matched[route.matched.length - 1].components.default;
+    },
+    getLocalTabNav() {
+      const localTabNav = localStorage.getItem('tab_nav');
+      let result = [];
+      if (localTabNav) {
+        try {
+          result = JSON.parse(localTabNav);
+        } catch (e) {}
+      }
+      return result;
     },
     addKeepAlive(route) {
       if (!route.meta.keepAlive) return;
@@ -174,8 +188,15 @@ export default {
     }
   },
   render() {
+    const cls = [
+      `multi-wrap`,
+      {
+        [`multi-wrap-sm`]: this.currentSize === 'small',
+        [`multi-wrap-lg`]: this.currentSize === 'large'
+      }
+    ];
     return (
-      <div class="multi-wrap">
+      <div class={cls}>
         <el-tabs ref="multiTab" class="multi-tab" type="card" value={this.activeKey} on-tab-click={this.handleClick} on-tab-remove={this.removeTab}>
           {this.createPanelList()}
         </el-tabs>
@@ -200,13 +221,29 @@ export default {
     .el-tabs__header {
       margin: 0;
       border-bottom-color: $borderColor;
+      .el-tabs__nav-prev,
+      .el-tabs__nav-next {
+        display: flex;
+        align-items: center;
+        height: calc(100% - 1px);
+        padding: 0 4px;
+        &:hover {
+          background-color: $backgroundColorSecondary;
+        }
+      }
       .el-tabs__nav {
         border-color: $borderColor;
         .el-tabs__item {
+          height: 38px;
+          line-height: 38px;
+          padding: 0 16px;
           font-size: $textSize;
           border-left-color: $borderColor;
           &.is-active {
             font-weight: 700;
+          }
+          .el-icon-close {
+            line-height: 14px;
           }
         }
       }
@@ -227,6 +264,24 @@ export default {
     border-radius: $borderRadius;
     box-shadow: $boxShadow;
     z-index: 9999;
+  }
+  &.multi-wrap-lg {
+    /deep/ .multi-tab {
+      .el-tabs__item {
+        padding: 0 18px !important;
+        height: 42px !important;
+        line-height: 42px !important;
+      }
+    }
+  }
+  &.multi-wrap-sm {
+    /deep/ .multi-tab {
+      .el-tabs__item {
+        padding: 0 14px !important;
+        height: 34px !important;
+        line-height: 34px !important;
+      }
+    }
   }
 }
 </style>

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 11:05:45
+ * @Last Modified time: 2020-07-21 15:23:55
  */
 @import '../../style/index.scss';
 
@@ -145,6 +145,9 @@ $prefix-cls: '#{$v-prefix}-form-panel';
         font-size: $font-size-base;
         vertical-align: top;
         cursor: default;
+        .el-tag {
+          margin-right: 8px;
+        }
       }
       &.is-required {
         .el-form-item__label {

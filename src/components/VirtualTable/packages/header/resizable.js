@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-07 19:04:14
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 17:18:37
+ * @Last Modified time: 2020-07-22 14:15:51
  */
-import { getNodeOffset, deepFindColumn } from '../utils';
+import { getNodeOffset } from '../utils';
 import config from '../config';
 
 export default {
@@ -18,11 +18,11 @@ export default {
   },
   methods: {
     resizeMousedown(ev) {
-      ev.stopPropagation();
       ev.preventDefault();
 
+      const _this = this;
       const dom = ev.target;
-      const { $vTable, $$tableBody, columns, flattenColumns, doLayout, setLocalColumns } = this.$$table;
+      const { $vTable, $$tableBody, columns, doLayout, setLocalColumns } = this.$$table;
       const target = this.$resizableBar;
 
       const half = dom.offsetWidth / 2;
@@ -34,8 +34,8 @@ export default {
       target.style.display = 'block';
 
       // 操作表格列 -> 违背了单向数据流原则，后期建议优化
-      const tColumn = deepFindColumn(flattenColumns, this.column.dataIndex);
-      const renderWidth = tColumn.width || tColumn.renderWidth;
+      const renderWidth = this.column.width || this.column.renderWidth;
+      let res = renderWidth;
 
       document.onmousemove = function(ev) {
         let ml = ev.clientX - disX;
@@ -44,15 +44,21 @@ export default {
         // 左边界限定
         if (rw < config.defaultColumnWidth) return;
 
-        tColumn.width = tColumn.renderWidth = rw;
+        res = rw;
+
         target.style.left = `${ml + left}px`;
       };
 
       document.onmouseup = function() {
         $vTable.classList.remove('c--resize');
         target.style.display = 'none';
+
+        _this.column.width = _this.column.renderWidth = res;
         doLayout();
+
+        // 本地存储列信息
         setLocalColumns(columns);
+
         this.onmousemove = null;
         this.onmouseup = null;
       };

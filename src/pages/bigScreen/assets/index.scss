@@ -2,16 +2,21 @@
  * @Author: 焦质晔
  * @Date: 2020-07-06 09:41:57
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 13:07:00
+ * @Last Modified time: 2020-07-16 16:47:29
  */
 .v-screen {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #040509;
+  padding: 8px;
+  background: url(../../../assets/img/big-screen-bg.jpg) 50% 0 no-repeat;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
   &--toper-title {
+    margin: 10px 0 30px;
     font-size: 26px;
-    padding-top: 10px;
     text-align: center;
     color: #fff;
     text-shadow: 0 0 4px #fff;
@@ -27,7 +32,7 @@
     &-middle {
       display: flex;
       flex-direction: column;
-      width: 45vw;
+      width: 46vw;
     }
     &-right {
       display: flex;
@@ -36,12 +41,28 @@
     }
     .chart {
       flex: 1;
-      margin: 10px;
-      background: #fff;
+      margin: 6px;
+      // background: #fff;
     }
     .map {
       flex: none;
       height: 55vh;
     }
+  }
+  .delay-200ms {
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+  }
+  .delay-400ms {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+  }
+  .delay-600ms {
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+  }
+  .delay-800ms {
+    -webkit-animation-delay: 0.8s;
+    animation-delay: 0.8s;
   }
 }

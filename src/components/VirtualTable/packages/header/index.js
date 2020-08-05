@@ -2,10 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 10:14:52
+ * @Last Modified time: 2020-07-22 10:52:35
  */
 import { pickBy, intersection, isFunction } from 'lodash';
-import config from '../config';
 import Locale from '../locale/mixin';
 import { where } from '../filter-sql';
 import { convertToRows, getCellValue, createWhereSQL, isEmpty } from '../utils';
@@ -96,9 +95,10 @@ export default {
         layout: { gutterWidth },
         resizable,
         scrollY,
+        sorter,
         isIE
       } = this.$$table;
-      const { dataIndex, colSpan, rowSpan, fixed, align, sorter, orderBy, filter, required } = column;
+      const { dataIndex, colSpan, rowSpan, fixed, align, sorter: isSorter, filter, required } = column;
       const leftFixedColumns = columns.filter(x => x.fixed === 'left');
       const rightFixedColumns = columns.filter(x => x.fixed === 'right');
       const cls = [
@@ -108,9 +108,9 @@ export default {
           [`col--center`]: align === 'center',
           [`col--right`]: align === 'right',
           [`v-column--required`]: !!required,
-          [`v-column-has-sorter`]: sorter,
+          [`v-column-has-sorter`]: isSorter,
           [`v-column-has-filter`]: filter,
-          [`v-column--sort`]: !!orderBy,
+          [`v-column--sort`]: Object.keys(sorter).includes(dataIndex),
           [`v-cell-fix-left`]: fixed === 'left',
           [`v-cell-fix-right`]: fixed === 'right',
           [`v-cell-fix-left-last`]: !isIE && fixed === 'left' && leftFixedColumns[leftFixedColumns.length - 1].dataIndex === dataIndex,
@@ -132,7 +132,7 @@ export default {
       );
     },
     renderCell(column) {
-      const { dataIndex, type, sorter, orderBy, filter, title } = column;
+      const { dataIndex, type, sorter, filter, title } = column;
       const { selectionKeys } = this.$$table;
       if (dataIndex === '__selection__' && type === 'checkbox') {
         return (
@@ -143,7 +143,7 @@ export default {
       }
       let vNodes = [];
       if (sorter) {
-        vNodes.push(this.renderSorter(orderBy));
+        vNodes.push(this.renderSorter(this.sorter[dataIndex]));
       }
       if (filter) {
         vNodes.push(this.renderFilter(column));
@@ -169,9 +169,9 @@ export default {
         }
       ];
       return (
-        <span class="v-cell--sort">
-          <SvgIcon class={ascCls} icon-class="caret-up" title={this.t('table.sorter.asc')} />
-          <SvgIcon class={descCls} icon-class="caret-down" title={this.t('table.sorter.desc')} />
+        <span class="v-cell--sort" title={this.t('table.sorter.text')}>
+          <SvgIcon class={ascCls} icon-class="caret-up" />
+          <SvgIcon class={descCls} icon-class="caret-down" />
         </span>
       );
     },
@@ -180,18 +180,10 @@ export default {
     },
     thClickHandle(ev, column) {
       const { multipleSort } = this.$$table;
-      const { sorter, orderBy, dataIndex } = column;
+      const { sorter, dataIndex } = column;
       if (sorter) {
-        const order = orderBy ? (orderBy === this.descend ? null : this.descend) : this.ascend;
-        // 取消其他排序
-        if (!multipleSort) {
-          this.flattenColumns.forEach(x => {
-            if (!x.sorter || x.dataIndex === dataIndex) return;
-            x.orderBy = null;
-          });
-        }
-        // 同步状态
-        column.orderBy = order;
+        const current = this.sorter[dataIndex];
+        const order = current ? (current === this.descend ? null : this.descend) : this.ascend;
         // 设置排序值
         if (!multipleSort) {
           this.sorter = Object.assign({}, { [dataIndex]: order });
@@ -254,37 +246,32 @@ export default {
       this.sorterHandle();
     },
     // 格式化排序参数
-    formatSorterValue(option) {
-      const result = [];
-      Object.keys(option).forEach(dataIndex => {
-        if (option[dataIndex] !== null) {
-          result.push(`${dataIndex}|${option[dataIndex]}`);
-        }
-      });
-      return result.length ? { [config.sorterFieldName]: result.join(',') } : {};
+    formatSorterValue(sorter) {
+      const result = {};
+      for (let key in sorter) {
+        if (sorter[key] === null) continue;
+        result[key] = sorter[key];
+      }
+      return result;
     },
     // 格式化筛选参数
-    formatFilterValue(option) {
+    formatFilterValue(filters) {
       const result = {};
-      for (let key in option) {
+      for (let key in filters) {
         if (!key.includes('|')) continue;
         let [type, property] = key.split('|');
-        for (let mark in option[key]) {
-          if (isEmpty(option[key][mark])) {
-            delete option[key][mark];
+        for (let mark in filters[key]) {
+          if (isEmpty(filters[key][mark])) {
+            delete filters[key][mark];
           }
         }
         // result[`${type}|${property}`]
-        result[property] = option[key];
+        result[property] = filters[key];
       }
       return result;
     },
     // 清空表头排序
     clearTheadSorter() {
-      this.flattenColumns.forEach(x => {
-        if (!x.sorter) return;
-        x.orderBy = null;
-      });
       this.sorter = {};
     },
     // 清空表头筛选

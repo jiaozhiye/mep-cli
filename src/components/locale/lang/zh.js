@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-02 16:04:30
+ * @Last Modified time: 2020-08-02 09:22:16
  */
 import tableZhLocale from '../../VirtualTable/packages/locale/lang/zh';
 
@@ -72,6 +72,12 @@ export default {
     noData: 'pdf 文件未载入，无法打印！',
     error: '文件格式有误，无法打印！',
     preview: '打印预览'
+  },
+  clientPrint: {
+    preview: '打印预览',
+    pageSetting: '页面设置',
+    close: '关 闭',
+    confirm: '确 定'
   },
   form: {
     inputPlaceholder: '请输入...',

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 17:57:31
+ * @Last Modified time: 2020-07-29 12:53:02
  */
 import i18n from '@/lang';
 
@@ -19,6 +19,7 @@ const config = {
   showSizeSelect: true, // 是否显示尺寸选择
   showCTICenter: true, // 是否显示 CTI
   showNotification: true, // 是否显示通知
+  onlyOneMessage: false, // 是否只显示一条提示信息
   notifyDuration: 3000, // 通知消息组件显示时间
   // element ui 尺寸的映射
   toElementSize: {

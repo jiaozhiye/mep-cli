@@ -2,16 +2,18 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 14:43:01
+ * @Last Modified time: 2020-08-05 14:14:20
  */
 import { maxBy, minBy, sumBy } from 'lodash';
-import { sleep, groupBy, getCellValue, setCellValue } from '../utils';
+import { groupBy, getCellValue, setCellValue } from '../utils';
 import config from '../config';
+import Locale from '../locale/mixin';
 
 import VTable from '../table';
 
 export default {
   name: 'GroupSummaryResult',
+  mixins: [Locale],
   props: ['columns', 'group', 'summary'],
   inject: ['$$table'],
   data() {
@@ -28,39 +30,18 @@ export default {
     return {
       loading: !1,
       list: [], // 汇总表格数据
+      vFetch: this.createvTableFetch(),
       vColumns: this.createvTableColumns(groupColumns, summaryColumns),
       exportExcel: {
-        fileName: '汇总结果.xlsx'
+        fileName: this.t('table.groupSummary.exportFileName')
       },
       tablePrint: {
         showLogo: true
       }
     };
   },
-  computed: {
-    fetchParams() {
-      const { fetchParams, pagination } = this.$$table;
-      const result = {};
-      const pageKeys = Object.keys(pagination);
-      for (let key in fetchParams) {
-        if (pageKeys.includes(key)) continue;
-        result[key] = fetchParams[key];
-      }
-      return result;
-    },
-    params() {
-      const selectSQL = this.summary.map(x => `${x.formula}(${x.summary})`).join(',');
-      const groupBySQL = this.group.map(x => `${x.group}`).join(',');
-      return {
-        ...this.fetchParams,
-        summary: `${selectSQL}|${groupBySQL}`
-      };
-    }
-  },
   mounted() {
-    if (this.$$table.isFetch) {
-      this.getvTableData();
-    } else {
+    if (!this.$$table.isFetch) {
       this.list = this.createvTableData(this.$$table.tableFullData);
     }
   },
@@ -72,11 +53,21 @@ export default {
         dictItems: column.dictItems ?? []
       };
     },
+    createvTableFetch() {
+      const { isFetch, fetchParams, fetch } = this.$$table;
+      if (!isFetch) return null;
+      const params = Object.assign({}, fetchParams, {
+        [config.groupSummary.summaryFieldName]: this.summary.map(x => `${x.formula}|${x.summary}`).join(','),
+        [config.groupSummary.groupbyFieldName]: this.group.map(x => `${x.group}`).join(','),
+        usedJH: 0
+      });
+      return Object.assign({}, fetch, { params });
+    },
     createvTableColumns(groupColumns, summaryColumns) {
       return [
         {
           title: '序号',
-          dataIndex: 'index',
+          dataIndex: 'pageIndex',
           width: 80,
           render: text => {
             return text + 1;
@@ -90,7 +81,7 @@ export default {
         ...summaryColumns.map(x => ({
           title: x.title,
           dataIndex: x.dataIndex,
-          summation: {}
+          summation: this.$$table.isFetch ? { dataKey: x.dataIndex } : {}
         }))
       ];
     },
@@ -131,41 +122,25 @@ export default {
       });
       // =================
       return res;
-    },
-    async getvTableData() {
-      this.loading = !0;
-      if (process.env.MOCK_DATA === 'true') {
-        await sleep(500);
-        this.list = this.createvTableData(this.$$table.tableFullData);
-      } else {
-        // console.log(`ajax 请求参数：`, this.params);
-        try {
-          const res = await this.$$table.fetch.api(this.params);
-          if (res.code === 200) {
-            this.list = res.data ?? [];
-          } else {
-            this.list = [];
-          }
-        } catch (e) {}
-      }
-      this.loading = !1;
     }
   },
   render() {
-    const { vColumns, list, loading, exportExcel, tablePrint } = this;
+    const { vColumns, list, vFetch, exportExcel, tablePrint } = this;
+    const tableProps = {
+      props: {
+        height: 400,
+        ...(this.$$table.isFetch ? { fetch: vFetch } : { dataSource: list }),
+        columns: vColumns,
+        rowKey: record => record.index,
+        showFullScreen: !1,
+        exportExcel,
+        tablePrint,
+        columnsChange: columns => (this.vColumns = columns)
+      }
+    };
     return (
       <div>
-        <VTable
-          height={400}
-          loading={loading}
-          dataSource={list}
-          columns={vColumns}
-          showFullScreen={false}
-          rowKey={record => record.index}
-          exportExcel={exportExcel}
-          tablePrint={tablePrint}
-          columnsChange={columns => (this.vColumns = columns)}
-        />
+        <VTable {...tableProps} />
       </div>
     );
   }

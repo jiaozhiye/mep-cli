@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-16 13:31:07
+ * @Last Modified time: 2020-07-23 10:31:51
  */
 const expandableMixin = {
   methods: {
@@ -25,7 +25,7 @@ const expandableMixin = {
       if (!expandable) {
         return [];
       }
-      return expandable.defaultExpandAllRows ? allRowKeys : [];
+      return expandable.defaultExpandAllRows ? [...allRowKeys] : [];
     }
   }
 };

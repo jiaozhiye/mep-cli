@@ -2,14 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-02 15:29:28
+ * @Last Modified time: 2020-07-21 11:28:40
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
 import TopFilter from '../TopFilter';
 import VirtualTable from '../VirtualTable';
 
-import { merge, isFunction } from 'lodash';
+import { merge, cloneDeep, isFunction } from 'lodash';
 import { debounce, sleep } from '../_utils/tool';
 import PropTypes from '../_utils/vue-types';
 
@@ -47,7 +47,7 @@ export default {
       columns: this.createTableColumns(),
       fetch: {
         api: fetch.api,
-        params: fetch.params || {},
+        params: cloneDeep(fetch.params ?? {}),
         dataKey: fetch.dataKey
       },
       loading: false,
@@ -150,10 +150,15 @@ export default {
         },
         ...(this.table.columns || []),
         ...vals.map(x => {
-          let dict = x.refListName ? { dictItems: this.createDictList(x.refListName) } : null;
+          let dict = x.refListName ? this.createDictList(x.refListName) : [];
           return {
             ...x,
-            ...dict
+            sorter: true,
+            filter: {
+              type: x.type ?? 'text',
+              items: dict
+            },
+            dictItems: dict
           };
         })
       ];
@@ -171,7 +176,7 @@ export default {
       ];
     },
     filterChangeHandle(val) {
-      let { params } = this.fetch;
+      let params = this.table.fetch?.params;
       if (isFunction(this.beforeFetch)) {
         val = this.beforeFetch(val);
       }

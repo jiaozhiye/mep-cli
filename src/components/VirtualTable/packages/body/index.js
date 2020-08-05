@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 13:41:51
+ * @Last Modified time: 2020-08-04 21:25:01
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains } from '../utils';
@@ -12,6 +12,7 @@ import { isEqual, isFunction, isObject } from 'lodash';
 import formatMixin from './format';
 import keyboardMixin from './keyboard';
 
+import Draggable from '../draggable';
 import Expandable from '../expandable';
 import Selection from '../selection';
 import CellEdit from '../edit';
@@ -68,6 +69,9 @@ export default {
     firstDataIndex() {
       const effectColumns = this.flattenColumns.filter(x => !['__expandable__', '__selection__', config.operationColumn].includes(x.dataIndex));
       return effectColumns.length ? effectColumns[0].dataIndex : '';
+    },
+    isDraggable() {
+      return this.$$table.rowDraggable;
     },
     isTreeTable() {
       return this.tableData.some(x => Array.isArray(x.children) && x.children.length);
@@ -127,7 +131,7 @@ export default {
       );
     },
     renderRows(list, depth = 0) {
-      const { getRowKey, selectionKeys, expandable, rowExpandedKeys, ellipsis } = this.$$table;
+      const { getRowKey, selectionKeys, highlightKey, expandable, rowExpandedKeys, ellipsis } = this.$$table;
       const rows = [];
       list.forEach(row => {
         // 行记录 索引
@@ -137,7 +141,8 @@ export default {
         const cls = [
           `v-body--row`,
           {
-            [`v-body--row-selected`]: selectionKeys.includes(rowKey)
+            [`v-body--row-selected`]: selectionKeys.includes(rowKey),
+            [`v-body--row-current`]: highlightKey === rowKey
           }
         ];
         rows.push(
@@ -176,8 +181,8 @@ export default {
       return rows;
     },
     renderColumn(column, columnIndex, row, rowIndex, rowKey, depth) {
-      const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, isIE } = this.$$table;
-      const { dataIndex, fixed, align, className, orderBy } = column;
+      const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, sorter, isIE } = this.$$table;
+      const { dataIndex, fixed, align, className } = column;
       const { rowspan, colspan } = this.getSpan(row, column, rowIndex, columnIndex);
       const isEllipsis = ellipsis || column.ellipsis;
       if (!rowspan || !colspan) {
@@ -189,7 +194,7 @@ export default {
           [`col--ellipsis`]: isEllipsis,
           [`col--center`]: align === 'center',
           [`col--right`]: align === 'right',
-          [`v-column--sort`]: !!orderBy,
+          [`v-column--sort`]: Object.keys(sorter).includes(dataIndex),
           [`v-cell-fix-left`]: fixed === 'left',
           [`v-cell-fix-right`]: fixed === 'right',
           [`v-cell-fix-left-last`]: !isIE && fixed === 'left' && leftFixedColumns[leftFixedColumns.length - 1].dataIndex === dataIndex,
@@ -235,7 +240,7 @@ export default {
       }
       if (isFunction(editRender)) {
         // CellEdit -> UI 组件，无状态组件
-        return <CellEdit column={column} record={row} rowKey={rowKey} columnKey={dataIndex} clicked={this.clicked} />;
+        return <CellEdit ref={`${rowKey}-${dataIndex}`} column={column} record={row} rowKey={rowKey} columnKey={dataIndex} clicked={this.clicked} />;
       }
       // Content Node
       const vNodeText = isFunction(render) ? render(text, row, column, rowIndex, columnIndex) : this.renderText(text, column, row);
@@ -290,25 +295,34 @@ export default {
       return { rowspan, colspan };
     },
     cellClickHandle(ev, row, column) {
-      const { getRowKey, rowSelection = {}, selectionKeys } = this.$$table;
+      const { getRowKey, rowSelection = {}, selectionKeys, rowHighlight } = this.$$table;
       const { dataIndex } = column;
-      const rowKey = getRowKey(row, row.index);
       if (['__expandable__', config.operationColumn].includes(dataIndex)) return;
-      // 不可编辑单元格
-      if (!column.editRender) {
-        let { type, disabled = noop } = rowSelection;
-        if (type && !disabled(row)) {
-          if (type === 'radio') {
-            this.setSelectionKeys([rowKey]);
-          }
-          if (type === 'checkbox') {
-            this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...new Set([...selectionKeys, rowKey])] : selectionKeys.filter(x => x !== rowKey));
-          }
+      const rowKey = getRowKey(row, row.index);
+      // 设置 clicked 坐标
+      this.setClickedValues([rowKey, dataIndex]);
+      // 判断单元格是否可编辑
+      const options = column.editRender?.(row, column);
+      const isEditable = options && !options.disabled;
+      // 正处于编辑状态的单元格
+      // const isEditing = this.$refs[`${rowKey}-${dataIndex}`]?.isEditing;
+      // 行选中
+      const { type, disabled = noop } = rowSelection;
+      if (type && !disabled(row) && !isEditable) {
+        if (type === 'radio') {
+          this.setSelectionKeys([rowKey]);
+        }
+        if (type === 'checkbox') {
+          this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...new Set([...selectionKeys, rowKey])] : selectionKeys.filter(x => x !== rowKey));
         }
       }
       // 单击 展开列、可选择列、操作列 不触发行单击事件
       if (['__selection__'].includes(dataIndex)) return;
-      this.setClickedValues([rowKey, dataIndex]);
+      // 行高亮
+      if (rowHighlight && !rowHighlight.disabled?.(row)) {
+        this.$$table.highlightKey = rowKey;
+      }
+      // 行单击
       this.$$table.$emit('rowClick', row, column, ev);
     },
     cellDbclickHandle(ev, row, column) {
@@ -323,19 +337,35 @@ export default {
     setSelectionKeys(arr) {
       this.$$table.selectionKeys = arr;
     },
+    setHighlightKey(key) {
+      this.$$table.highlightKey = key;
+    },
     isTreeNode(row) {
       return Array.isArray(row.children) && row.children.length > 0;
     }
   },
   render() {
-    const { bodyWidth, wrapStyle, tableData } = this;
+    const { bodyWidth, wrapStyle, tableData, isDraggable } = this;
+    const { tableFullData } = this.$$table;
+    const dragProps = {
+      props: {
+        tag: 'tbody',
+        value: tableFullData,
+        options: { animation: 200 }
+      },
+      on: {
+        input: list => {
+          this.$$table.tableFullData = list;
+        }
+      }
+    };
     return (
       <div class="v-table--body-wrapper body--wrapper" style={{ ...wrapStyle }}>
         {this.renderBodyYSpace()}
         {this.renderBodyXSpace()}
         <table class="v-table--body" cellspacing="0" cellpadding="0" border="0" style={{ width: bodyWidth }}>
           {this.renderColgroup()}
-          <tbody>{this.renderRows(tableData)}</tbody>
+          {!isDraggable ? <tbody>{this.renderRows(tableData)}</tbody> : <Draggable {...dragProps}>{this.renderRows(tableData)}</Draggable>}
         </table>
       </div>
     );

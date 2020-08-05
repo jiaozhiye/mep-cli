@@ -1,0 +1,47 @@
+## API
+
+### ClientPrint
+
+| 参数           | 说明                                                                          | 类型            | 默认值 |
+| -------------- | ----------------------------------------------------------------------------- | --------------- | ------ |
+| templateRender | 打印模板组件(异步)，通过 () => import(`@test/pages/printTemplate/demo2`) 赋值 | object          | -      |
+| dataSource     | 打印数据                                                                      | array \| object | -      |
+| uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                                      | string          | -      |
+| type           | 打印按钮的类型                                                                | string          | -      |
+| disabled       | 打印按钮的禁用状态                                                            | boolean         | false  |
+| click          | 点击事件(异步方法)，用于获取接口打印数据，给 dataSource 赋值                  | func            | -      |
+
+### 打印模板，标签支持的类属型
+
+- .bor: 单元格全边框，加在 td 标签上
+- .fs12: 字体的大小为 12px，加在 table 标签
+- .fs13: 字体的大小为 13px，加在 table 标签
+- .fs14: 字体的大小为 14px，加在 table 标签
+- .fl: 左浮动
+- .fr: 右浮动
+- .tc: 文本居中对齐
+- .tr: 文本居右对齐
+- .bor-t：单元格上边框，加在 td 标签上
+- .bor-b：单元格下边框，加在 td 标签上
+- .bor-l：单元格左边框，加在 td 标签上
+- .bor-r：单元格右边框，加在 td 标签上
+- .no-bor：去掉单元格边框，加在 td 标签上
+
+### 示例
+
+1. 画打印模板时，必须使用 table 技术，除了以上公共的 class 属性外，不能使用自定义样式表，只能使用 style 行间样式。
+2. 打印模板中的 table 表格，已经做了 24 列的等宽处理，采用了栅格系统的理念，通过合并行、列灵活实现布局。
+3. 画打印模板时不需要处理打印的 Logo，底层已经处理。
+4. 打印模板组件 template 标签的根组件必须是 table 标签。
+
+注意：整个打印模板的绘制，必须使用标准的 table 布局！！！
+
+```bash
+# template
+<template>
+  <client-print :templateRender="() => import(`@test/pages/printTemplate/demo2`)">打印</client-print>
+</template>
+
+# js
+export default {};
+```

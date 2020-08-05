@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-30 17:26:30
+ * @Last Modified time: 2020-07-28 10:27:27
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -15,6 +15,7 @@ export default {
   // 刷新表格数据
   DO_REFRESH() {
     this.clearRowSelection();
+    this.clearRowHighlight();
     this.getTableData();
   },
   // 获取表格操作记录
@@ -29,6 +30,26 @@ export default {
       updated: updated.filter(row => ![...intersection(updated, inserted), ...intersection(updated, removed)].includes(row)),
       removed: removed.filter(row => !intersections.includes(row))
     };
+  },
+  // 清空表格数据
+  CLEAR_TABLE_DATA() {
+    if (this.isFetch) {
+      this.setRecordsTotal(0);
+    } else {
+      // 清空列选中
+      this.clearRowSelection();
+      // 清空行高亮
+      this.clearRowHighlight();
+      // 清空表头排序
+      this.clearTableSorter();
+      // 清空表头筛选
+      this.clearTableFilter();
+      // 清空高级检索
+      this.clearSuperSearch();
+      // 清空表格操作记录
+      this.clearTableLog();
+    }
+    this.createTableData([]);
   },
   // 清空表格操作记录
   CLEAR_LOG() {
@@ -76,6 +97,10 @@ export default {
         // 移除选择列数据
         if (this.selectionKeys.includes(rowKey)) {
           this.removeSelectionKey(rowKey);
+        }
+        // 移除高亮行数据
+        if (rowKey === this.highlightKey) {
+          this.clearRowHighlight();
         }
         // 移除展开行数据
         if (this.rowExpandedKeys.includes(rowKey)) {

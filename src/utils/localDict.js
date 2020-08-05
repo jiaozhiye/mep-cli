@@ -2,20 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-09 10:46:19
+ * @Last Modified time: 2020-08-03 11:28:05
  */
 export default {
   sex: [
-    {
-      cnText: '男',
-      enText: 'man',
-      value: '1'
-    },
-    {
-      cnText: '女',
-      enText: 'woman',
-      value: '0'
-    }
+    { cnText: '男', enText: 'man', value: '1' },
+    { cnText: '女', enText: 'woman', value: '0' }
   ],
   // 电池回收单状态
   CLMBatteryRecyclingState: [
@@ -925,7 +917,8 @@ export default {
     { value: '30', cnText: '完成' },
     { value: '40', cnText: '上传' },
     { value: '50', cnText: '接收' },
-    // { value: '60: cnText: '总公司拒绝' },//迷你店业务，捷达没有迷你店业务
+    // 迷你店业务，捷达没有迷你店业务
+    // { value: '60: cnText: '总公司拒绝' },
     { value: '80', cnText: '失效' }
   ],
   // 备件采购订单类型
@@ -937,10 +930,12 @@ export default {
     { value: 'ZFWQ', cnText: 'FIB三包订单' },
     { value: 'ZSQT', cnText: '首批建储' },
     { value: 'ZTCT', cnText: '促销套餐订单' },
-    // { value: 'ZRQT: cnText: '推式订单' },//有两年入出记录的经销商才能开通推式订单
+    // 有两年入出记录的经销商才能开通推式订单
+    // { value: 'ZRQT: cnText: '推式订单' },
     { value: 'Z3QT', cnText: '三方订单' },
     { value: 'ZZQT', cnText: '定向订单' }
-    // { value: 'ZWHQ: cnText: '文化公司' },//精品业务，捷达不涉及精品业务
+    // 精品业务，捷达不涉及精品业务
+    // { value: 'ZWHQ: cnText: '文化公司' },
   ],
   // 备件采购计划状态
   SPAPurPlanStatus: [
@@ -1854,5 +1849,131 @@ export default {
     { value: 'C', cnText: '确认' },
     { value: 'P', cnText: '审核' },
     { value: 'Q', cnText: '作废' }
+  ],
+  // 客户关怀 回访类型
+  CARTemplatetype: [
+    { value: '0', cnText: '销售回访' },
+    { value: '1', cnText: '售后回访' },
+    { value: '2', cnText: '战败回访' },
+    { value: '3', cnText: '二手车回访' },
+    { value: '4', cnText: '潜客回访' },
+    { value: '5', cnText: '活动回访' }
+  ],
+  // 客户关怀 是否停用
+  CARDeleteflag: [
+    { value: '0', cnText: '是' },
+    { value: '1', cnText: '否' }
+  ],
+  // 客户关怀 问卷来源
+  CARDealerflag: [
+    { value: '0', cnText: '主机厂' },
+    { value: '1', cnText: '自建' }
+  ],
+  // 关怀状态
+  CARingState: [
+    { value: '1', cnText: '电话未接通' },
+    { value: '2', cnText: '客户挂断' },
+    { value: '3', cnText: '临时有事' },
+    { value: '4', cnText: '再次预约' },
+    { value: '5', cnText: '关怀完成' },
+    { value: '6', cnText: '其他' }
+  ],
+  // 关怀原因
+  CAREcause: [
+    { value: '1', cnText: '生日' },
+    { value: '2', cnText: '年检' },
+    { value: '3', cnText: '质保' },
+    { value: '4', cnText: '自定义' },
+    { value: '5', cnText: '流失预警' },
+    { value: '6', cnText: '摇摆预警' }
+  ],
+  // 关怀结果
+  CAREoutcome: [
+    { value: '1', cnText: '非常满意' },
+    { value: '2', cnText: '满意' },
+    { value: '3', cnText: '一般' },
+    { value: '4', cnText: '不满意' }
+  ],
+  // 客户关怀 回访状态
+  CAREREVISITTYPE: [
+    { value: '01', cnText: '未回访' },
+    { value: '02', cnText: '已回访' },
+    { value: '03', cnText: '需再回访' },
+    { value: '04', cnText: '放弃回访' }
+  ],
+  // 客户关怀 回访状态原因
+  CAREREVISITTYPEREASON: [
+    { value: '01', cnText: '错号' },
+    { value: '02', cnText: '延期回访' },
+    { value: '03', cnText: '拒绝回访' },
+    { value: '04', cnText: '其他' },
+    { value: '05', cnText: '空号' },
+    { value: '06', cnText: '占线' },
+    { value: '07', cnText: '关机' },
+    { value: '08', cnText: '停机' },
+    { value: '09', cnText: '无法接通' },
+    { value: '10', cnText: '无人接听' },
+    { value: '11', cnText: '拒接电话' }
+  ],
+  // 客户关怀 回访结果
+  CAREQUESTIONRESULT: [
+    { value: '01', cnText: '非常满意' },
+    { value: '02', cnText: '满意' },
+    { value: '03', cnText: '一般' },
+    { value: '04', cnText: '不满意' },
+    { value: '05', cnText: '非常不满意' },
+    { value: '06', cnText: '无人接听' },
+    { value: '07', cnText: '拒接' },
+    { value: '08', cnText: '拒访' },
+    { value: '09', cnText: '关机' },
+    { value: '10', cnText: '停机' },
+    { value: '11', cnText: '无法接通' },
+    { value: '12', cnText: '空号' },
+    { value: '13', cnText: '出租' },
+    { value: '14', cnText: '租赁' },
+    { value: '15', cnText: '号码错误' },
+    { value: '16', cnText: '驾校' }
+  ],
+  // 媒体曝光
+  CareMedia: [
+    { value: '0', cnText: '未提及' },
+    { value: '1', cnText: '提出媒体炒作' },
+    { value: '2', cnText: '以采访，未曝光' },
+    { value: '3', cnText: '已曝光' },
+    { value: '9', cnText: '其他' }
+  ], // 投诉人身份
+  CareTsrIdentity: [
+    { value: '0', cnText: '一般记者' },
+    { value: '1', cnText: '政府' },
+    { value: '2', cnText: '记者' },
+    { value: '3', cnText: '网约车/出租车' },
+    { value: '9', cnText: '其他' }
+  ], // 车辆问题
+  CareCarProblem: [
+    { value: '0', cnText: '一般瑕疵' },
+    { value: '1', cnText: '一般批量问题（异响、双层漆等）' },
+    { value: '2', cnText: '新车问题，涉及安全或动力总成问题' },
+    { value: '3', cnText: '敏感批量问题（异味，DSG、后轴、烧机油）' },
+    { value: '9', cnText: '其他' }
+  ], // 额外财产损失
+
+  CarePropertyDamage: [
+    { value: '0', cnText: '0-10万' },
+    { value: '1', cnText: '10-30万' },
+    { value: '2', cnText: '30-100万' },
+    { value: '3', cnText: '100万以上' },
+    { value: '9', cnText: '其他' }
+  ], // 人身损失
+  CarePersonDamage: [
+    { value: '0', cnText: '轻伤' },
+    { value: '1', cnText: '重伤' },
+    { value: '2', cnText: '一人死亡' },
+    { value: '3', cnText: '多人死亡' },
+    { value: '9', cnText: '其他' }
+  ], // 投诉解决状态
+  CareResloveStatus: [
+    { value: '0', cnText: '需求单未解决' },
+    { value: '1', cnText: '需求单已解决' },
+    { value: '2', cnText: '需求单已作废' }
   ]
 };

@@ -21,7 +21,9 @@
 | rowStyle         | 给行附加样式                              | object \| Function(row, rowIndex)                      | -      |
 | cellStyle        | 给单元格附加样式                          | object \| Function(row, column, rowIndex, columnIndex) | -      |
 | spanMethod       | 合并行或列的计算方法                      | Function({row, column, rowIndex, columnIndex})         | -      |
+| rowDraggable     | 是否开启列表数据拖拽排序                  | boolean                                                | false  |
 | rowSelection     | 列表项是否可选择，[配置项](#rowSelection) | object                                                 | -      |
+| rowHighlight     | 列表行高亮选中，[配置项](#rowHighlight)   | object                                                 | -      |
 | expandable       | 展开行配置项，[配置项](#expandable)       | object                                                 | -      |
 | multipleSort     | 是否为多列排序模式                        | boolean                                                | true   |
 | webPagination    | 是否为前端内存分页                        | boolean                                                | false  |
@@ -32,16 +34,18 @@
 | showRefresh      | 是否显示刷新按钮                          | boolean                                                | true   |
 | exportExcel      | 导出表格数据，[配置项](#exportExcel)      | object                                                 | -      |
 | tablePrint       | 表格打印，[配置项](#tablePrint)           | object                                                 | -      |
+| showSuperSearch  | 是否显示高级检索                          | boolean                                                | true   |
 | showColumnDefine | 是否显示列定义                            | boolean                                                | true   |
 
 ### 事件
 
-| 事件名称    | 说明                       | 回调参数                                                                                             |
-| ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------- |
-| change      | 分页、排序、筛选变化时触发 | Function(pagination, filters, sorter, { currentDataSource: tableData, allDataSource: allTableData }) |
-| dataChange  | 表格数据变化时触发         | Function(tableData)                                                                                  |
-| rowClick    | 行单击事件                 | Function(row, column, event)                                                                         |
-| rowDblclick | 行双击事件                 | Function(row, column, event)                                                                         |
+| 事件名称    | 说明                           | 回调参数                                                                                             |
+| ----------- | ------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| change      | 分页、排序、筛选变化时触发     | Function(pagination, filters, sorter, { currentDataSource: tableData, allDataSource: allTableData }) |
+| dataChange  | 表格数据变化时触发             | Function(tableData)                                                                                  |
+| rowClick    | 行单击事件                     | Function(row, column, event)                                                                         |
+| rowDblclick | 行双击事件                     | Function(row, column, event)                                                                         |
+| rowEnter    | 行选中(单选)或行高亮的回车事件 | Function(row, event)                                                                                 |
 
 ### 方法
 
@@ -50,6 +54,7 @@
 | CALCULATE_HEIGHT | 计算表格高度                                   | -                                          | -      |
 | DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | -                                          | -      |
 | GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                          | object |
+| CLEAR_TABLE_DATA | 清空表格数据                                   | -                                          | -      |
 | CLEAR_LOG        | 清空表格操作记录                               | -                                          | -      |
 | INSERT_RECORDS   | 插入表格行数据                                 | Function(rows \| row, bottom(默认) \| top) | -      |
 | REMOVE_RECORDS   | 移除表格数据                                   | Function(rowKeys \| rows \| row )          | -      |
@@ -196,11 +201,11 @@
 
 ### summation
 
-| 参数      | 说明                                            | 类型                   | 默认值 |
-| --------- | ----------------------------------------------- | ---------------------- | ------ |
-| dataIndex | 服务端合计，数据的 key，建议和列 dataIndex 一致 | string                 | -      |
-| unit      | 合计字段的单位                                  | string                 | -      |
-| onChange  | 字段合计变化时触发                              | Function(value:number) | -      |
+| 参数     | 说明                                                | 类型                   | 默认值 |
+| -------- | --------------------------------------------------- | ---------------------- | ------ |
+| dataKey  | 服务端合计，合计数据的 key，支持 `a.b.c` 的路径写法 | string                 | -      |
+| unit     | 合计字段的单位                                      | string                 | -      |
+| onChange | 字段合计变化时触发                                  | Function(value:number) | -      |
 
 ### rowSelection
 
@@ -210,6 +215,14 @@
 | selectedRowKeys | 选中项的 rowKey 数组 | array                                  | -      |
 | disabled        | 是否允许行选择       | Function(row) => boolean               | -      |
 | onChange        | 选中项发生变化时触发 | Function(selectionKeys, selectionRows) | -      |
+
+### rowHighlight
+
+| 参数          | 说明                 | 类型                               | 默认值 |
+| ------------- | -------------------- | ---------------------------------- | ------ |
+| currentRowKey | 当前高亮行的 rowKey  | string \| number                   | -      |
+| disabled      | 是否允许行高亮       | Function(row) => boolean           | -      |
+| onChange      | 高亮行发生变化时触发 | Function(highlightKey, currentRow) | -      |
 
 ### expandable
 

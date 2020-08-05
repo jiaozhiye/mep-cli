@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <router-link to="/" :title="title">
-      <img :class="imgClassName" :src="imgUrl" />
+      <img :class="imgClassName" :src="imgUrl" alt="" />
     </router-link>
   </div>
 </template>
@@ -52,12 +52,14 @@ export default {
 
 <style lang="scss" scoped>
 .logo {
-  height: 56px;
+  display: flex;
+  align-items: center;
+  height: 52px;
+  border-bottom: 1px solid $logoBgColor;
   background-color: $logoBgColor;
   overflow: hidden;
   a {
-    height: 100%;
-    line-height: 54px;
+    width: 100%;
     display: block;
     img {
       display: inline-block;

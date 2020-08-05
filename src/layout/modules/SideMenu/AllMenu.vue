@@ -1,5 +1,5 @@
 <template>
-  <div :class="allMenuCls">
+  <div class="all-menu">
     <div class="title" :class="{ selected: visible ? !0 : !1 }" @click.stop="clickHandle">
       <i class="el-icon-menu" />
       <span v-if="!collapsed" class="text">{{ $t('sidebar.allNavTitle') }}</span>
@@ -20,12 +20,10 @@
  * @Last Modified by: 焦质晔
  * @Last Modified time: 2020-07-07 20:12:31
  **/
-import { size } from '@/mixins/sizeMixin';
 import addEventListener from 'add-dom-event-listener';
 
 export default {
   name: 'AllMenu',
-  mixins: [size],
   props: {
     collapsed: {
       type: Boolean,
@@ -39,13 +37,6 @@ export default {
     };
   },
   computed: {
-    allMenuCls() {
-      return {
-        [`all-menu`]: !0,
-        [`all-menu-sm`]: this.currentSize === 'small',
-        [`all-menu-lg`]: this.currentSize === 'large'
-      };
-    },
     poperShow() {
       return this.visible ? 'show' : '';
     },
@@ -136,18 +127,6 @@ export default {
     }
     .box {
       height: 100%;
-    }
-  }
-  &-lg {
-    height: 40px;
-    .title {
-      line-height: 40px;
-    }
-  }
-  &-sm {
-    height: 32px;
-    .title {
-      line-height: 32px;
     }
   }
 }

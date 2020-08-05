@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 16:39:11
+ * @Last Modified time: 2020-07-31 08:54:07
  */
 // app
 export const LOGININFO = 'LOGININFO';
@@ -16,6 +16,7 @@ export const COMMON_MENU = 'COMMON_MENU';
 export const DICT_DATA = 'DICT_DATA';
 export const ADD_CACHE = 'ADD_CACHE';
 export const DEL_CACHE = 'DEL_CACHE';
+export const CLEAR_CACHE = 'CLEAR_CACHE';
 export const ADD_IFRAME = 'ADD_IFRAME';
 export const DEL_IFRAME = 'DEL_IFRAME';
 export const ADD_STAR_MENU = 'ADD_STAR_MENU';

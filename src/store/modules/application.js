@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 19:53:10
+ * @Last Modified time: 2020-07-31 09:02:57
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -72,7 +72,7 @@ const state = {
   dict: {}, // 数据字典
   keepAliveList: [], // 路由组件缓存列表
   iframeList: [], // iframe 列表
-  isNotifyMark: false // 页面中是否已存在消息通知组件
+  isNotifyMark: !1 // 页面中是否已存在消息通知组件
 };
 
 // actions
@@ -179,6 +179,7 @@ const actions = {
     } else {
       const res = await getAllDict();
       if (res.code === 200) {
+        // 数据字典规则：如果有重复的 Code，服务端覆盖客户端
         data = {
           ...localDict,
           ...res.data.dict,
@@ -207,6 +208,12 @@ const actions = {
     commit({
       type: types.DEL_CACHE,
       data: params
+    });
+  },
+  clearKeepAliveCache({ commit, state }, params) {
+    commit({
+      type: types.CLEAR_CACHE,
+      data: []
     });
   },
   createIframeList({ commit, state }, params) {
@@ -331,6 +338,9 @@ const mutations = {
   },
   [types.DEL_CACHE](state, { data }) {
     state.keepAliveList = state.keepAliveList.filter(x => x.key !== data);
+  },
+  [types.CLEAR_CACHE](state, { data }) {
+    state.keepAliveList = data;
   },
   [types.ADD_IFRAME](state, { data }) {
     state.iframeList = [...state.iframeList, data];

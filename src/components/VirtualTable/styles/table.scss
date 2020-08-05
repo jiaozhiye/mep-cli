@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-09 21:48:35
+ * @Last Modified time: 2020-07-22 16:28:48
  */
 @import './common.scss';
 
@@ -50,8 +50,11 @@
   margin-bottom: $v-module-distance;
   .v-space {
     flex: 1;
+    display: flex;
+    justify-content: space-between;
     .v-slot {
-      display: inline-flex;
+      flex: 1;
+      display: inline-table;
       margin-right: $v-module-distance;
     }
   }
@@ -113,8 +116,9 @@
   }
 
   &.c--resize {
-    * {
-      cursor: col-resize;
+    cursor: col-resize;
+    .v-header--column {
+      pointer-events: none;
     }
   }
 
@@ -141,6 +145,12 @@
   .v-body--row-selected {
     .v-body--column {
       background-color: $v-table-row-selected-background-color;
+    }
+  }
+
+  .v-body--row-current {
+    .v-body--column {
+      background-color: $v-table-row-current-background-color;
     }
   }
 

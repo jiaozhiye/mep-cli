@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 08:36:59
+ * @Last Modified time: 2020-07-24 15:55:54
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -41,7 +41,7 @@ const columnItem = {
   ),
   // 底部合计
   summation: PropTypes.shape({
-    dataIndex: PropTypes.string, // 服务端合计的数据字段名，建议和 column 的 dataIndex 一致
+    dataKey: PropTypes.string, // 服务端合计的数据字段名(路径)
     unit: PropTypes.string, // 合计字段的单位
     onChange: PropTypes.func // 字段合计变化时触发
   }),
@@ -108,9 +108,9 @@ export default {
   // 是否带有纵向边框
   border: PropTypes.bool.def(true),
   // 表格的高度
-  height: PropTypes.oneOfType[(PropTypes.number, PropTypes.string)],
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // 表格的最大高度
-  maxHeight: PropTypes.oneOfType[(PropTypes.number, PropTypes.string)],
+  maxHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // 页面是否加载中
   loading: PropTypes.bool.def(false),
   // 所有列是否允许拖动列宽调整大小
@@ -129,12 +129,20 @@ export default {
   cellStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   // 合并行或列的计算方法
   spanMethod: PropTypes.func,
+  // 列表项拖拽排序
+  rowDraggable: PropTypes.bool.def(false),
   // 列表项是否可选择
   rowSelection: PropTypes.shape({
     type: PropTypes.oneOf(['checkbox', 'radio']).isRequired, // 选择类型
     selectedRowKeys: PropTypes.array, // 选中项的 key 数组，支持动态赋值
     disabled: PropTypes.func, // 是否允许行选择，参数：row，返回值 bool
     onChange: PropTypes.func // 选中项发生变化时触发
+  }),
+  // 列表行高亮选中
+  rowHighlight: PropTypes.shape({
+    currentRowKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string]), // 当前高亮行的 key
+    disabled: PropTypes.func, // 是否允许行高亮，参数：row，返回值 bool
+    onChange: PropTypes.func // 高亮行发生变化时触发
   }),
   // 展开行配置项
   expandable: {
@@ -165,8 +173,12 @@ export default {
   tablePrint: PropTypes.shape({
     showLogo: PropTypes.bool.def(true) // 是否显示打印单 logo
   }),
+  // 是否显示高级检索
+  showSuperSearch: PropTypes.bool.def(true),
   // 是否显示列定义
-  showColumnDefine: PropTypes.bool.def(true)
+  showColumnDefine: PropTypes.bool.def(true),
+  // 只显示图标，不显示文字
+  onlyShowIcon: PropTypes.bool
 };
 
 /**
@@ -175,6 +187,7 @@ export default {
  * dataChange: 表格数据变化时触发，参数 tableData
  * rowClick: 行单击事件，参数 row, column, event
  * rowDblclick: 行双击事件，参数 row, column, event
+ * rowEnter: 行选中(单选) 或 行高亮 回车时触发，参数 row, event
  */
 
 /**

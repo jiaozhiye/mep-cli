@@ -16,3 +16,12 @@
 [submodule "src/modules/lifecycle"]
 	path = src/modules/lifecycle
 	url = http://202.38.164.237/mep-vue/mep-vue-lifecycle.git
+[submodule "src/modules/customercare"]
+	path = src/modules/customercare
+	url = http://202.38.164.237/mep-vue/mep-vue-customercare.git
+[submodule "src/modules/salesapp"]
+	path = src/modules/salesapp
+	url = http://202.38.164.237/mep-vue/mep-vue-salesapp.git
+[submodule "src/modules/presales"]
+	path = src/modules/presales
+	url = http://202.38.164.237/mep-vue/mep-vue-presales.git

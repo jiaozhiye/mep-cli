@@ -2,19 +2,20 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-04-24 01:58:00
+ * @Last Modified time: 2020-07-29 10:04:26
  */
 'use strict';
 
+const path = require('path');
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
 const merge = require('webpack-merge');
-const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 process.env.NODE_ENV = 'development';
 
@@ -51,6 +52,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
+    new CaseSensitivePathsPlugin(),
     new Dotenv(),
     new HtmlWebpackPlugin({
       filename: 'index.html',

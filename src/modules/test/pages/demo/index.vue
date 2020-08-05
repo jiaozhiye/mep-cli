@@ -25,12 +25,14 @@
       :fetch="fetch"
       :rowKey="record => record.id"
       :rowSelection="selection"
+      :rowHighlight="rowHighlight"
       :exportExcel="exportExcel"
       :tablePrint="tablePrint"
       :columnsChange="columns => (this.columns = columns)"
     >
       <template slot="default">
         <el-button type="primary" icon="el-icon-plus" @click="addInfoHandle">新建</el-button>
+        <client-print uniqueKey="cprint_jzy" :dataSource="printDataList" :click="printHandle3" :templateRender="() => import(`@test/pages/printTemplate/demo2`)">客户端打印</client-print>
         <web-print :click="printHandle">pdf 打印</web-print>
         <el-button icon="el-icon-printer" @click="printHandle2">插件打印</el-button>
         <el-button type="danger" icon="el-icon-delete" @click="removeHandle">删除</el-button>
@@ -73,7 +75,7 @@ export default {
     this.selectedKeys = [];
     return {
       filterList: this.createTopFilterList(),
-      filterDefaultValue: { b: '2' },
+      filterDefaultValue: { c: '' },
       columns: this.createTableColumns(),
       fetch: {
         api: () => {},
@@ -91,6 +93,7 @@ export default {
           this.selectedKeys = val;
         }
       },
+      rowHighlight: {},
       exportExcel: {
         fileName: '导出文件.xlsx'
       },
@@ -110,7 +113,8 @@ export default {
         username: 'SJ12345R01',
         password: 'Faw12345678',
         'login-form-type': 'pwd'
-      }
+      },
+      printDataList: []
     };
   },
   computed: {
@@ -124,7 +128,18 @@ export default {
       return this.$refs.print;
     }
   },
+  mounted() {
+    this.rowHighlight = { currentRowKey: 1 };
+  },
   methods: {
+    async printHandle3() {
+      await sleep(1000);
+      let res = [];
+      for (let i = 0; i < 200; i++) {
+        res[i] = i;
+      }
+      this.printDataList = res;
+    },
     asdasd() {
       this.visible = !this.visible;
     },
@@ -244,7 +259,7 @@ export default {
           style: { minWidth: '220px' },
           fieldName: 'startTime|endTime',
           options: {
-            // minDateTime: '2020-06-10'
+            dateType: 'exactdaterange'
           },
           rules: [{ required: true, message: '请选择日期', trigger: 'change' }]
         },

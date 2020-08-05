@@ -2,12 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 18:44:17
+ * @Last Modified time: 2020-08-05 09:47:03
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction, isRegExp, isElement } from 'lodash';
 import moment from 'moment';
 import PropTypes from '../_utils/vue-types';
-import { sleep } from '../_utils/tool';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
@@ -20,6 +19,8 @@ import UploadCropper from '../UploadCropper';
 import Tinymce from '../Tinymce';
 import SearchHelper from '../SearchHelper';
 import BaseDialog from '../BaseDialog';
+import Address from './Address';
+import EpCascader from './EpCascader';
 
 const noop = () => {};
 
@@ -35,6 +36,7 @@ export default {
     ).isRequired,
     size: PropTypes.oneOf(['small', 'default', 'large']),
     initialValue: PropTypes.object.def({}),
+    loading: PropTypes.bool.def(false),
     formType: PropTypes.string.def('default'),
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
@@ -46,8 +48,7 @@ export default {
     return {
       form: {}, // 表单的值
       desc: {}, // 描述信息
-      visible: {},
-      loading: false
+      visible: {}
     };
   },
   computed: {
@@ -66,7 +67,6 @@ export default {
         this.$set(x, 'disabled', x.disabled);
         this.$set(x, 'hidden', x.hidden);
         this.$set(x, 'rules', x.rules);
-        delete x.labelOptions;
       });
       return result;
     },
@@ -124,6 +124,7 @@ export default {
   },
   mounted() {
     this.bindResizeEvent();
+    this.createInputFocus();
   },
   methods: {
     initialHandle() {
@@ -136,7 +137,7 @@ export default {
     getInitialValue(item) {
       const { type = '', fieldName, options = {}, readonly } = item;
       // 初始值
-      let val = this.initialValue[fieldName];
+      let val = this.initialValue[fieldName] ?? undefined;
       if (this.formType === 'onlyShow') {
         item.disabled = true;
       }
@@ -152,12 +153,6 @@ export default {
       if (type === 'CHECKBOX') {
         val = val ?? options.falseValue ?? '0';
       }
-      if (type === 'INPUT_TREE' && isUndefined(this[`${fieldName}TreeFilterTexts`])) {
-        this[`${fieldName}TreeFilterTexts`] = '';
-      }
-      if (type === 'INPUT_CASCADER' && isUndefined(this[`${fieldName}CascaderTexts`])) {
-        this[`${fieldName}CascaderTexts`] = '';
-      }
       return val;
     },
     createFormValue() {
@@ -166,6 +161,12 @@ export default {
         target[x.fieldName] = this.getInitialValue(x);
       });
       return Object.assign({}, this.initialValue, target);
+    },
+    createInputFocus() {
+      const { type, fieldName } = this.list.filter(x => x.fieldName && !x.hidden)[0] ?? {};
+      if (type === 'INPUT' && fieldName) {
+        this.$refs[`${type}-${fieldName}`].focus();
+      }
     },
     createDescription() {
       const target = {};
@@ -293,39 +294,32 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input
+            ref={`INPUT-${fieldName}`}
             value={prevValue}
             onInput={val => {
               // 搜索帮助，不允许输入
               if (isSearchHelper || noInput) return;
-              if (isRegExp(pattern)) {
-                // 是否为删除动作
-                const isRemoveHandle = val.length < (prevValue && prevValue.length);
-                // 单元格正则校验
-                if (!isRemoveHandle && !pattern.test(val)) return;
-              }
               form[fieldName] = val;
               onInput(val);
             }}
             title={prevValue}
             minlength={minlength}
             maxlength={maxlength}
-            placeholder={!disabled ? placeholder : ''}
+            placeholder={!disabled ? (!isSearchHelper ? placeholder : this.t('form.selectPlaceholder')) : ''}
             readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             show-password={password}
             show-word-limit={showLimit}
             clearable
-            onClear={() => {
+            onChange={val => {
               // 搜索帮助
-              if (isSearchHelper || noInput) {
+              if (!val && (isSearchHelper || noInput)) {
                 if (Array.isArray(this[`${fieldName}ExtraKeys`]) && this[`${fieldName}ExtraKeys`].length) {
                   this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
                 }
                 this.desc[fieldName] = '';
               }
-            }}
-            onChange={val => {
               form[fieldName] = val.trim();
               onChange(form[fieldName]);
             }}
@@ -365,7 +359,7 @@ export default {
     INPUT_NUMBER(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
-      const { maxlength, min = 0, max, step = 1, precision } = options;
+      const { maxlength, min = 0, max, step = 1, precision, controls = !1 } = options;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -379,7 +373,7 @@ export default {
             max={max}
             step={step}
             precision={precision}
-            controls={false}
+            controls={controls}
             clearable
             onChange={val => {
               if (maxlength > 0 && typeof val !== 'undefined') {
@@ -501,7 +495,7 @@ export default {
                 }}
               />
               <el-tree
-                ref={`tree-${fieldName}`}
+                ref={`INPUT_TREE-${fieldName}`}
                 {...treeWrapProps}
                 style={{ marginTop: '4px' }}
                 defaultExpandAll={true}
@@ -570,6 +564,66 @@ export default {
               }}
             />
           </el-popover>
+        </el-form-item>
+      );
+    },
+    INPUT_ADDRESS(option) {
+      const { form, formType } = this;
+      const { label, fieldName, labelWidth, labelOptions, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
+      this[`${fieldName}AddressTexts`] = (form[fieldName] ?? []).map(x => x.vName).join(' / ');
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom" trigger="click">
+            <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
+              <Address
+                value={form[fieldName]}
+                onInput={val => {
+                  this.addressChangeHandle(fieldName, val);
+                }}
+                fetch={request}
+                style={style}
+                onChange={() => {
+                  onChange(form[fieldName], this[`${fieldName}AddressTexts`]);
+                }}
+                onClose={val => {
+                  this.visible[fieldName] = val;
+                }}
+              />
+            </div>
+            <el-input
+              slot="reference"
+              value={this[`${fieldName}AddressTexts`]}
+              placeholder={formType !== 'onlyShow' ? placeholder : ''}
+              readonly={readonly}
+              disabled={disabled}
+              clearable
+              style={disabled && { pointerEvents: 'none' }}
+              onClear={() => {
+                this.addressChangeHandle(fieldName, []);
+                onChange(form[fieldName], this[`${fieldName}AddressTexts`]);
+              }}
+            />
+          </el-popover>
+        </el-form-item>
+      );
+    },
+    EP_CASCADER(option) {
+      const { form, formType } = this;
+      const { label, fieldName, labelWidth, labelOptions, descOptions, onChange = noop } = option;
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <EpCascader
+            value={form[fieldName]}
+            formType={formType}
+            option={option}
+            onChange={(val, item, values) => {
+              form[fieldName] = val;
+              onChange(val, item, values);
+            }}
+          />
+          {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>
       );
     },
@@ -712,7 +766,7 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-date-picker
-            ref={fieldName}
+            ref={`DATE-${fieldName}`}
             type={dateType.replace('exact', '')}
             value={form[fieldName]}
             onInput={val => {
@@ -754,7 +808,7 @@ export default {
                 if (passed) {
                   form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat);
                 }
-                this.$refs[`${fieldName}`].hidePicker();
+                this.$refs[`DATE-${fieldName}`].hidePicker();
               }
             }}
             onChange={() => onChange(form[fieldName])}
@@ -790,6 +844,7 @@ export default {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
+        form[fieldName][1] = this.getDefaultEndTime(end);
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -824,12 +879,12 @@ export default {
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <div class={cls} style={{ ...style }}>
             <el-date-picker
-              ref={`${fieldName}-start`}
+              ref={`RANGE_DATE-${fieldName}-start`}
               type={dateType.replace('exact', '').slice(0, -5)}
               value={form[fieldName][0]}
               onInput={val => {
                 val = !val ? this.getDefaultStartTime(minDateTime) : val;
-                form[fieldName] = this.formatDate([val, form[fieldName][1]], conf[dateType].valueFormat);
+                form[fieldName] = this.formatDate([val, form[fieldName][1]], conf[dateType].valueFormat, dateType === 'datetimerange');
               }}
               pickerOptions={{
                 disabledDate: time => {
@@ -864,7 +919,7 @@ export default {
                   if (passed) {
                     form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat);
                   }
-                  this.$refs[`${fieldName}-start`].hidePicker();
+                  this.$refs[`RANGE_DATE-${fieldName}-start`].hidePicker();
                 }
               }}
               onChange={() => onChange(form[fieldName])}
@@ -873,11 +928,11 @@ export default {
               -
             </span>
             <el-date-picker
-              ref={`${fieldName}-end`}
+              ref={`RANGE_DATE-${fieldName}-end`}
               type={dateType.replace('exact', '').slice(0, -5)}
               value={form[fieldName][1]}
               onInput={val => {
-                form[fieldName] = this.formatDate([form[fieldName][0], val ?? ''], conf[dateType].valueFormat);
+                form[fieldName] = this.formatDate([form[fieldName][0], val ?? ''], conf[dateType].valueFormat, dateType === 'datetimerange');
               }}
               pickerOptions={{
                 disabledDate: time => {
@@ -911,7 +966,7 @@ export default {
                   if (passed) {
                     form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat);
                   }
-                  this.$refs[`${fieldName}-end`].hidePicker();
+                  this.$refs[`RANGE_DATE-${fieldName}-end`].hidePicker();
                 }
               }}
               onChange={() => onChange(form[fieldName])}
@@ -1100,21 +1155,28 @@ export default {
     TEXT_AREA(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
-      const { rows = 2, maxlength = 200 } = options;
+      const { rows = 2, maxrows, maxlength = 200, onInput = noop } = options;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input
             type="textarea"
-            v-model={form[fieldName]}
+            value={form[fieldName]}
+            onInput={val => {
+              form[fieldName] = val;
+              onInput(val);
+            }}
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
             clearable
-            autosize={{ minRows: rows }}
+            autosize={{ minRows: rows, maxRows: maxrows }}
             maxlength={maxlength}
             showWordLimit
-            onChange={onChange}
+            onChange={val => {
+              form[fieldName] = val.trim();
+              onChange(form[fieldName]);
+            }}
           />
         </el-form-item>
       );
@@ -1333,7 +1395,7 @@ export default {
     },
     // 树控件顶部文本帅选方法
     treeFilterTextHandle(key) {
-      this.$refs[`tree-${key}`].filter(this[`${key}TreeFilterTexts`]);
+      this.$refs[`INPUT_TREE-${key}`].filter(this[`${key}TreeFilterTexts`]);
     },
     // 树结构的筛选方法
     filterNodeHandle(value, data) {
@@ -1353,15 +1415,17 @@ export default {
       // 强制重新渲染组件
       this.$forceUpdate();
     },
+    // 省市区选择器值变化处理方法
+    addressChangeHandle(fieldName, data = []) {
+      this.form[fieldName] = data;
+      this[`${fieldName}AddressTexts`] = data.map(x => x.vName).join(' / ');
+      // 强制重新渲染组件
+      this.$forceUpdate();
+    },
     // 文件上传的 change 事件
     fileChangeHandle(fieldName, val) {
       this.form[fieldName] = val;
       this.doFormItemValidate(fieldName);
-    },
-    async loadingHandler() {
-      this.loading = true;
-      await sleep(300);
-      this.loading = false;
     },
     createFormItem() {
       return this.list
@@ -1376,8 +1440,8 @@ export default {
           return VNode;
         });
     },
-    doClearValidate($ref) {
-      $ref?.clearValidate();
+    doClearValidate(compRef) {
+      compRef?.clearValidate();
     },
     doFormItemValidate(fieldName) {
       this.$refs.form.validateField(fieldName);
@@ -1464,7 +1528,6 @@ export default {
             this.createAnchorFixed(fields);
           }
         } else {
-          this.loadingHandler();
           this.emitFormChange();
         }
       });
@@ -1535,7 +1598,7 @@ export default {
       ) : null;
     },
     // 设置日期控件的禁用状态
-    setDisabledDate(time, [minDateTime, maxDateTime]) {
+    setDisabledDate(oDate, [minDateTime, maxDateTime]) {
       const min = minDateTime
         ? moment(minDateTime)
             .toDate()
@@ -1547,13 +1610,13 @@ export default {
             .getTime()
         : 0;
       if (min && max) {
-        return !(time.getTime() >= min && time.getTime() <= max);
+        return !(oDate.getTime() >= min && oDate.getTime() <= max);
       }
       if (!!min) {
-        return time.getTime() < min;
+        return oDate.getTime() < min;
       }
       if (!!max) {
-        return time.getTime() > max;
+        return oDate.getTime() > max;
       }
       return false;
     },
@@ -1574,12 +1637,13 @@ export default {
           item = '';
         }
         if (!item) {
-          item = i === 0 ? this.getDefaultStartTime() : this.getDefaultEndTime();
+          let defaultDateTime = i === 0 ? this.getDefaultStartTime() : this.getDefaultEndTime();
+          item = moment(defaultDateTime).format(mType);
         }
         return item;
       });
       // 日期区间类型 & 后边小于前边
-      if (res.length > 1 && moment(res[1]).isBefore(res[0])) {
+      if (res.length === 2 && moment(res[1]).isBefore(res[0])) {
         res[1] = res[0];
       }
       if (!nft) {
@@ -1660,13 +1724,13 @@ export default {
     SET_FIELDS_VALUE(values = {}) {
       for (let key in values) {
         if (this.fieldNames.includes(key)) {
-          this.form[key] = values[key];
+          this.form[key] = values[key] ?? undefined;
         }
       }
     },
     SET_FORM_VALUES(values = {}) {
       for (let key in values) {
-        this.form[key] = values[key];
+        this.form[key] = values[key] ?? undefined;
       }
     },
     async GET_FORM_DATA() {

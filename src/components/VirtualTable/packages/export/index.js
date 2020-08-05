@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 17:54:50
+ * @Last Modified time: 2020-07-20 17:20:08
  */
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
@@ -37,8 +37,8 @@ export default {
   },
   methods: {
     createDataList(list) {
-      return list.map(x => {
-        let item = { ...x };
+      return list.map((x, i) => {
+        let item = { ...x, index: i, pageIndex: i };
         this.filterColumns.forEach((column, index) => {
           const { dataIndex, dictItems, render, extraRender } = column;
           const val = get(item, dataIndex);

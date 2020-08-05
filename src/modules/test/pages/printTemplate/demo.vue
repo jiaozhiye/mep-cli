@@ -80,7 +80,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-22 09:57:45
+ * @Last Modified time: 2020-08-02 10:49:26
  **/
 import moment from 'moment';
 
@@ -97,6 +97,9 @@ export default {
         return curr.ckdj * curr.ckdj + prev;
       }, 0);
     }
+  },
+  mounted() {
+    console.log(1234);
   },
   mounted() {
     this.$emit('onPrintTable', this.$refs.print.innerHTML);

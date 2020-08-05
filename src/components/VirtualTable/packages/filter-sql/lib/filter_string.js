@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 10:24:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-12 17:27:26
+ * @Last Modified time: 2020-07-17 09:40:30
  */
 const conjuctions = ['&&', '||', 'AND', 'OR', 'and', 'or', 'like', 'in', 'nin', 'LIKE', 'IN', 'NIN'];
 
@@ -45,9 +45,9 @@ export default {
   },
 
   // return string with quotes if it is a string
-  stringify: function(string) {
+  stringify: function(string, separator = ' ') {
     if (typeof string == 'string') {
-      return "'" + string + "'";
+      return "'" + string.trim().replace(/\s/g, separator) + "'";
     } else {
       return string;
     }

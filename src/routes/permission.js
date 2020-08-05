@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-24 09:27:09
+ * @Last Modified time: 2020-07-28 13:20:02
  */
 import router from '@/routes';
 import store from '@/store';
@@ -50,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       if (!isIframe(to.path) && !store.state.app.navList.length) {
         // 通过 vuex 管理导航数据
-        const bool = await store.dispatch('app/createNavList');
+        let bool = await store.dispatch('app/createNavList');
         bool ? next({ ...to, replace: true }) : redirect(next, false);
       } else {
         let { tabNavList } = store.state.app;

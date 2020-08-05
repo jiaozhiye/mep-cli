@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-26 14:44:36
+ * @Last Modified time: 2020-08-05 09:28:28
  */
 'use strict';
 
@@ -11,6 +11,7 @@ const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
 const { VueLoaderPlugin } = require('vue-loader');
+// 自定义主题
 const ThemeColorReplacer = require('webpack-custom-theme');
 const forElementUI = require('webpack-custom-theme/forElementUI');
 
@@ -50,6 +51,9 @@ module.exports = {
       '@sales': utils.resolve('src/modules/sales'),
       '@service': utils.resolve('src/modules/service'),
       '@usedcar': utils.resolve('src/modules/usedcar'),
+      '@customercare': utils.resolve('src/modules/customercare'),
+      '@salesapp': utils.resolve('src/modules/salesapp'),
+      '@presales': utils.resolve('src/modules/presales'),
       '@others': utils.resolve('src/modules/others')
     }
   },
@@ -68,7 +72,7 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        use: 'babel-loader?cacheDirectory',
+        use: ['babel-loader?cacheDirectory'],
         include: [utils.resolve('src')],
         exclude: /node_modules/
       },

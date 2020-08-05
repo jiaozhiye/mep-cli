@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-30 11:34:10
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 19:59:29
+ * @Last Modified time: 2020-07-29 19:32:38
  */
 import { xor, isUndefined } from 'lodash';
 
@@ -24,7 +24,28 @@ const localStorageMixin = {
         localColumns.map(x => x.dataIndex),
         this.columns.map(x => x.dataIndex)
       );
-      if (diffs.length > 0) return;
+      if (diffs.length > 0) {
+        return this.columns.map(column => {
+          const { dataIndex } = column;
+          const target = localColumns.find(x => x.dataIndex === dataIndex);
+          if (!target) {
+            return column;
+          }
+          if (!isUndefined(target.hidden)) {
+            column.hidden = target.hidden;
+          }
+          if (!isUndefined(target.fixed)) {
+            column.fixed = target.fixed;
+          }
+          if (!isUndefined(target.width)) {
+            column.width = target.width;
+          }
+          if (!isUndefined(target.renderWidth)) {
+            column.renderWidth = target.renderWidth;
+          }
+          return column;
+        });
+      }
       return localColumns.map(x => {
         let target = this.columns.find(k => k.dataIndex === x.dataIndex);
         if (isUndefined(x.fixed)) {

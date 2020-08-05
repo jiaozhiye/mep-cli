@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-22 09:57:34
+ * @Last Modified time: 2020-07-28 19:01:58
  **/
 const styleText = `
   <style type="text/css">
@@ -30,6 +30,12 @@ const styleText = `
     .tr {
       text-align: right;
     }
+    .fl {
+      float: left;
+    }
+    .fr {
+      float: right;
+    }
     /* 全边框 */
     .bor tr th,
     .bor tr td {
@@ -50,6 +56,9 @@ const styleText = `
     }
     .bor-through tr:last-of-type td {
       border-bottom: 0;
+    }
+    .no-bor {
+      border: none !important;
     }
   </style>
 `;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:18:31
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 15:17:15
+ * @Last Modified time: 2020-07-24 09:37:02
  */
 export default {
   table: {
@@ -82,7 +82,8 @@ export default {
       maxText: 'maximum value',
       minText: 'minimum value',
       avgText: 'average value',
-      countText: 'records total'
+      countText: 'records total',
+      exportFileName: 'result.xlsx'
     },
     highSearch: {
       text: 'advanced search',

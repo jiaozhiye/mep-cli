@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-24 10:45:40
+ * @Last Modified time: 2020-07-29 13:02:43
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import moment from 'moment';
@@ -99,8 +99,9 @@ export const confirmAction = async (msg = i18n.t('information.confirm'), type = 
  * @returns
  */
 export const notifyAction = async (msg = '', type = 'success', delay = config.notifyDuration) => {
-  if (store.state.app.isNotifyMark) return;
+  if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
+  await sleep(0);
   Notification({ title: i18n.t('information.title'), message: msg, type, duration: delay, dangerouslyUseHTMLString: true });
   await sleep(config.notifyDuration);
   store.dispatch('app/createNotifyState', false);
@@ -113,8 +114,9 @@ export const notifyAction = async (msg = '', type = 'success', delay = config.no
  * @returns
  */
 export const messageAction = async (msg = '', type = 'info') => {
-  if (store.state.app.isNotifyMark) return;
+  if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
+  await sleep(0);
   Message({ message: msg, showClose: true, type, duration: config.notifyDuration });
   await sleep(config.notifyDuration);
   store.dispatch('app/createNotifyState', false);

@@ -7,6 +7,7 @@
 | list            | 表单组件数据数组，[配置项](#formItem)，必要参数 | array               | -       |
 | initialValue    | 表单组件的初始值，只在组件首次加载时生效        | obkect              | -       |
 | formType        | 表单的类型                                      | default \| onlyShow | default |
+| loading         | 提交按钮的 loading 效果                         | boolean             | false   |
 | cols            | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number              | -       |
 | labelWidth      | label 标签的宽度，单位 px                       | number              | 80      |
 | scrollContainer | 具有滚动条的容器，用于表单校验信息的锚点定位    | HTMLNode            | -       |
@@ -40,6 +41,7 @@
 | RANGE_INPUT_NUMBER | 区间类型的数字输入框 |
 | INPUT_TREE         | 树结构输入框         |
 | INPUT_CASCADER     | 下拉框的级联选择     |
+| EP_CASCADER        | 级联选择             |
 | SELECT             | 单选下拉框           |
 | MULTIPLE_SELECT    | 多选下拉框           |
 | CHECKBOX           | 复选框               |
@@ -132,14 +134,14 @@
 
 | 参数           | 说明                                           | 类型   | 默认值 |
 | -------------- | ---------------------------------------------- | ------ | ------ |
-| date           | 日期类型，值得格式 yyyy-MM-dd HH:mm:ss         | tring  | -      |
-| datetime       | 日期时间类型，值得格式 yyyy-MM-dd HH:mm:ss     | tring  | -      |
-| exactdate      | 严格日期类型，值得格式 yyyy-MM-dd              | string | -      |
-| daterange      | 日期区间类型，值得格式 yyyy-MM-dd HH:mm:ss     | string | -      |
-| datetimerange  | 日期时间区间类型，值得格式 yyyy-MM-dd HH:mm:ss | string | -      |
-| exactdaterange | 严格日期时间区间类型，值得格式 yyyy-MM-dd      | string | -      |
-| month          | 月份类型，值得格式 yyyy-MM                     | string | -      |
-| monthrange     | 月份区间类型，值得格式 yyyy-MM                 | string | -      |
+| date           | 日期类型，值的格式 yyyy-MM-dd HH:mm:ss         | tring  | 默认   |
+| datetime       | 日期时间类型，值的格式 yyyy-MM-dd HH:mm:ss     | tring  | -      |
+| exactdate      | 严格日期类型，值的格式 yyyy-MM-dd              | string | -      |
+| daterange      | 日期区间类型，值的格式 yyyy-MM-dd HH:mm:ss     | string | 默认   |
+| datetimerange  | 日期时间区间类型，值的格式 yyyy-MM-dd HH:mm:ss | string | -      |
+| exactdaterange | 严格日期时间区间类型，值的格式 yyyy-MM-dd      | string | -      |
+| month          | 月份类型，值的格式 yyyy-MM                     | string | -      |
+| monthrange     | 月份区间类型，值的格式 yyyy-MM                 | string | -      |
 
 ### searchHelper
 

@@ -2,11 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:23:23
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-04-18 21:16:06
+ * @Last Modified time: 2020-07-25 11:19:29
  */
 import Sortable from './sortable';
 
-// =========== utils ============
 function getConsole() {
   if (typeof window !== 'undefined') {
     return window.console;
@@ -36,7 +35,6 @@ function insertNodeAt(fatherNode, node, position) {
   const refNode = position === 0 ? fatherNode.children[0] : fatherNode.children[position - 1].nextSibling;
   fatherNode.insertBefore(node, refNode);
 }
-// =========== utils END ============
 
 function buildAttribute(object, propName, value) {
   if (value === undefined) {
@@ -209,10 +207,6 @@ const draggableComponent = {
   created() {
     if (this.list !== null && this.value !== null) {
       console.error('Value and list props are mutually exclusive! Please set one or another.');
-    }
-
-    if (this.element !== 'div') {
-      console.warn('Element props is deprecated please use tag props instead. See https://github.com/SortableJS/Vue.Draggable/blob/master/documentation/migrate.md#element-props');
     }
   },
 

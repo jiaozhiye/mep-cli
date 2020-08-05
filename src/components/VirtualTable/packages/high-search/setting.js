@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 13:04:15
+ * @Last Modified time: 2020-07-17 09:43:59
  */
 import localforage from 'localforage';
 import { stringify, array_format, isBracketBalance } from '../filter-sql';
@@ -51,12 +51,12 @@ export default {
         let x = this.currentData[i];
         if (!x.fieldName) continue;
         let type = this.filterColumns.find(k => k.dataIndex === x.fieldName).filter.type;
-        let val = Array.isArray(x.condition) ? array_format(x.condition) : stringify(type === 'number' ? Number(x.condition) : x.condition);
+        let val = Array.isArray(x.condition) ? array_format(x.condition) : stringify(type === 'number' ? Number(x.condition) : x.condition, '^');
         __query__ += `${x.bracket_left} ${x.fieldName} ${x.expression} ${val} ${x.bracket_right} ${x.logic} `;
         cutStep = x.logic.length;
       }
       __query__ = __query__.slice(0, -1 * cutStep - 2);
-      return __query__.trim();
+      return __query__.replace(/\s+/g, ' ').trim();
     },
     confirmDisabled() {
       return !(this.query && isBracketBalance(this.query));

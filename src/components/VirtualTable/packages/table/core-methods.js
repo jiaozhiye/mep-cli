@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 10:12:38
+ * @Last Modified time: 2020-07-23 11:54:32
  */
-import { throttle, browse, difference, sleep, getCellValue, setCellValue } from '../utils';
+import { columnsFlatMap, throttle, browse, difference, sleep, getCellValue, setCellValue } from '../utils';
 import config from '../config';
 import { get, cloneDeep } from 'lodash';
 
@@ -70,11 +70,11 @@ export default {
           const items = get(res.data, datakey) ?? [];
           const total = get(res.data, datakey.replace(/[^\.]+$/, config.totalKey)) || items.length || 0;
           // 服务端合计
-          if (this.showFooter) {
+          if (this.isServerSummation) {
             this.flattenColumns
-              .filter(x => x.summation && x.summation.dataIndex)
+              .filter(x => !!x.summation?.dataKey)
               .forEach(x => {
-                setCellValue(this.summaries, x.dataIndex, Number(res.data[x.summation.dataIndex]) || 0);
+                setCellValue(this.summaries, x.dataIndex, Number(getCellValue(res.data, x.summation.dataKey)));
               });
           }
           // 处理数据
@@ -234,6 +234,13 @@ export default {
   createSuperSearch(val = '') {
     this.superSearchQuery = val;
   },
+  // 设置列汇总条件
+  createColumnSummary() {
+    return columnsFlatMap(this.columns)
+      .filter(x => x.summation?.dataKey)
+      .map(x => `sum|${x.dataIndex}`)
+      .join(',');
+  },
   // 是否仅有分页参数产生变化
   onlyPaginationChange(next, prev) {
     const diff = Object.keys(difference(next, prev));
@@ -247,6 +254,10 @@ export default {
   clearRowSelection() {
     this.selectionKeys = [];
   },
+  // 清空行高亮
+  clearRowHighlight() {
+    this.highlightKey = '';
+  },
   // 清空表头排序
   clearTableSorter() {
     this.$refs[`tableHeader`]?.clearTheadSorter();
@@ -258,6 +269,10 @@ export default {
   // 清空高级检索的条件
   clearSuperSearch() {
     this.createSuperSearch('');
+  },
+  // 清空列汇总条件
+  clearColumnSummary() {
+    this.columnSummaryQuery = '';
   },
   // 清空表格各种操作记录
   clearTableLog() {
@@ -274,7 +289,6 @@ export default {
   // 析构方法
   destroy() {
     this.removeEvents();
-    this.resetColumns();
     this.store.destroye();
   }
 };

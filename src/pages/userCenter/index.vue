@@ -10,6 +10,7 @@
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item icon="el-icon-setting">{{ $t('settings.usercenter') }}</el-dropdown-item>
+        <el-dropdown-item icon="el-icon-refresh" @click.native="clearHandle">{{ $t('settings.clearcache') }}</el-dropdown-item>
         <el-dropdown-item icon="el-icon-switch-button" divided @click.native="logoutHandle">{{ $t('settings.logout') }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -21,7 +22,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-18 08:13:24
+ * @Last Modified time: 2020-07-31 09:45:44
  **/
 import { mapActions } from 'vuex';
 import { getUser } from '@/utils/cookies';
@@ -34,7 +35,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions('app', ['createLogout']),
+    ...mapActions('app', ['clearKeepAliveCache', 'createLogout']),
+    clearHandle() {
+      this.clearKeepAliveCache();
+      setTimeout(() => window.history.go(0), 0);
+    },
     logoutHandle() {
       // 需要走后台推出接口
       this.createLogout();

@@ -2,13 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:29:47
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-12 16:41:31
+ * @Last Modified time: 2020-07-25 10:28:49
  */
 import Popper from '../popper';
 import Draggable from '../draggable';
 import Checkbox from '../checkbox';
 
-import config from '../config';
+import { getConfig } from '../../../_utils/globle-config';
 import Locale from '../locale/mixin';
 
 const noop = () => {};
@@ -30,6 +30,9 @@ export default {
   computed: {
     realColumns() {
       return [...this.leftFixedColumns, ...this.mainColumns, ...this.rightFixedColumns];
+    },
+    showButtonText() {
+      return !(this.$$table.onlyShowIcon ?? getConfig('VirtualTable_onlyShowIcon') ?? !1);
     }
   },
   watch: {
@@ -69,7 +72,7 @@ export default {
         <li key={column.dataIndex} class="item">
           <Checkbox value={!column.hidden} onInput={val => (column.hidden = !val)} onChange={this.changeHandle} />
           <i class={cls} title={this.t('table.columnFilter.draggable')} />
-          <span>{column.title}</span>
+          <span title={column.title}>{column.title}</span>
           {type === 'main' ? (
             <span class="fixed">
               <i class="iconfont icon-step-backward" title={this.t('table.columnFilter.fixedLeft')} onClick={() => this.fixedChangeHandle(column, 'left')} />
@@ -134,6 +137,7 @@ export default {
     }
   },
   render() {
+    const { showPopper, showButtonText } = this;
     const wrapProps = {
       ref: 'vPopper',
       props: {
@@ -153,9 +157,9 @@ export default {
     return (
       <div class={cls}>
         <Popper {...wrapProps}>
-          <span slot="reference" class={{ [`text`]: !0, [`selected`]: this.showPopper }}>
+          <span slot="reference" class={{ [`text`]: !0, [`selected`]: showPopper }} title={!showButtonText ? this.t('table.columnFilter.text') : ''}>
             <i class="iconfont icon-unorderedlist" />
-            {this.t('table.columnFilter.text')}
+            {showButtonText && this.t('table.columnFilter.text')}
           </span>
           <div class="v-popper">{this.renderColumnFilter()}</div>
         </Popper>
