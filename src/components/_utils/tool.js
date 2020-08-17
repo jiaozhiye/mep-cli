@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 10:58:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-03 10:39:02
+ * @Last Modified time: 2020-08-12 16:49:05
  */
 /**
  * @description 判断浏览器是否 IE11
@@ -34,12 +34,13 @@ export const sleep = async delay => {
 
 /**
  * @description 捕获基于 Promise 操作的异常
- * @param {object} promise Promise 对象
+ * @param {func} asyncFn 异步函数
+ * @param {any} params 函数的参数
  * @returns {array} 错误前置
  */
-export const errorCapture = async promise => {
+export const errorCapture = async (asyncFn, params) => {
   try {
-    const res = await promise;
+    const res = await asyncFn(params);
     return [null, res];
   } catch (e) {
     return [e, null];

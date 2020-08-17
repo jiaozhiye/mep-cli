@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 14:00:56
+ * @Last Modified time: 2020-08-08 10:31:27
  */
 $--color-primary: $primaryColor;
 
@@ -12,7 +12,6 @@ $--color-danger: $errorColor;
 $--color-info: #909090;
 
 $--font-size-base: $textSize;
-// $--font-size-small: $textSize - 2px;
 $--font-size-small: $textSize;
 $--input-small-font-size: $--font-size-small;
 $--button-small-font-size: $--font-size-small;
@@ -21,6 +20,7 @@ $--color-text-primary: $textColor;
 $--color-text-regular: #606060;
 $--color-text-secondary: #979797;
 $--color-text-placeholder: #b8b8b8;
+$--disabled-color-base: $textColor;
 
 $--border-color-base: $borderColor;
 $--border-color-light: $borderColor;

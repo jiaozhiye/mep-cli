@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 10:58:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-03 16:14:40
+ * @Last Modified time: 2020-08-08 09:44:27
  */
 export const getDPI = () => {
   let arrDPI = new Array();
@@ -11,7 +11,7 @@ export const getDPI = () => {
     arrDPI[1] = window.screen.deviceYDPI;
   } else {
     let tmpNode = document.createElement('DIV');
-    tmpNode.style.cssText = `width:1in; height:1in; position:absolute; left:0px; top:0px; z-index:-1; visibility:hidden;`;
+    tmpNode.style.cssText = `width: 1in; height: 1in; position: absolute; left: 0px; top: 0px; z-index: -1; visibility: hidden;`;
     document.body.appendChild(tmpNode);
     arrDPI[0] = parseInt(tmpNode.offsetWidth);
     arrDPI[1] = parseInt(tmpNode.offsetHeight);

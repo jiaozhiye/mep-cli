@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-23 11:54:32
+ * @Last Modified time: 2020-08-17 09:00:27
  */
-import { columnsFlatMap, throttle, browse, difference, sleep, getCellValue, setCellValue } from '../utils';
+import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, getCellValue, setCellValue } from '../utils';
 import config from '../config';
 import { get, cloneDeep } from 'lodash';
 
@@ -14,7 +14,7 @@ const throttleScrollYDuration = $browse['msie'] ? 20 : 10;
 
 export default {
   // 创建表格数据
-  createTableData(list, callback) {
+  createTableData(list) {
     const { currentPage, pageSize } = this.pagination;
     const resetRowData = arr => {
       return arr.map((record, index) => {
@@ -22,20 +22,9 @@ export default {
           record.children = resetRowData(record.children);
         }
         // 数据索引
-        record.index = index;
+        this.$set(record, 'index', index);
         // 分页索引
         record.pageIndex = (currentPage - 1) * pageSize + index;
-        // 初始化数据
-        this.flattenColumns.forEach(column => {
-          const { dataIndex, precision } = column;
-          if (['__expandable__', '__selection__', config.operationColumn].includes(dataIndex)) return;
-          // 回调方法
-          callback?.(record, dataIndex);
-          const cellVal = getCellValue(record, dataIndex);
-          if (precision >= 0 && !Number.isNaN(Number.parseFloat(cellVal))) {
-            setCellValue(record, dataIndex, Number(cellVal).toFixed(precision));
-          }
-        });
         return record;
       });
     };
@@ -88,6 +77,9 @@ export default {
         // 设置展开行
         this.rowExpandedKeys = this.createRowExpandedKeys();
       } catch (e) {}
+    }
+    if (hasOwn(this.fetch, 'stopToFirst')) {
+      this.fetch.stopToFirst = false;
     }
     this.showLoading = false;
   },

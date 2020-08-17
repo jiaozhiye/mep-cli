@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-21 15:23:55
+ * @Last Modified time: 2020-08-14 11:25:16
  */
 @import '../../style/index.scss';
 
@@ -37,6 +37,8 @@ $prefix-cls: '#{$v-prefix}-form-panel';
         }
       }
       .el-form-item__content {
+        display: flex;
+        align-items: center;
         .el-form-item__error {
           margin-top: -2px;
           transform-origin: 0 50%;
@@ -46,13 +48,6 @@ $prefix-cls: '#{$v-prefix}-form-panel';
       }
       .el-select {
         width: 100%;
-        .el-select__tags {
-          height: 24px;
-          overflow-y: auto;
-          .el-select__input {
-            height: inherit;
-          }
-        }
       }
       .el-autocomplete {
         width: 100%;
@@ -136,14 +131,18 @@ $prefix-cls: '#{$v-prefix}-form-panel';
           width: 20px;
         }
       }
+      .el-radio-group,
+      .el-checkbox-group {
+        display: inline-flex;
+        flex-wrap: wrap;
+      }
       .desc-icon {
-        padding: 7px 6px;
+        padding: 0 6px;
         font-size: 18px;
-        vertical-align: top;
+        line-height: inherit;
       }
       .desc-text {
         font-size: $font-size-base;
-        vertical-align: top;
         cursor: default;
         .el-tag {
           margin-right: 8px;
@@ -209,9 +208,13 @@ $prefix-cls: '#{$v-prefix}-form-panel';
             }
           }
         }
-      }
-      .desc-text {
-        font-size: $font-size-sm !important;
+        .el-radio__label,
+        .el-checkbox__label {
+          font-size: $font-size-sm !important;
+        }
+        .desc-text {
+          font-size: $font-size-sm !important;
+        }
       }
     }
   }
@@ -238,9 +241,13 @@ $prefix-cls: '#{$v-prefix}-form-panel';
             }
           }
         }
-      }
-      .desc-text {
-        font-size: $font-size-base !important;
+        .el-radio__label,
+        .el-checkbox__label {
+          font-size: $font-size-base !important;
+        }
+        .desc-text {
+          font-size: $font-size-base !important;
+        }
       }
     }
   }

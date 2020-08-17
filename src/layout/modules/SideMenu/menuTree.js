@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 10:48:59
+ * @Last Modified time: 2020-08-08 09:12:06
  */
 import variables from '@/assets/css/variables.scss';
 
@@ -42,7 +42,8 @@ export default {
       return arr
         .filter(x => !x.hideInMenu)
         .map(item => {
-          const { key, title, icon } = item;
+          let { key, title, icon } = item;
+          key = key ?? '';
           // 判断是否为 http 链接
           const httpLink = /^https?:\/\//.test(key);
           const menuItemNode = !httpLink ? (

@@ -2,52 +2,62 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:13:54
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 13:47:24
+ * @Last Modified time: 2020-08-15 18:19:58
  */
-.v-cell--edit {
-  .el-input-group {
-    display: table;
-  }
-  .el-input__inner {
-    padding: 0 $v-module-distance;
-    font-size: $v-font-size;
-  }
-  .el-date-editor {
-    width: 100%;
+.v-body--column {
+  .v-cell--edit {
+    .el-input-group {
+      display: table;
+    }
     .el-input__inner {
-      padding-left: 30px;
+      padding: 0 $v-module-distance !important;
+      font-size: $v-font-size;
+      text-align: left;
     }
-  }
-  .el-select {
-    .el-select__tags {
-      height: 28px;
-      overflow-y: auto;
+    .el-date-editor {
+      width: 100%;
+      .el-input__inner {
+        padding-left: 30px;
+      }
     }
-  }
-  .is-disabled {
-    .el-input-group__append {
-      cursor: not-allowed;
-      .el-button {
+    .el-select {
+      width: 100%;
+    }
+    .is-disabled {
+      .el-input-group__append {
+        cursor: not-allowed;
+        .el-button {
+          pointer-events: none;
+        }
+      }
+    }
+    &.is-error {
+      position: relative;
+      .el-input__inner {
+        border-color: $v-danger-color;
+      }
+      .search-helper + .cell-error {
+        right: 40px;
+      }
+      .cell-error {
+        position: absolute;
+        font-size: $v-font-size-mini;
+        line-height: 1.2;
+        color: $v-danger-color;
+        top: 9px;
+        right: 8px;
         pointer-events: none;
       }
     }
   }
-  &.is-error {
-    position: relative;
-    .el-input__inner {
-      border-color: $v-danger-color;
+  &.col--center {
+    .v-cell--edit .el-input__inner {
+      text-align: center;
     }
-    .search-helper + .cell-error {
-      right: 40px;
-    }
-    .cell-error {
-      position: absolute;
-      font-size: $v-font-size-mini;
-      line-height: 1.2;
-      color: $v-danger-color;
-      top: 9px;
-      right: 8px;
-      pointer-events: none;
+  }
+  &.col--right {
+    .v-cell--edit .el-input__inner {
+      text-align: right;
     }
   }
 }

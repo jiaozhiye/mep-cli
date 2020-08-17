@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-03 20:39:10
+ * @Last Modified time: 2020-08-07 15:44:20
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
+import moment from 'moment';
 import config from './config';
 
 export default {
@@ -14,11 +15,14 @@ export default {
         <style type="text/css">
           table {
             width: 100%;
-            border-collapse: collapse;
             border-spacing: 0;
+            border-collapse: collapse;
+            table-layout: fixed;
           }
           table tr td {
-            padding: 4px;
+            padding: 2px;
+            line-height: 1.2;
+            word-wrap: break-word;
           }
           .fs12 {
             font-size: 12px;
@@ -69,34 +73,19 @@ export default {
 
       const {
         form: { setting, printerName, printerType, copies },
-        pageSize
+        pageSize,
+        uniqueKey,
+        closeOnPrinted
       } = this;
       const { left, right, top, bottom } = setting.distance;
 
       // 初始化
       LODOP.PRINT_INIT(
-        this.uniqueKey ??
+        uniqueKey ??
           Math.random()
             .toString()
             .slice(2)
       );
-
-      // 纵向
-      if (setting.direction === 'vertical') {
-        // 按内容走纸，连续打印
-        if (printerType === 'stylus') {
-          LODOP.SET_PRINT_PAGESIZE(3, pageSize[0] * 10, 0, ''); // 9mm -> 打印的下边距
-        } else {
-          // 整张打印
-          LODOP.SET_PRINT_PAGESIZE(1, pageSize[0] * 10, pageSize[1] * 10, '');
-        }
-      }
-
-      // 横向
-      if (setting.direction === 'horizontal') {
-        LODOP.SET_PRINT_PAGESIZE(2, pageSize[0] * 10, pageSize[1] * 10, '');
-        LODOP.SET_SHOW_MODE('LANDSCAPE_DEFROTATED', 1);
-      }
 
       // 设置打印机
       LODOP.SET_PRINTER_INDEX(printerName);
@@ -107,8 +96,26 @@ export default {
       // 双面打印
       LODOP.SET_PRINT_MODE('DOUBLE_SIDED_PRINT', !!setting.doubleSide);
 
-      // 设置设置完打印后 是否关闭预览窗口;
+      // 完打印后，关闭预览窗口
       LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
+
+      // 针式打印机，连续打印
+      if (printerType === 'stylus') {
+        LODOP.SET_PRINT_PAGESIZE(3, pageSize[0] * 10, config.defaultDistance * 100 * 2, '');
+      }
+
+      // 激光打印机
+      if (printerType === 'laser') {
+        // 纵向
+        if (setting.direction === 'vertical') {
+          LODOP.SET_PRINT_PAGESIZE(1, pageSize[0] * 10, pageSize[1] * 10, '');
+        }
+        // 横向
+        if (setting.direction === 'horizontal') {
+          LODOP.SET_PRINT_PAGESIZE(2, pageSize[0] * 10, pageSize[1] * 10, '');
+          LODOP.SET_SHOW_MODE('LANDSCAPE_DEFROTATED', 1);
+        }
+      }
 
       // 设置边距 增加表格项
       LODOP.ADD_PRINT_TABLE(
@@ -119,8 +126,23 @@ export default {
         this.createStyle() + __html__
       );
 
+      // 监听事件
+      LODOP.On_Return = (TaskID, Value) => {
+        this.dispatch('ClientPrint', 'print', Value);
+        if (typeof Value !== 'boolean') return;
+        if (Value) {
+          closeOnPrinted && this.$emit('close');
+        } else {
+          this.$message.error(this.t('clientPrint.printError'));
+        }
+      };
+
       // 打印
-      LODOP.PREVIEW();
+      if (process.env.MOCK_DATA === 'true') {
+        LODOP.PREVIEW();
+      } else {
+        LODOP.PRINT();
+      }
 
       // // 追加打印头部
       // this.LODOP.ADD_PRINT_TABLE(0, 0, '100%', 60, css.style + this.createPrintLogo());
@@ -142,15 +164,30 @@ export default {
     },
     doExport(__html__) {
       const LODOP = getLodop();
+
       if (!LODOP) return;
-      const uniqueKey =
-        this.uniqueKey ??
-        Math.random()
-          .toString()
-          .slice(2);
-      LODOP.PRINT_INIT(uniqueKey);
+
+      const { uniqueKey, closeOnPrinted } = this;
+
+      LODOP.PRINT_INIT(
+        uniqueKey ??
+          Math.random()
+            .toString()
+            .slice(2)
+      );
+
+      LODOP.On_Return = (TaskID, Value) => {
+        this.dispatch('ClientPrint', 'export', Value);
+        if (Value) {
+          closeOnPrinted && this.$emit('close');
+        } else {
+          this.$message.error(this.t('clientPrint.exportError'));
+        }
+      };
+
       LODOP.ADD_PRINT_TABLE(0, 0, 'RightMargin: 0', 'BottomMargin: 0', this.createStyle() + __html__);
-      LODOP.SAVE_TO_FILE(`${uniqueKey}.xlsx`);
+
+      LODOP.SAVE_TO_FILE(`${moment().format('YYYYMMDDHHmmss')}.xlsx`);
     }
   }
 };

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 08:04:15
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-02 20:46:11
+ * @Last Modified time: 2020-08-06 11:09:17
  */
 import Locale from '../../_utils/mixins/locale';
 import config from './config';
@@ -96,8 +96,8 @@ export default {
           fieldName: 'disleft',
           options: {
             min: config.defaultDistance,
-            step: 0.1,
-            precision: 1,
+            step: 0.05,
+            precision: 2,
             controls: true
           },
           style: { width: `calc(100% - 50px)` },
@@ -112,8 +112,8 @@ export default {
           fieldName: 'disright',
           options: {
             min: config.defaultDistance,
-            step: 0.1,
-            precision: 1,
+            step: 0.05,
+            precision: 2,
             controls: true
           },
           style: { width: `calc(100% - 50px)` },
@@ -128,8 +128,8 @@ export default {
           fieldName: 'distop',
           options: {
             min: config.defaultDistance,
-            step: 0.1,
-            precision: 1,
+            step: 0.05,
+            precision: 2,
             controls: true
           },
           style: { width: `calc(100% - 50px)` },
@@ -144,8 +144,8 @@ export default {
           fieldName: 'disbottom',
           options: {
             min: config.defaultDistance,
-            step: 0.1,
-            precision: 1,
+            step: 0.05,
+            precision: 2,
             controls: true
           },
           style: { width: `calc(100% - 50px)` },

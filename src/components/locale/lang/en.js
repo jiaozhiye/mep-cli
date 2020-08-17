@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-02 09:22:14
+ * @Last Modified time: 2020-08-07 13:24:29
  */
 import tableEnLocale from '../../VirtualTable/packages/locale/lang/en';
 
@@ -76,6 +76,8 @@ export default {
   clientPrint: {
     preview: '打印预览',
     pageSetting: '页面设置',
+    printError: '打印失败！',
+    exportError: '导出失败！',
     close: '关 闭',
     confirm: '确 定'
   },

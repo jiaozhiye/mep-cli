@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-24 15:55:54
+ * @Last Modified time: 2020-08-17 09:16:42
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -63,7 +63,7 @@ const columnItem = {
  *   extra: PropTypes.shape({
  *     maxlength: PropTypes.number,
  *     max: PropTypes.number,
- *     min: PropTypes.number,
+ *     min: PropTypes.number.def(0),
  *     trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
  *     falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
  *     text: PropTypes.string,
@@ -103,6 +103,7 @@ export default {
     api: PropTypes.func.isRequired, // api 接口
     params: PropTypes.object.isRequired, // 接口参数
     xhrAbort: PropTypes.bool, // 是否取消请求
+    stopToFirst: PropTypes.bool, // 是否返回第一页
     dataKey: PropTypes.string // 数据路径
   }),
   // 是否带有纵向边框
@@ -167,7 +168,7 @@ export default {
   showRefresh: PropTypes.bool.def(true),
   // 导出表格数据
   exportExcel: PropTypes.shape({
-    fileName: PropTypes.string.isRequired // 导出的文件名，需包含扩展名[xlsx|csv]
+    fileName: PropTypes.string // 导出的文件名，需包含扩展名[xlsx|csv]
   }),
   // 表格打印
   tablePrint: PropTypes.shape({

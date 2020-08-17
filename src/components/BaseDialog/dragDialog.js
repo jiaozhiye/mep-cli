@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-27 12:30:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-25 17:01:54
+ * @Last Modified time: 2020-08-13 20:30:16
  */
 import { throttle } from '../_utils/tool';
 
@@ -32,25 +32,19 @@ export default {
       const disX = e.clientX - this.offsetLeft;
       const disY = e.clientY - this.offsetTop;
 
-      const dragDomWidth = dragDom.offsetWidth;
-      const dragDomHeight = dragDom.offsetHeight;
-
-      const screenWidth = document.body.clientWidth;
-      const screenHeight = document.body.clientHeight;
-
       const minDragDomLeft = dragDom.offsetLeft;
-      const maxDragDomLeft = screenWidth - dragDom.offsetLeft - dragDomWidth;
+      const maxDragDomLeft = window.innerWidth - dragDom.offsetLeft - dragDom.offsetWidth;
 
       const minDragDomTop = dragDom.offsetTop;
-      const maxDragDomTop = screenHeight - dragDom.offsetTop - dragDomHeight;
+      const maxDragDomTop = window.innerHeight - dragDom.offsetTop - dragDom.offsetHeight;
 
-      // 获取到的值带px 正则匹配替换
+      // 获取到的值带 px 正则匹配替换
       let styL = getStyle(dragDom, 'left');
       let styT = getStyle(dragDom, 'top');
 
       if (styL.includes('%')) {
-        styL = +document.body.clientWidth * (+styL.replace(/\%/g, '') / 100);
-        styT = +document.body.clientHeight * (+styT.replace(/\%/g, '') / 100);
+        styL = +window.innerWidth * (+styL.replace(/\%/g, '') / 100);
+        styT = +window.innerHeight * (+styT.replace(/\%/g, '') / 100);
       } else {
         styL = +styL.replace(/\px/g, '');
         styT = +styT.replace(/\px/g, '');

@@ -2,7 +2,7 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: 申庆柱
- * @LastEditTime: 2020-07-21 10:09:10
+ * @LastEditTime: 2020-08-12 08:48:16
  */
 
 import { get } from 'lodash';
@@ -60,6 +60,8 @@ export default {
       this.isInit = false;
       if (!this.valueAllLevels && this.value && this.itemList.length) {
         this.currentValue = this.treeFindPath(this.itemList, data => data.value === this.value);
+      } else if (this.valueAllLevels && this.itemList.length) {
+        this.currentValue = Array.isArray(this.value) ? this.value : [];
       }
     },
     // 获取级联数据

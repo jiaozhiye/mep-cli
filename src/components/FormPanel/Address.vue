@@ -40,7 +40,7 @@
    * @Author: 田暹琪
    * @Date: 2020-07-10 10:00:00
    * @Last Modified by: 田暹琪
-   * @Last Modified time: 2020-07-16 16:07:22
+   * @Last Modified time: 2020-08-06 10:40:22
    **/
   import PropTypes from '../_utils/vue-types';
 
@@ -199,12 +199,12 @@
         for (let i in this.currentList) {
           let c = this.currentList[i];
           if (c.vLevel == vLevel) {
-            this.currentList[i] = { iD: cur.iD, vLevel: vLevel, vName: cur.vName };
+            this.currentList[i] = { iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName };
             isHave = true;
           }
         }
         if (!isHave) {
-          this.currentList.push({ iD: cur.iD, vLevel: vLevel, vName: cur.vName });
+          this.currentList.push({ iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName });
         }
         this.currentList.sort((a, b) => {
           return a.vLevel - b.vLevel;

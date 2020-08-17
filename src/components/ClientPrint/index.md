@@ -7,9 +7,19 @@
 | templateRender | 打印模板组件(异步)，通过 () => import(`@test/pages/printTemplate/demo2`) 赋值 | object          | -      |
 | dataSource     | 打印数据                                                                      | array \| object | -      |
 | uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                                      | string          | -      |
+| closeOnPrinted | 打印后是否关闭预览窗口                                                        | boolean         | false  |
 | type           | 打印按钮的类型                                                                | string          | -      |
 | disabled       | 打印按钮的禁用状态                                                            | boolean         | false  |
 | click          | 点击事件(异步方法)，用于获取接口打印数据，给 dataSource 赋值                  | func            | -      |
+
+### 事件
+
+| 事件名称 | 说明                                 | 回调参数       |
+| -------- | ------------------------------------ | -------------- |
+| print    | 打印的回调事件，参数表示是否成功打印 | Function(bool) |
+| export   | 导出的回调事件，参数表示是否成功导出 | Function(bool) |
+| open     | 打印预览窗口，打开时触发             | -              |
+| close    | 打印预览窗口，关闭时触发             | -              |
 
 ### 打印模板，标签支持的类属型
 
@@ -27,21 +37,45 @@
 - .bor-r：单元格右边框，加在 td 标签上
 - .no-bor：去掉单元格边框，加在 td 标签上
 
-### 示例
+### 连续打印(针式)
+
+针式打印机，连续无分页打印，需要设置打印机的打印选项：
+
+1. 用户自定义纸张，宽度 24.10 厘米，高度 55.88 厘米(最大高度即可)
+2. 设置纸张规格为 上一步自定义纸张的名称
+
+### 说明
 
 1. 画打印模板时，必须使用 table 技术，除了以上公共的 class 属性外，不能使用自定义样式表，只能使用 style 行间样式。
 2. 打印模板中的 table 表格，已经做了 24 列的等宽处理，采用了栅格系统的理念，通过合并行、列灵活实现布局。
-3. 画打印模板时不需要处理打印的 Logo，底层已经处理。
+3. 画打印模板时不需要处理打印的 Logo 和 行高(line-height)，底层已经处理。
 4. 打印模板组件 template 标签的根组件必须是 table 标签。
 
 注意：整个打印模板的绘制，必须使用标准的 table 布局！！！
 
+### 示例
+
 ```bash
 # template
 <template>
-  <client-print :templateRender="() => import(`@test/pages/printTemplate/demo2`)">打印</client-print>
+  <client-print uniqueKey="print_jzy" :dataSource="printData" :click="printHandle" :templateRender="() => import(`@test/pages/printTemplate/demo2`)">打印</client-print>
 </template>
 
 # js
-export default {};
+export default {
+  data: {
+    printData: []
+  },
+  methods: {
+    async printHandle() {
+      // 模拟接口请求数据
+      await sleep(1000);
+      let res = [];
+      for (let i = 0; i < 100; i++) {
+        res[i] = i;
+      }
+      this.printData = res;
+    },
+  }
+};
 ```

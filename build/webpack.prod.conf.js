@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-17 11:17:25
+ * @Last Modified time: 2020-08-12 17:25:29
  */
 'use strict';
 
@@ -92,12 +92,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       inject: true,
       favicon: utils.resolve('public/favicon.ico'),
       minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
+        removeComments: true
       },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency',
       templateParameters: {
         BASE_URL: config.build.assetsPublicPath + config.build.assetsSubDirectory
       }

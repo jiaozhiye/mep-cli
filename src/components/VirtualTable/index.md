@@ -52,7 +52,7 @@
 | 方法名称         | 说明                                           | 参数                                       | 返回值 |
 | ---------------- | ---------------------------------------------- | ------------------------------------------ | ------ |
 | CALCULATE_HEIGHT | 计算表格高度                                   | -                                          | -      |
-| DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | -                                          | -      |
+| DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | Function(callback)                         | -      |
 | GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                          | object |
 | CLEAR_TABLE_DATA | 清空表格数据                                   | -                                          | -      |
 | CLEAR_LOG        | 清空表格操作记录                               | -                                          | -      |
@@ -87,12 +87,13 @@
 
 ### fetch
 
-| 参数     | 说明                                | 类型    | 默认值 |
-| -------- | ----------------------------------- | ------- | ------ |
-| api      | ajax 接口，必要参数                 | func    | -      |
-| params   | 接口参数，必要参数                  | object  | -      |
-| xhrAbort | 是否取消请求                        | boolean | false  |
-| dataKey  | 数据的 key，支持 `a.b.c` 的路径写法 | string  | items  |
+| 参数        | 说明                                | 类型    | 默认值 |
+| ----------- | ----------------------------------- | ------- | ------ |
+| api         | ajax 接口，必要参数                 | func    | -      |
+| params      | 接口参数，必要参数                  | object  | -      |
+| xhrAbort    | 是否取消请求                        | boolean | false  |
+| stopToFirst | 是否阻止返回第一页                  | boolean | false  |
+| dataKey     | 数据的 key，支持 `a.b.c` 的路径写法 | string  | items  |
 
 ### filter
 
@@ -174,12 +175,12 @@
 | ---------- | ------------------ | ---------------- | ------ |
 | maxlength  | 最大长度           | number           | -      |
 | max        | 最大值             | number           | -      |
-| min        | 最小值             | number           | -      |
+| min        | 最小值             | number           | 0      |
 | trueValue  | 针对 checkbox 生效 | string \| number | -      |
 | falseValue | 针对 checkbox 生效 | string \| number | -      |
 | text       | 显示的文本         | string           | -      |
 | disabled   | 表单禁用状态       | boolean          | -      |
-| clearable  | 是否显示清除按钮   | boolean          | -      |
+| clearable  | 是否显示清除按钮   | boolean          | true   |
 
 ### helper
 
@@ -235,9 +236,9 @@
 
 ### exportExcel
 
-| 参数     | 说明                                          | 类型   | 默认值 |
-| -------- | --------------------------------------------- | ------ | ------ |
-| fileName | 导出的文件名，需包含扩展名 xlsx/csv，必要参数 | string | -      |
+| 参数     | 说明                                   | 类型   | 默认值                |
+| -------- | -------------------------------------- | ------ | --------------------- |
+| fileName | 导出的文件名，需包含扩展名 xlsx \| csv | string | [当前时间字符串].xlsx |
 
 ### tablePrint
 

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-04 21:25:01
+ * @Last Modified time: 2020-08-15 18:01:27
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains } from '../utils';
@@ -251,10 +251,10 @@ export default {
       return vNodeText;
     },
     renderText(text, column, row) {
-      const { dictItems, formatType, editRender } = column;
+      const { dictItems, precision, formatType, editRender } = column;
       const dicts = dictItems || editRender?.(row, column)?.items || [];
       const target = dicts.find(x => x.value == text);
-      let result = target?.text ?? text;
+      let result = target?.text ?? text ?? '';
       // 数据是数组的情况
       if (Array.isArray(text)) {
         result = text
@@ -263,6 +263,10 @@ export default {
             return target?.text ?? x;
           })
           .join(',');
+      }
+      // 处理数值精度
+      if (precision >= 0) {
+        result = Number(result).toFixed(precision);
       }
       // 处理数据格式化
       if (formatType) {

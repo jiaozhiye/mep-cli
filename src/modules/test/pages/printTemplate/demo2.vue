@@ -11,7 +11,7 @@
     <tr v-for="x in dataSource" :key="x">
       <td colspan="4" class="bor">内容{{ x }}</td>
       <td colspan="4" class="bor">内容{{ x }}</td>
-      <td colspan="4" class="bor">内容内容内容内容内容内容内容内容{{ x }}</td>
+      <td colspan="4" class="bor">内容{{ x }}</td>
       <td colspan="4" class="bor">内容{{ x }}</td>
       <td colspan="4" class="bor">内容{{ x }}</td>
       <td colspan="4" class="bor">内容{{ x }}</td>

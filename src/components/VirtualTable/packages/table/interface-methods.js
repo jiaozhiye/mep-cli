@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-28 10:27:27
+ * @Last Modified time: 2020-08-17 09:11:39
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
+import config from '../config';
 
 export default {
   // 计算表格高度
@@ -13,10 +14,11 @@ export default {
     this.$nextTick(() => this.calcTableHeight());
   },
   // 刷新表格数据
-  DO_REFRESH() {
+  async DO_REFRESH(callback) {
     this.clearRowSelection();
     this.clearRowHighlight();
-    this.getTableData();
+    await this.getTableData();
+    callback?.();
   },
   // 获取表格操作记录
   GET_LOG() {
@@ -56,17 +58,25 @@ export default {
     this.clearTableLog();
   },
   // 表格数据插入
-  INSERT_RECORDS(rows, dir = 'bottom') {
-    rows = (Array.isArray(rows) ? rows : [rows]).filter(row => isObject(row));
+  INSERT_RECORDS(records, dir = 'bottom') {
+    const rows = (Array.isArray(records) ? records : [records]).filter(x => isObject(x));
+    rows.forEach(row => {
+      // 初始化数据
+      this.flattenColumns.forEach(column => {
+        const { dataIndex } = column;
+        if (['__expandable__', '__selection__', config.operationColumn].includes(dataIndex)) return;
+        setCellValue(row, dataIndex, getCellValue(row, dataIndex));
+      });
+      // 添加表格操作记录
+      this.store.addToInserted(row);
+    });
     // 处理插入数据
     const tableData = dir === 'bottom' ? [...this.tableOriginData, ...rows] : [...rows, ...this.tableOriginData];
     // 清空表头筛选和排序
     this.clearTableSorter();
     this.clearTableFilter();
     // 重新创建表格数据
-    this.createTableData(tableData, (record, dataIndex) => setCellValue(record, dataIndex, getCellValue(record, dataIndex)));
-    // 添加表格操作记录
-    rows.forEach(row => this.store.addToInserted(row));
+    this.createTableData(tableData);
     // 滚动条定位
     if (rows.length > 0) {
       let current = dir === 'bottom' ? rows[rows.length - 1] : rows[0];
@@ -74,8 +84,8 @@ export default {
     }
   },
   // 删除数据
-  REMOVE_RECORDS(rows) {
-    rows = Array.isArray(rows) ? rows : [rows];
+  REMOVE_RECORDS(records) {
+    const rows = Array.isArray(records) ? records : [records];
     const rowKeys = rows.filter(x => !!x).map(x => (isObject(x) ? this.getRowKey(x, x.index) : x));
     const editableColumns = this.flattenColumns.filter(column => isFunction(column.editRender));
     for (let i = 0; i < this.tableFullData.length; i++) {

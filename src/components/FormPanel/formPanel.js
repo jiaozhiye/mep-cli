@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-05 09:47:03
+ * @Last Modified time: 2020-08-17 15:36:46
  **/
-import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction, isRegExp, isElement } from 'lodash';
+import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction, isElement } from 'lodash';
 import moment from 'moment';
 import PropTypes from '../_utils/vue-types';
 import Size from '../_utils/mixins/size';
@@ -12,6 +12,7 @@ import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
 import FormCols from '../_utils/mixins/form-cols';
 import pinyin, { STYLE_FIRST_LETTER } from '../Pinyin';
+import InputNumber from './InputNumber';
 import Cascader from './Cascader.vue';
 import BreakSpace from '../BreakSpace';
 import UploadFile from '../UploadFile';
@@ -41,7 +42,8 @@ export default {
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
     isSubmitBtn: PropTypes.bool.def(false),
-    scrollContainer: PropTypes.any.def(null)
+    scrollContainer: PropTypes.any.def(null),
+    defultValueOnClear: PropTypes.bool.def(false)
   },
   data() {
     this.arrayTypes = ['RANGE_DATE', 'RANGE_TIME', 'RANGE_TIME_SELECT', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX', 'UPLOAD_IMG', 'UPLOAD_FILE'];
@@ -247,62 +249,65 @@ export default {
       } = option;
       const { minlength = 0, maxlength, showLimit, password = false, noInput = false, pattern, unitRender, onInput = noop, onEnter = noop, onFocus = noop, onBlur = noop } = options;
       const isSearchHelper = !!Object.keys(searchHelper).length;
-      const dialogProps = {
-        props: {
-          visible: this.visible[fieldName],
-          title: this.t('form.searchHelper'),
-          showFullScreen: false,
-          destroyOnClose: true,
-          containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
-        },
-        on: {
-          'update:visible': val => (this.visible[fieldName] = val)
-        }
-      };
-      const shProps = {
-        props: {
-          ...searchHelper
-        },
-        on: {
-          close: (visible, data, alias) => {
-            if (isObject(data) && Object.keys(alias).length) {
-              const extraKeys = [];
-              for (let key in alias) {
-                if (key !== 'extra') {
-                  form[key] = data[alias[key]];
-                  if (key !== fieldName) {
-                    extraKeys.push(key);
-                  } else {
-                    onChange(form[key]);
+      const dialogProps = isSearchHelper
+        ? {
+            props: {
+              visible: this.visible[fieldName],
+              title: this.t('form.searchHelper'),
+              showFullScreen: false,
+              destroyOnClose: true,
+              containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
+            },
+            on: {
+              'update:visible': val => (this.visible[fieldName] = val)
+            }
+          }
+        : null;
+      const shProps = isSearchHelper
+        ? {
+            props: {
+              ...searchHelper
+            },
+            on: {
+              close: (visible, data, alias) => {
+                if (isObject(data) && Object.keys(alias).length) {
+                  for (let key in alias) {
+                    if (key !== 'extra') {
+                      form[key] = data[alias[key]];
+                      if (key === fieldName) {
+                        onChange(form[key]);
+                      }
+                    } else {
+                      this.desc[fieldName] = data[alias[key]];
+                    }
                   }
-                } else {
-                  this.desc[fieldName] = data[alias[key]];
                 }
-              }
-              if (extraKeys.length) {
-                this[`${fieldName}ExtraKeys`] = extraKeys;
+                const { closed = noop } = searchHelper;
+                closed(data);
+                this.visible[fieldName] = visible;
               }
             }
-            const { closed = noop } = searchHelper;
-            closed(data);
-            this.visible[fieldName] = visible;
           }
+        : null;
+      if (isSearchHelper) {
+        let fieldKeys = [...Object.keys(searchHelper.fieldAliasMap?.() ?? {}), ...Object.values(searchHelper.fieldsDefine ?? {})];
+        if (!this[`${fieldName}ExtraKeys`]) {
+          this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
         }
-      };
-      const prevValue = form[fieldName];
+      }
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input
             ref={`INPUT-${fieldName}`}
-            value={prevValue}
+            value={form[fieldName]}
             onInput={val => {
               // 搜索帮助，不允许输入
               if (isSearchHelper || noInput) return;
               form[fieldName] = val;
               onInput(val);
             }}
-            title={prevValue}
+            title={form[fieldName]}
             minlength={minlength}
             maxlength={maxlength}
             placeholder={!disabled ? (!isSearchHelper ? placeholder : this.t('form.selectPlaceholder')) : ''}
@@ -359,31 +364,22 @@ export default {
     INPUT_NUMBER(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
-      const { maxlength, min = 0, max, step = 1, precision, controls = !1 } = options;
+      const { maxlength, min = 0, max, step, precision, controls = !1 } = options;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-input-number
+          <InputNumber
             v-model={form[fieldName]}
-            placeholder={!disabled ? placeholder : ''}
-            disabled={disabled}
-            style={{ ...style }}
-            controls-position="right"
             min={min}
             max={max}
             step={step}
             precision={precision}
+            maxlength={maxlength}
             controls={controls}
-            clearable
-            onChange={val => {
-              if (maxlength > 0 && typeof val !== 'undefined') {
-                const res = Number.parseInt(val).toString();
-                if (res.length > maxlength) {
-                  form[fieldName] = Number(res.slice(0, maxlength));
-                }
-              }
-              onChange(form[fieldName]);
-            }}
+            placeholder={!disabled ? placeholder : ''}
+            disabled={disabled}
+            style={{ ...style }}
+            onChange={onChange}
           />
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>
@@ -479,6 +475,7 @@ export default {
             transition="el-zoom-in-top"
             placement="bottom-start"
             trigger="click"
+            style={{ width: '100%' }}
             on-after-leave={() => {
               this[`${fieldName}TreeFilterTexts`] = '';
               this.treeFilterTextHandle(fieldName);
@@ -503,7 +500,7 @@ export default {
                 filterNodeMethod={this.filterNodeHandle}
                 on-node-click={data => {
                   this.treeNodeClickHandle(fieldName, data);
-                  onChange(this.form[fieldName], data);
+                  onChange(form[fieldName], data);
                 }}
               />
             </div>
@@ -517,7 +514,7 @@ export default {
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.treeNodeClickHandle(fieldName, {});
-                onChange(this.form[fieldName], null);
+                onChange(form[fieldName], null);
               }}
             />
           </el-popover>
@@ -531,7 +528,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click">
+          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click" style={{ width: '100%' }}>
             <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
               <Cascader
                 value={form[fieldName]}
@@ -574,7 +571,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom" trigger="click">
+          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom" trigger="click" style={{ width: '100%' }}>
             <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
               <Address
                 value={form[fieldName]}
@@ -594,7 +591,7 @@ export default {
             <el-input
               slot="reference"
               value={this[`${fieldName}AddressTexts`]}
-              placeholder={formType !== 'onlyShow' ? placeholder : ''}
+              placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
               clearable
@@ -639,9 +636,9 @@ export default {
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-autocomplete
             v-model={form[fieldName]}
+            popper-class="search-helper-popper"
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
-            popperClass="search-helper-popper"
             style={{ ...style }}
             clearable
             onSelect={val => {
@@ -650,19 +647,23 @@ export default {
                 form[key] = val[alias[key]];
               }
               if (onlySelect) {
-                this[`${fieldName}PrevValue`] = form[fieldName];
+                this[`__${fieldName}__pv`] = form[fieldName];
               }
             }}
             onBlur={ev => {
               if (!onlySelect) return;
               if (ev.target.value) {
-                form[fieldName] = this[`${fieldName}PrevValue`];
+                form[fieldName] = this[`__${fieldName}__pv`];
               } else {
-                this[`${fieldName}PrevValue`] = '';
+                this[`__${fieldName}__pv`] = '';
               }
+              setTimeout(() => this[`__${fieldName}__cb`]?.([]), 300);
             }}
             onChange={onChange}
-            fetchSuggestions={(queryString, cb) => this.querySearchAsync(request, fieldName, columns, queryString, cb)}
+            fetchSuggestions={(queryString, cb) => {
+              !this[`__${fieldName}__cb`] && (this[`__${fieldName}__cb`] = cb);
+              this.querySearchAsync(request, fieldName, columns, queryString, cb);
+            }}
             scopedSlots={{
               default: ({ item }) => {
                 const single = columns.length === 1;
@@ -844,7 +845,7 @@ export default {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
-        form[fieldName][1] = this.getDefaultEndTime(end);
+        form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`;
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -932,7 +933,8 @@ export default {
               type={dateType.replace('exact', '').slice(0, -5)}
               value={form[fieldName][1]}
               onInput={val => {
-                form[fieldName] = this.formatDate([form[fieldName][0], val ?? ''], conf[dateType].valueFormat, dateType === 'datetimerange');
+                val = !val ? this.getDefaultEndTime(maxDateTime) : val;
+                form[fieldName] = this.formatDate([form[fieldName][0], val], conf[dateType].valueFormat, dateType === 'datetimerange');
               }}
               pickerOptions={{
                 disabledDate: time => {
@@ -1007,8 +1009,7 @@ export default {
             isRange={true}
             value={form[fieldName].length ? form[fieldName] : undefined}
             onInput={val => {
-              val = val === null ? [] : val;
-              form[fieldName] = val;
+              form[fieldName] = val ?? [];
             }}
             value-format={valueFormat}
             range-separator="-"
@@ -1057,8 +1058,7 @@ export default {
           <el-time-select
             value={form[fieldName][0]}
             onInput={val => {
-              val = val === null ? undefined : val;
-              form[fieldName] = [val, endVal];
+              form[fieldName] = [val ?? undefined, endVal];
             }}
             pickerOptions={{
               start: startTime,
@@ -1080,8 +1080,7 @@ export default {
           <el-time-select
             value={form[fieldName][1]}
             onInput={val => {
-              val = val === null ? undefined : val;
-              form[fieldName] = [startVal, val];
+              form[fieldName] = [val ?? undefined, val];
             }}
             pickerOptions={{
               start: startTime,
@@ -1235,11 +1234,11 @@ export default {
     },
     TINYMCE(option) {
       const { form } = this;
-      const { label, fieldName, labelWidth, labelOptions, height, upload, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, height, upload, style = {}, disabled, onChange = noop } = option;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <Tinymce v-model={form[fieldName]} upload={upload} height={height} disabled={disabled} onChange={onChange} />
+          <Tinymce v-model={form[fieldName]} upload={upload} height={height} disabled={disabled} style={{ width: '100%', ...style }} onChange={onChange} />
         </el-form-item>
       );
     },
@@ -1277,9 +1276,6 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-select
-            multiple={multiple}
-            multipleLimit={limit}
-            filterable={filterable}
             value={form[fieldName]}
             onInput={val => {
               if (!(multiple && filterable)) {
@@ -1288,6 +1284,18 @@ export default {
                 setTimeout(() => (form[fieldName] = val), 20);
               }
             }}
+            multiple={multiple}
+            multipleLimit={limit}
+            collapseTags={multiple}
+            filterable={filterable}
+            title={
+              multiple
+                ? itemList
+                    .filter(x => form[fieldName].includes(x.value))
+                    .map(x => x.text)
+                    .join(',')
+                : null
+            }
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
@@ -1300,8 +1308,13 @@ export default {
               }
             }}
             onChange={val => {
-              const { text } = itemList.find(x => x.value === val) || {};
-              onChange(val, !multiple ? text : undefined);
+              const text = !multiple
+                ? itemList.find(x => x.value === val)?.text
+                : itemList
+                    .filter(x => form[fieldName].includes(x.value))
+                    .map(x => x.text)
+                    .join(',');
+              onChange(val, text);
               if (!filterable) return;
               this.filterMethodHandle(fieldName, '');
             }}
@@ -1448,22 +1461,24 @@ export default {
     },
     excuteFormData(form) {
       this.formItemList
-        .filter(x => ['RANGE_INPUT_NUMBER', 'RANGE_TIME_SELECT'].includes(x.type))
+        .filter(x => ['RANGE_DATE', 'RANGE_INPUT_NUMBER', 'RANGE_TIME_SELECT'].includes(x.type))
         .map(x => x.fieldName)
         .forEach(fieldName => {
           if (form[fieldName].length > 0) {
-            // 处理可能出现的风险 bug
-            form[fieldName] = Object.assign([], [undefined, undefined], form[fieldName]);
-            if (form[fieldName].every(x => isUndefined(x))) {
+            let isEmpty = form[fieldName].every(x => {
+              let val = x ?? '';
+              return val === '';
+            });
+            if (isEmpty) {
               form[fieldName] = [];
-            }
-            if (form[fieldName].some(x => isUndefined(x))) {
-              let val = form[fieldName].find(x => !isUndefined(x));
-              form[fieldName] = [val, val];
             }
           }
         });
       for (let attr in form) {
+        // 可能会影响业务代码
+        if (form[attr] === '') {
+          form[attr] = undefined;
+        }
         if (attr.includes('|') && Array.isArray(form[attr])) {
           let [start, end] = attr.split('|');
           form[start] = form[attr][0];
@@ -1539,7 +1554,9 @@ export default {
         // 搜索帮助
         let extraKeys = this[`${x.fieldName}ExtraKeys`];
         if (Array.isArray(extraKeys) && extraKeys.length) {
-          extraKeys.forEach(key => (this.form[key] = undefined));
+          extraKeys.forEach(key => {
+            this.SET_FORM_VALUES({ [key]: undefined });
+          });
         }
         if (!x.noResetable) return;
         noResetValue[x.fieldName] = this.form[x.fieldName];
@@ -1621,24 +1638,28 @@ export default {
       return false;
     },
     getDefaultStartTime(datetime) {
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 00:00:00` : '1900-01-01 00:00:00';
+      const defultValue = this.defultValueOnClear ? `1900-01-01 00:00:00` : '';
+      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 00:00:00` : defultValue;
     },
     getDefaultEndTime(datetime) {
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 23:59:59` : `${moment().format('YYYY-MM-DD')} 23:59:59`;
+      const defultValue = this.defultValueOnClear ? `${moment().format('YYYY-MM-DD')} 23:59:59` : '';
+      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 23:59:59` : defultValue;
     },
     // 日期格式化
     formatDate(val, vf, nft) {
       const arr = Array.isArray(val) ? val : [val];
       const mType = vf.replace('yyyy', 'YYYY').replace('dd', 'DD');
-      let res = arr.map((x, i) => {
-        x = x ?? '';
+      let res = arr.map((x = '', i) => {
         let item = /^[\d-\s\:]+$/.test(x) ? moment(x).format(mType) : '';
         if (item === 'Invalid date') {
           item = '';
         }
         if (!item) {
           let defaultDateTime = i === 0 ? this.getDefaultStartTime() : this.getDefaultEndTime();
-          item = moment(defaultDateTime).format(mType);
+          item = defaultDateTime ? moment(defaultDateTime).format(mType) : item;
+        }
+        if (!nft) {
+          item = i === 0 ? item.replace(/\d{2}:\d{2}:\d{2}$/, '00:00:00') : item.replace(/\d{2}:\d{2}:\d{2}$/, '23:59:59');
         }
         return item;
       });
@@ -1646,10 +1667,8 @@ export default {
       if (res.length === 2 && moment(res[1]).isBefore(res[0])) {
         res[1] = res[0];
       }
-      if (!nft) {
-        res = res.map((x, i) => {
-          return i === 0 ? x.replace(/\d{2}:\d{2}:\d{2}$/, '00:00:00') : x.replace(/\d{2}:\d{2}:\d{2}$/, '23:59:59');
-        });
+      if (res.every(x => !x)) {
+        res = [];
       }
       return Array.isArray(val) ? res : res[0];
     },

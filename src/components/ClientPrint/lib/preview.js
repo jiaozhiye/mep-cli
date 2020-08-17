@@ -2,13 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-04 22:14:08
+ * @Last Modified time: 2020-08-10 10:49:44
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
 import Size from '../../_utils/mixins/size';
 import Locale from '../../_utils/mixins/locale';
 import PrefixCls from '../../_utils/mixins/prefix-cls';
+import Emitter from '../../_utils/mixins/emitter';
 import config from './config';
 import Print from './print';
 
@@ -18,8 +19,8 @@ import PageSetting from './setting';
 
 export default {
   name: 'Preview',
-  mixins: [Size, Locale, PrefixCls, Print],
-  props: ['dataSource', 'templateRender', 'uniqueKey'],
+  mixins: [Size, Locale, PrefixCls, Emitter, Print],
+  props: ['dataSource', 'templateRender', 'uniqueKey', 'closeOnPrinted'],
   provide() {
     return {
       $$preview: this
@@ -70,6 +71,15 @@ export default {
       }
       return result;
     },
+    isWindowsPrinter() {
+      const {
+        printerItems,
+        form: { printerName }
+      } = this;
+      // Windows 内置打印机
+      const regExp = /OneNote|Microsoft|Fax/;
+      return !regExp.test(printerItems.find(x => x.value === printerName).text);
+    },
     pageSize() {
       return this.form.setting.pageSize.split('*').map(x => Number(x));
     },
@@ -95,7 +105,10 @@ export default {
       this.doPrint(this.$$container.createPrintHtml(this.printPage));
       // 存储配置信息
       try {
-        await localforage.setItem(this.printerKey, this.form);
+        await localforage.setItem(this.printerKey, {
+          ...this.form,
+          printerName: this.printerItems.find(x => x.value === this.form.printerName).text
+        });
       } catch (err) {}
     }
   },
@@ -104,7 +117,10 @@ export default {
     try {
       const res = await localforage.getItem(this.printerKey);
       if (Object.keys(res).length) {
-        this.form = Object.assign({}, this.form, res);
+        this.form = Object.assign({}, this.form, {
+          ...res,
+          printerName: this.printerItems.find(x => x.text === res.printerName)?.value ?? -1
+        });
       }
     } catch (err) {}
   },

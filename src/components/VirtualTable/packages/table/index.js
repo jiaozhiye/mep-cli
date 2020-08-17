@@ -2,14 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-25 20:13:09
+ * @Last Modified time: 2020-08-17 15:52:00
  */
 import baseProps from './props';
 import Store from '../store';
 import config from '../config';
 import { isEqual } from 'lodash';
 
-import { columnsFlatMap, getAllColumns, getAllRowKeys, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, debounce, browse } from '../utils';
+import { columnsFlatMap, getAllColumns, getAllRowKeys, tableDataFlatMap, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
@@ -284,7 +284,7 @@ export default {
     fetchParams(next, prev) {
       if (!this.isFetch) return;
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
-      if (!isOnlyPageChange && next.currentPage > 1) {
+      if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch.stopToFirst) {
         this.toFirstPage();
       } else {
         debounce(this.getTableData)();
@@ -293,7 +293,7 @@ export default {
     selectionKeys(next, prev) {
       if (!this.rowSelection || isEqual(next, prev)) return;
       const { onChange = noop } = this.rowSelection;
-      const selectedRows = this.tableFullData.filter(record => next.includes(this.getRowKey(record, record.index)));
+      const selectedRows = tableDataFlatMap(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
       onChange(next, selectedRows);
     },
     [`rowSelection.selectedRowKeys`](next) {
@@ -303,7 +303,7 @@ export default {
     highlightKey(next) {
       if (!this.rowHighlight) return;
       const { onChange = noop } = this.rowHighlight;
-      const currentRow = this.tableFullData.find(record => this.getRowKey(record, record.index) === next);
+      const currentRow = tableDataFlatMap(this.tableFullData).find(record => this.getRowKey(record, record.index) === next);
       onChange(next, currentRow || null);
     },
     [`rowHighlight.currentRowKey`](next) {
@@ -528,7 +528,7 @@ export default {
             {/* 主要内容 */}
             <div class="v-table--main-wrapper">
               {/* 头部 */}
-              <TableHeader {...tableHeaderProps} />
+              {showHeader && <TableHeader {...tableHeaderProps} />}
               {/* 表格体 */}
               <TableBody {...tableBodyProps} />
               {/* 底部 */}

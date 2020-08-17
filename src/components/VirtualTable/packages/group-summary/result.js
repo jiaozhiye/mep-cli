@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-05 14:14:20
+ * @Last Modified time: 2020-08-05 15:36:52
  */
 import { maxBy, minBy, sumBy } from 'lodash';
 import { groupBy, getCellValue, setCellValue } from '../utils';
@@ -59,7 +59,7 @@ export default {
       const params = Object.assign({}, fetchParams, {
         [config.groupSummary.summaryFieldName]: this.summary.map(x => `${x.formula}|${x.summary}`).join(','),
         [config.groupSummary.groupbyFieldName]: this.group.map(x => `${x.group}`).join(','),
-        usedJH: 0
+        usedJH: 2
       });
       return Object.assign({}, fetch, { params });
     },

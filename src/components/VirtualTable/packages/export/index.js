@@ -2,15 +2,15 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-20 17:20:08
+ * @Last Modified time: 2020-08-07 16:10:11
  */
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
 
 import config from '../config';
-import i18n from '../locale';
 import Locale from '../locale/mixin';
 import { setCellValue, filterTableColumns } from '../utils';
+import moment from 'moment';
 import { get, isFunction } from 'lodash';
 
 export default {
@@ -19,7 +19,7 @@ export default {
   props: {
     flattenColumns: PropTypes.array,
     data: PropTypes.array.def([]),
-    fileName: PropTypes.string.def(`${i18n.t('table.export.fileName')}.xlsx`),
+    fileName: PropTypes.string,
     fetch: PropTypes.object
   },
   inject: ['$$table'],
@@ -87,12 +87,13 @@ export default {
   },
   render() {
     const { data, fields, fileName, fetch } = this;
+    const exportFileName = fileName ?? `${moment().format('YYYYMMDDHHmmss')}.xlsx`;
     const wrapProps = {
       props: {
         initialValue: data,
         fields,
-        fileType: fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase(),
-        fileName,
+        fileType: exportFileName.slice(exportFileName.lastIndexOf('.') + 1).toLowerCase(),
+        fileName: exportFileName,
         ...this.createFetchParams(fetch),
         formatHandle: this.createDataList
       }

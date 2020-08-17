@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 15:16:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 13:55:11
+ * @Last Modified time: 2020-08-14 11:11:54
  */
 .el-notification {
   a {
@@ -29,7 +29,7 @@
 }
 .el-input:not(.el-input--prefix) {
   .el-input__inner {
-    padding: 0 $modulePadding;
+    padding-left: $modulePadding;
   }
 }
 .el-input.el-input-group--append {
@@ -47,6 +47,18 @@
 .el-input.el-input--suffix {
   .el-input__suffix {
     transition: none;
+  }
+}
+.el-radio-group {
+  line-height: inherit;
+}
+.el-radio,
+.el-checkbox {
+  margin-right: 20px;
+  line-height: inherit;
+  .el-radio__label,
+  .el-checkbox__label {
+    padding-left: 6px;
   }
 }
 .el-select-dropdown {

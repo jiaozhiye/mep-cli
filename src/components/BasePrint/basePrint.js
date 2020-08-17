@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-01 16:39:32
+ * @Last Modified time: 2020-08-07 09:17:31
  **/
 import { getLodop } from './LodopFuncs';
 import css from './style.js';
@@ -78,7 +78,7 @@ export default {
       if (this.direction === 'vertical') {
         // 按内容走纸，连续打印
         if (this.alwaysPrint) {
-          this.LODOP.SET_PRINT_PAGESIZE(3, this.pageSize[0], 90, ''); // 9mm -> 打印的下边距
+          this.LODOP.SET_PRINT_PAGESIZE(3, this.pageSize[0], 90, '');
         } else {
           // 整张打印
           this.LODOP.SET_PRINT_PAGESIZE(1, this.pageSize[0], this.pageSize[1], '');
@@ -91,9 +91,6 @@ export default {
         this.LODOP.SET_SHOW_MODE('LANDSCAPE_DEFROTATED', 1);
       }
 
-      // 设置打印内容的自动缩放
-      this.LODOP.SET_PRINT_MODE('PRINT_PAGE_PERCENT', 'Full-Width');
-
       // 设置设置完打印后 是否关闭预览窗口;
       this.LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
 
@@ -102,7 +99,6 @@ export default {
         this.LODOP.SET_PRINT_COPIES(this.printCopies);
       }
 
-      // 需要导出
       if (!this.exportExcel?.fileName) {
         // 追加打印头部
         this.LODOP.ADD_PRINT_TABLE(0, 0, '100%', 60, css.style + this.createPrintLogo());

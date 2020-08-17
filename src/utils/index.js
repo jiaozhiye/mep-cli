@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-29 13:02:43
+ * @Last Modified time: 2020-08-12 16:49:05
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import moment from 'moment';
@@ -40,12 +40,13 @@ export const sleep = async delay => {
 
 /**
  * @description 捕获基于 Promise 操作的异常
- * @param {object} promise Promise 对象
+ * @param {func} asyncFn 异步函数
+ * @param {any} params 函数的参数
  * @returns {array} 错误前置
  */
-export const errorCapture = async promise => {
+export const errorCapture = async (asyncFn, params) => {
   try {
-    const res = await promise;
+    const res = await asyncFn(params);
     return [null, res];
   } catch (e) {
     return [e, null];

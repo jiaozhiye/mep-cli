@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 09:34:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-05 08:31:12
+ * @Last Modified time: 2020-08-10 13:21:00
  */
 import { sleep } from '../../_utils/tool';
 import { mmToPx, pxToMm, insertBefore, isPageBreak } from './utils';
@@ -31,36 +31,40 @@ export default {
     previewEl() {
       return this.$el.querySelector('.workspace');
     },
-    realWidth() {
+    pagePrintWidth() {
       const {
         pageSize,
+        isWindowsPrinter,
         form: {
-          setting: { direction, distance }
+          setting: { direction }
         }
       } = this.$$preview;
-      const width = mmToPx(direction === 'vertical' ? pageSize[0] : pageSize[1]);
-      return width - mmToPx((distance.left - config.defaultDistance) * 10) - mmToPx((distance.right - config.defaultDistance) * 10);
+      const paddingX = isWindowsPrinter ? config.defaultDistance * 10 + config.defaultDistance * 10 : 0;
+      const pageWidth = direction === 'vertical' ? pageSize[0] : pageSize[1];
+      return pageWidth - paddingX;
     },
-    realHeight() {
+    pagePrintHeight() {
       const {
         pageSize,
+        isWindowsPrinter,
         form: {
-          setting: { direction, distance }
+          setting: { direction }
         }
       } = this.$$preview;
-      const height = mmToPx(direction === 'vertical' ? pageSize[1] : pageSize[0]);
-      return height - mmToPx((distance.top - config.defaultDistance) * 10) - mmToPx((distance.bottom - config.defaultDistance) * 10);
+      const paddingY = isWindowsPrinter ? config.defaultDistance * 10 + config.defaultDistance * 10 : 0;
+      const pageHeight = direction === 'vertical' ? pageSize[1] : pageSize[0];
+      return pageHeight - paddingY;
     },
     workspaceWidth() {
-      return `${this.realWidth}px`;
+      const { distance } = this.$$preview.form.setting;
+      return mmToPx(this.pagePrintWidth - (distance.left - config.defaultDistance) * 10 - (distance.right - config.defaultDistance) * 10);
     },
     workspaceHeight() {
-      const { form } = this.$$preview;
-      // 针式打印机  连续打印
-      if (form.printerType === 'stylus') {
-        return 'auto';
-      }
-      return `${this.realHeight}px`;
+      const { distance } = this.$$preview.form.setting;
+      return mmToPx(this.pagePrintHeight - (distance.top - config.defaultDistance) * 10 - (distance.bottom - config.defaultDistance) * 10);
+    },
+    scaleSize() {
+      return this.$$preview.form.scale;
     },
     pageDistance() {
       const {
@@ -75,18 +79,28 @@ export default {
         bottom: mmToPx(distance.bottom * 10)
       };
     },
-    scaleSize() {
-      return this.$$preview.form.scale;
-    },
     workspaceStyle() {
+      const {
+        form: { printerType }
+      } = this.$$preview;
+      const offsetWidth = this.workspaceWidth + this.pageDistance.left + this.pageDistance.right;
+      const defaultOffsetLeft = config.previewWidth - offsetWidth <= 0 ? 0 : (config.previewWidth - offsetWidth) / 2;
+      const stepOffsetLeft = Math.abs(((1 - this.scaleSize) * offsetWidth) / 2);
+      let offsetLeft = 0;
+      if (this.scaleSize > 1) {
+        offsetLeft = stepOffsetLeft > defaultOffsetLeft ? -1 * defaultOffsetLeft : -1 * stepOffsetLeft;
+      }
+      if (this.scaleSize < 1) {
+        offsetLeft = offsetWidth - stepOffsetLeft * 2 > config.previewWidth ? 0 : defaultOffsetLeft > 0 ? stepOffsetLeft : (config.previewWidth - (offsetWidth - stepOffsetLeft * 2)) / 2;
+      }
       return {
-        width: this.workspaceWidth,
-        height: this.workspaceHeight,
+        width: `${this.workspaceWidth}px`,
+        height: `${printerType === 'stylus' ? 'auto' : this.workspaceHeight + 'px'}`,
         paddingLeft: `${this.pageDistance.left}px`,
         paddingRight: `${this.pageDistance.right}px`,
         paddingTop: `${this.pageDistance.top}px`,
         paddingBottom: `${this.pageDistance.bottom}px`,
-        transform: `scale(${this.scaleSize})`,
+        transform: `translateX(${offsetLeft}px) scale(${this.scaleSize})`,
         opacity: this.loading ? 0 : 1
       };
     },
@@ -95,7 +109,7 @@ export default {
     }
   },
   watch: {
-    realHeight() {
+    workspaceHeight() {
       this.createWorkspace();
     },
     [`$$preview.form.setting.fixedLogo`]() {
@@ -109,10 +123,10 @@ export default {
     createLogo() {
       const __html__ = [
         `<tr style="height: ${config.logoHeight}px;">`,
-        `<td colspan="12" align="left" valign="top">`,
+        `<td colspan="12" align="left">`,
         `<img src="/static/img/logo_l.png" border="0" height="26" style="margin-left: 10px;" />`,
         `</td>`,
-        `<td colspan="12" align="right" valign="top">`,
+        `<td colspan="12" align="right">`,
         `<img src="/static/img/logo_r.png" border="0" height="38" style="margin-right: 10px;" />`,
         `</td>`,
         `</tr>`
@@ -160,7 +174,7 @@ export default {
       } = this.$$preview;
 
       // 页面高度
-      let pageHeight = setting.fixedLogo ? this.realHeight - config.logoHeight : this.realHeight;
+      let pageHeight = setting.fixedLogo ? this.workspaceHeight - config.logoHeight : this.workspaceHeight;
 
       let tmpArr = [];
       this.previewHtmls = [];
@@ -236,7 +250,7 @@ export default {
       return __html__;
     },
     createExportHtml() {
-      return '<table>' + this.createTdCols() + this.createLogo() + this.elementHtmls.join('') + '</table>';
+      return '<table>' + this.createLogo() + this.createTdCols() + this.elementHtmls.join('') + '</table>';
     },
     // 加载完成打印模板组件，创建预览工作区
     async SHOW_PREVIEW() {
@@ -251,7 +265,7 @@ export default {
     }
   },
   render() {
-    const { loading, templateRender: TemplateRender, dataSource, realWidth, workspaceWidth, workspaceStyle } = this;
+    const { loading, templateRender: TemplateRender, dataSource, workspaceWidth, workspaceStyle } = this;
     const prefixCls = this.getPrefixCls('cviewport--wrapper');
     const cls = { [prefixCls]: true };
     return (
@@ -259,7 +273,7 @@ export default {
         <Spin spinning={loading} tip="Loading..." containerStyle={{ height: `100%` }}>
           <div class="preview">
             {/* 隐藏原始的打印模板内容 */}
-            <div class="origin-template" style={{ width: workspaceWidth, marginLeft: `-${Math.floor(realWidth / 2)}px` }}>
+            <div class="origin-template" style={{ width: `${workspaceWidth}px`, marginLeft: `-${Math.floor(workspaceWidth / 2)}px` }}>
               <TemplateRender dataSource={dataSource} />
             </div>
             {/* 预览工作区 */}

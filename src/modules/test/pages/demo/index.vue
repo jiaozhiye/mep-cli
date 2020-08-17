@@ -50,7 +50,7 @@
         @success="successHandle"
       />
     </base-dialog>
-    <base-print ref="print" :data="printList" :isPreview="false" :render="() => import(`@test/pages/printTemplate/demo`)" />
+    <base-print ref="print" :data="printList" alwaysPrint :isPreview="false" :render="() => import(`@test/pages/printTemplate/demo`)" />
   </div>
 </template>
 
@@ -75,7 +75,7 @@ export default {
     this.selectedKeys = [];
     return {
       filterList: this.createTopFilterList(),
-      filterDefaultValue: { c: '' },
+      filterDefaultValue: {},
       columns: this.createTableColumns(),
       fetch: {
         api: () => {},
@@ -135,7 +135,7 @@ export default {
     async printHandle3() {
       await sleep(1000);
       let res = [];
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 100; i++) {
         res[i] = i;
       }
       this.printDataList = res;
@@ -153,7 +153,6 @@ export default {
           type: 'INPUT',
           label: this.$t('demo.label1'),
           fieldName: 'a',
-          noResetable: true,
           rules: [
             { required: true, message: '请输入条件', trigger: 'change' },
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'change' }

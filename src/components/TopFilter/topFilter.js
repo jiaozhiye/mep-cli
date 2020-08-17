@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-02 08:25:45
+ * @Last Modified time: 2020-08-17 15:37:02
  **/
-import { get, set, xor, transform, cloneDeep, isEqual, isObject, isUndefined, isFunction } from 'lodash';
+import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
 import PropTypes from '../_utils/vue-types';
 import Size from '../_utils/mixins/size';
@@ -12,6 +12,7 @@ import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
 import FormCols from '../_utils/mixins/form-cols';
 import pinyin, { STYLE_FIRST_LETTER } from '../Pinyin';
+import InputNumber from '../FormPanel/InputNumber';
 import Cascader from '../FormPanel/Cascader.vue';
 import SearchHelper from '../SearchHelper';
 import BaseDialog from '../BaseDialog';
@@ -37,7 +38,8 @@ export default {
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
     isCollapse: PropTypes.bool.def(true),
     isDisabled: PropTypes.bool.def(false),
-    isSubmitBtn: PropTypes.bool.def(true)
+    isSubmitBtn: PropTypes.bool.def(true),
+    defultValueOnClear: PropTypes.bool.def(false)
   },
   data() {
     this.arrayTypes = ['RANGE_DATE', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX'];
@@ -236,48 +238,52 @@ export default {
       } = option;
       const { minlength = 0, maxlength, noInput = false, unitRender, onInput = noop, onFocus = noop } = options;
       const isSearchHelper = !!Object.keys(searchHelper).length;
-      const dialogProps = {
-        props: {
-          visible: this.visible[fieldName],
-          title: this.t('form.searchHelper'),
-          showFullScreen: false,
-          destroyOnClose: true,
-          containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
-        },
-        on: {
-          'update:visible': val => (this.visible[fieldName] = val)
-        }
-      };
-      const shProps = {
-        props: {
-          ...searchHelper
-        },
-        on: {
-          close: (visible, data, alias) => {
-            if (isObject(data) && Object.keys(alias).length) {
-              const extraKeys = [];
-              for (let key in alias) {
-                if (key !== 'extra') {
-                  form[key] = data[alias[key]];
-                  if (key !== fieldName) {
-                    extraKeys.push(key);
-                  } else {
-                    onChange(form[key]);
+      const dialogProps = isSearchHelper
+        ? {
+            props: {
+              visible: this.visible[fieldName],
+              title: this.t('form.searchHelper'),
+              showFullScreen: false,
+              destroyOnClose: true,
+              containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
+            },
+            on: {
+              'update:visible': val => (this.visible[fieldName] = val)
+            }
+          }
+        : null;
+      const shProps = isSearchHelper
+        ? {
+            props: {
+              ...searchHelper
+            },
+            on: {
+              close: (visible, data, alias) => {
+                if (isObject(data) && Object.keys(alias).length) {
+                  for (let key in alias) {
+                    if (key !== 'extra') {
+                      form[key] = data[alias[key]];
+                      if (key === fieldName) {
+                        onChange(form[key]);
+                      }
+                    } else {
+                      this.desc[fieldName] = data[alias[key]];
+                    }
                   }
-                } else {
-                  this.desc[fieldName] = data[alias[key]];
                 }
-              }
-              if (extraKeys.length) {
-                this[`${fieldName}ExtraKeys`] = extraKeys;
+                const { closed = noop } = searchHelper;
+                closed(data);
+                this.visible[fieldName] = visible;
               }
             }
-            const { closed = noop } = searchHelper;
-            closed(data);
-            this.visible[fieldName] = visible;
           }
+        : null;
+      if (isSearchHelper) {
+        let fieldKeys = [...Object.keys(searchHelper.fieldAliasMap?.() ?? {}), ...Object.values(searchHelper.fieldsDefine ?? {})];
+        if (!this[`${fieldName}ExtraKeys`]) {
+          this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
         }
-      };
+      }
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -344,27 +350,18 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-input-number
+          <InputNumber
             v-model={form[fieldName]}
-            placeholder={!disabled ? placeholder : ''}
-            disabled={disabled}
-            style={{ ...style }}
-            controls-position="right"
             min={min}
             max={max}
             step={step}
             precision={precision}
+            maxlength={maxlength}
             controls={controls}
-            clearable
-            onChange={val => {
-              if (maxlength > 0 && typeof val !== 'undefined') {
-                const res = Number.parseInt(val).toString();
-                if (res.length > maxlength) {
-                  form[fieldName] = Number(res.slice(0, maxlength));
-                }
-              }
-              onChange(form[fieldName]);
-            }}
+            placeholder={!disabled ? placeholder : ''}
+            disabled={disabled}
+            style={{ ...style }}
+            onChange={onChange}
             nativeOnKeydown={this.enterEventHandle}
           />
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
@@ -461,6 +458,7 @@ export default {
             transition="el-zoom-in-top"
             placement="bottom-start"
             trigger="click"
+            style={{ width: '100%' }}
             on-after-leave={() => {
               this[`${fieldName}TreeFilterTexts`] = '';
               this.treeFilterTextHandle(fieldName);
@@ -485,7 +483,7 @@ export default {
                 filterNodeMethod={this.filterNodeHandle}
                 on-node-click={data => {
                   this.treeNodeClickHandle(fieldName, data);
-                  onChange(this.form[fieldName], data);
+                  onChange(form[fieldName], data);
                 }}
               />
             </div>
@@ -499,7 +497,7 @@ export default {
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.treeNodeClickHandle(fieldName, {});
-                onChange(this.form[fieldName], null);
+                onChange(form[fieldName], null);
               }}
               nativeOnKeydown={this.enterEventHandle}
             />
@@ -514,7 +512,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click">
+          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click" style={{ width: '100%' }}>
             <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
               <Cascader
                 value={form[fieldName]}
@@ -581,9 +579,9 @@ export default {
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-autocomplete
             v-model={form[fieldName]}
+            popper-class="search-helper-popper"
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
-            popperClass="search-helper-popper"
             style={{ ...style }}
             clearable
             onSelect={val => {
@@ -592,20 +590,24 @@ export default {
                 form[key] = val[alias[key]];
               }
               if (onlySelect) {
-                this[`${fieldName}PrevValue`] = form[fieldName];
+                this[`__${fieldName}__pv`] = form[fieldName];
               }
             }}
             onBlur={ev => {
               if (!onlySelect) return;
               if (ev.target.value) {
-                form[fieldName] = this[`${fieldName}PrevValue`];
+                form[fieldName] = this[`__${fieldName}__pv`];
               } else {
-                this[`${fieldName}PrevValue`] = '';
+                this[`__${fieldName}__pv`] = '';
               }
+              setTimeout(() => this[`__${fieldName}__cb`]?.([]), 300);
             }}
             onChange={onChange}
             nativeOnKeydown={this.enterEventHandle}
-            fetchSuggestions={(queryString, cb) => this.querySearchAsync(request, fieldName, columns, queryString, cb)}
+            fetchSuggestions={(queryString, cb) => {
+              !this[`__${fieldName}__cb`] && (this[`__${fieldName}__cb`] = cb);
+              this.querySearchAsync(request, fieldName, columns, queryString, cb);
+            }}
             scopedSlots={{
               default: ({ item }) => {
                 const single = columns.length === 1;
@@ -787,7 +789,7 @@ export default {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
-        form[fieldName][1] = this.getDefaultEndTime(end);
+        form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`;
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -875,7 +877,8 @@ export default {
               type={dateType.replace('exact', '').slice(0, -5)}
               value={form[fieldName][1]}
               onInput={val => {
-                form[fieldName] = this.formatDate([form[fieldName][0], val ?? ''], conf[dateType].valueFormat, dateType === 'datetimerange');
+                val = !val ? this.getDefaultEndTime(maxDateTime) : val;
+                form[fieldName] = this.formatDate([form[fieldName][0], val], conf[dateType].valueFormat, dateType === 'datetimerange');
               }}
               pickerOptions={{
                 disabledDate: time => {
@@ -1023,10 +1026,6 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-select
-            multiple={multiple}
-            multipleLimit={limit}
-            collapseTags={multiple}
-            filterable={filterable}
             value={form[fieldName]}
             onInput={val => {
               if (!(multiple && filterable)) {
@@ -1035,6 +1034,18 @@ export default {
                 setTimeout(() => (form[fieldName] = val), 20);
               }
             }}
+            multiple={multiple}
+            multipleLimit={limit}
+            collapseTags={multiple}
+            filterable={filterable}
+            title={
+              multiple
+                ? itemList
+                    .filter(x => form[fieldName].includes(x.value))
+                    .map(x => x.text)
+                    .join(',')
+                : null
+            }
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
@@ -1048,8 +1059,13 @@ export default {
               }
             }}
             onChange={val => {
-              const { text } = itemList.find(x => x.value === val) || {};
-              onChange(val, !multiple ? text : undefined);
+              const text = !multiple
+                ? itemList.find(x => x.value === val)?.text
+                : itemList
+                    .filter(x => form[fieldName].includes(x.value))
+                    .map(x => x.text)
+                    .join(',');
+              onChange(val, text);
               if (!filterable) return;
               this.filterMethodHandle(fieldName, '');
             }}
@@ -1200,18 +1216,20 @@ export default {
         .map(x => x.fieldName)
         .forEach(fieldName => {
           if (form[fieldName].length > 0) {
-            // 处理可能出现的风险 bug
-            form[fieldName] = Object.assign([], [undefined, undefined], form[fieldName]);
-            if (form[fieldName].every(x => isUndefined(x))) {
+            let isEmpty = form[fieldName].every(x => {
+              let val = x ?? '';
+              return val === '';
+            });
+            if (isEmpty) {
               form[fieldName] = [];
-            }
-            if (form[fieldName].some(x => isUndefined(x))) {
-              let val = form[fieldName].find(x => !isUndefined(x));
-              form[fieldName] = [val, val];
             }
           }
         });
       for (let attr in form) {
+        // 可能会影响业务代码
+        if (form[attr] === '') {
+          form[attr] = undefined;
+        }
         if (attr.includes('|') && Array.isArray(form[attr])) {
           let [start, end] = attr.split('|');
           form[start] = form[attr][0];
@@ -1258,7 +1276,9 @@ export default {
         // 搜索帮助
         let extraKeys = this[`${x.fieldName}ExtraKeys`];
         if (Array.isArray(extraKeys) && extraKeys.length) {
-          extraKeys.forEach(key => (this.form[key] = undefined));
+          extraKeys.forEach(key => {
+            this.SET_FORM_VALUES({ [key]: undefined });
+          });
         }
         if (!x.noResetable) return;
         noResetValue[x.fieldName] = this.form[x.fieldName];
@@ -1348,24 +1368,28 @@ export default {
       return false;
     },
     getDefaultStartTime(datetime) {
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 00:00:00` : '1900-01-01 00:00:00';
+      const defultValue = this.defultValueOnClear ? `1900-01-01 00:00:00` : '';
+      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 00:00:00` : defultValue;
     },
     getDefaultEndTime(datetime) {
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 23:59:59` : `${moment().format('YYYY-MM-DD')} 23:59:59`;
+      const defultValue = this.defultValueOnClear ? `${moment().format('YYYY-MM-DD')} 23:59:59` : '';
+      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 23:59:59` : defultValue;
     },
     // 日期格式化
     formatDate(val, vf, nft) {
       const arr = Array.isArray(val) ? val : [val];
       const mType = vf.replace('yyyy', 'YYYY').replace('dd', 'DD');
-      let res = arr.map((x, i) => {
-        x = x ?? '';
+      let res = arr.map((x = '', i) => {
         let item = /^[\d-\s\:]+$/.test(x) ? moment(x).format(mType) : '';
         if (item === 'Invalid date') {
           item = '';
         }
         if (!item) {
           let defaultDateTime = i === 0 ? this.getDefaultStartTime() : this.getDefaultEndTime();
-          item = moment(defaultDateTime).format(mType);
+          item = defaultDateTime ? moment(defaultDateTime).format(mType) : item;
+        }
+        if (!nft) {
+          item = i === 0 ? item.replace(/\d{2}:\d{2}:\d{2}$/, '00:00:00') : item.replace(/\d{2}:\d{2}:\d{2}$/, '23:59:59');
         }
         return item;
       });
@@ -1373,10 +1397,8 @@ export default {
       if (res.length === 2 && moment(res[1]).isBefore(res[0])) {
         res[1] = res[0];
       }
-      if (!nft) {
-        res = res.map((x, i) => {
-          return i === 0 ? x.replace(/\d{2}:\d{2}:\d{2}$/, '00:00:00') : x.replace(/\d{2}:\d{2}:\d{2}$/, '23:59:59');
-        });
+      if (res.every(x => !x)) {
+        res = [];
       }
       return Array.isArray(val) ? res : res[0];
     },
@@ -1416,6 +1438,11 @@ export default {
         if (this.fieldNames.includes(key)) {
           this.form[key] = values[key] ?? undefined;
         }
+      }
+    },
+    SET_FORM_VALUES(values = {}) {
+      for (let key in values) {
+        this.form[key] = values[key] ?? undefined;
       }
     },
     async GET_FORM_DATA() {

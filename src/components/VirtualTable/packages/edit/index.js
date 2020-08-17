@@ -2,14 +2,15 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-04 20:46:08
+ * @Last Modified time: 2020-08-15 18:15:11
  */
-import { isEqual, isUndefined, isFunction, isObject } from 'lodash';
+import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
 import Locale from '../locale/mixin';
 import { getCellValue, setCellValue, deepFindColumn } from '../utils';
 
 import Checkbox from '../checkbox';
+import InputNumber from './InputNumber';
 import SearchHelper from '../../../SearchHelper';
 import BaseDialog from '../../../BaseDialog';
 
@@ -106,41 +107,20 @@ export default {
     },
     numberHandle(row, column) {
       const { dataIndex, precision } = column;
-      const { extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
+      const { extra = {}, rules = [], onChange = noop, onEnter = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
-      const regExp = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
       return (
-        <el-input
+        <InputNumber
           ref={`number-${this.dataKey}`}
           size={this.size}
           value={prevValue}
           onInput={val => {
-            let isPassCheck = (!Number.isNaN(val) && regExp.test(val)) || val === '' || val === '-';
-            if (!isPassCheck) return;
-            // 不允许是负数
-            if (extra.min === 0 && val === '-') return;
-            let chunks = val.split('.');
-            // 判断整型
-            if (precision === 0 && chunks.length > 1) return;
-            // 判断浮点型
-            if (precision > 0 && chunks.length > 1 && chunks[1].length > precision) return;
-            // 判断最大值/最小值
-            if (Number(val) > extra.max) return;
-            if (Number(val) < extra.min) return;
-            // 设置数据值
             setCellValue(row, dataIndex, val);
-            // 校验
-            this.createFieldValidate(rules, val);
-            // input 事件
-            onInput({ [this.dataKey]: val }, row);
           }}
+          precision={precision}
+          min={extra.min}
+          max={extra.max}
           onChange={val => {
-            // 处理 val 值得特殊情况
-            val = val === '-' ? '' : val;
-            if (precision >= 0 && val !== '') {
-              val = Number(val).toFixed(precision);
-            }
-            setCellValue(row, dataIndex, val);
             this.createFieldValidate(rules, val);
             this.store.addToUpdated(row);
             onChange({ [this.dataKey]: val }, row);
@@ -162,13 +142,14 @@ export default {
       return (
         <el-select
           size={this.size}
-          multiple={isMultiple}
           value={prevValue}
           onInput={val => {
             setCellValue(row, dataIndex, val);
           }}
+          multiple={isMultiple}
+          collapseTags={isMultiple}
           placeholder={this.t('table.editable.selectPlaceholder')}
-          clearable={isUndefined(extra.clearable) ? !0 : extra.clearable}
+          clearable={extra.clearable ?? !0}
           onChange={val => {
             this.createFieldValidate(rules, val);
             this.store.addToUpdated(row);
@@ -202,7 +183,7 @@ export default {
           }}
           format={dateFormat}
           value-format={dateFormat}
-          clearable={!1}
+          clearable={extra.clearable ?? !0}
           placeholder={!isDateTime ? this.t('table.editable.datePlaceholder') : this.t('table.editable.datetimePlaceholder')}
           onChange={val => {
             this.createFieldValidate(rules, val);
@@ -316,7 +297,7 @@ export default {
             ref={`search-helper-${this.dataKey}`}
             size={this.size}
             value={prevValue}
-            clearable
+            clearable={extra.clearable ?? !0}
             disabled={extra.disabled}
             onClear={() => {
               setHelperValues('');
