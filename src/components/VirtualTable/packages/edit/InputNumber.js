@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-15 18:12:05
+ * @Last Modified time: 2020-08-25 17:19:31
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -71,6 +71,9 @@ export default {
       this.setValueHandle(val);
       this.emitEventHandle(val);
     },
+    focus() {
+      this.$refs['input']?.focus();
+    },
     select() {
       this.$refs['input']?.select();
     }
@@ -114,9 +117,6 @@ export default {
             if (precision === 0 && chunks.length > 1) return;
             // 判断浮点型
             if (precision > 0 && chunks.length > 1 && chunks[1].length > precision) return;
-            // 判断最大值/最小值
-            if (Number(val) > max) return;
-            if (Number(val) < min) return;
             // 设置数据值
             this.currentValue = val;
           }}
@@ -125,6 +125,13 @@ export default {
           onChange={val => {
             // 处理 val 值得特殊情况
             val = val === '-' ? '' : val;
+            // 判断最大值/最小值
+            if (Number(val) > max) {
+              val = max;
+            }
+            if (Number(val) < min) {
+              val = min;
+            }
             this.setValueHandle(val);
             this.emitEventHandle(val);
           }}

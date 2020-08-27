@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-15 18:15:11
+ * @Last Modified time: 2020-08-26 17:09:21
  */
 import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -10,6 +10,7 @@ import Locale from '../locale/mixin';
 import { getCellValue, setCellValue, deepFindColumn } from '../utils';
 
 import Checkbox from '../checkbox';
+import InputText from './InputText';
 import InputNumber from './InputNumber';
 import SearchHelper from '../../../SearchHelper';
 import BaseDialog from '../../../BaseDialog';
@@ -81,17 +82,19 @@ export default {
       const { extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
       return (
-        <el-input
+        <InputText
           ref={`text-${this.dataKey}`}
           size={this.size}
           value={prevValue}
           maxlength={extra.maxlength}
           onInput={val => {
             setCellValue(row, dataIndex, val);
-            this.createFieldValidate(rules, val);
+          }}
+          onNativeInput={val => {
             onInput({ [this.dataKey]: val }, row);
           }}
           onChange={val => {
+            this.createFieldValidate(rules, val);
             this.store.addToUpdated(row);
             onChange({ [this.dataKey]: val }, row);
             this.$$table.dataChangeHandle();
@@ -107,7 +110,7 @@ export default {
     },
     numberHandle(row, column) {
       const { dataIndex, precision } = column;
-      const { extra = {}, rules = [], onChange = noop, onEnter = noop } = this.options;
+      const { extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
       return (
         <InputNumber
@@ -120,6 +123,8 @@ export default {
           precision={precision}
           min={extra.min}
           max={extra.max}
+          maxlength={extra.maxlength}
+          style={{ width: '100%' }}
           onChange={val => {
             this.createFieldValidate(rules, val);
             this.store.addToUpdated(row);

@@ -22,7 +22,6 @@
     <div class="right">
       <div class="wrap">
         <h3>
-          <!-- <img src="@/assets/img/login_title.png" width="260" /> -->
           Welcome to MEP
         </h3>
         <div class="main">
@@ -225,7 +224,7 @@ export default {
   display: flex;
   height: 100%;
   background: #fff url(../../assets/img/login_bg.svg) no-repeat 50%;
-  background-size: 100%;
+  background-size: contain;
   .left {
     flex: 1;
     background: url(../../assets/img/login_left_bg.jpg) 50% 50% no-repeat;

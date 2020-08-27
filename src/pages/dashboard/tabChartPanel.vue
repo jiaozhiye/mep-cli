@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
-    <SuperTabs :initial-value="defaultTabLabel" size="large" animated>
-      <div slot="extraContent">
+    <SuperTabs :initial-value="defaultTabLabel" size="large" :tabNavOffsetLeft="10" animated>
+      <div slot="extraContent" style="margin-right: 4px;">
         <el-radio-group v-model="fetchParams.radioValue" size="small" @change="changeHandle">
           <el-radio-button label="1001">今日</el-radio-button>
           <el-radio-button label="1002">本周</el-radio-button>
@@ -10,10 +10,10 @@
         </el-radio-group>
       </div>
       <tab-panel key="1" label="成交量">
-        <Chart1 :fetchapi="() => {}" :params="fetchParams" :container-style="{ height: '345px' }" />
+        <Chart1 :fetchapi="() => {}" :params="fetchParams" :container-style="{ height: '350px' }" />
       </tab-panel>
       <tab-panel key="2" label="同比增长">
-        <Chart2 :fetchapi="() => {}" :params="fetchParams" :container-style="{ height: '345px' }" />
+        <Chart2 :fetchapi="() => {}" :params="fetchParams" :container-style="{ height: '350px' }" />
       </tab-panel>
     </SuperTabs>
   </div>

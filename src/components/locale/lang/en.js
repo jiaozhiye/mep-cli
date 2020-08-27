@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-07 13:24:29
+ * @Last Modified time: 2020-08-24 19:47:38
  */
 import tableEnLocale from '../../VirtualTable/packages/locale/lang/en';
 
@@ -101,7 +101,9 @@ export default {
     save: '保 存',
     spread: '展开',
     collect: '收起',
-    breakSpace: '分割线',
-    searchHelper: '搜索帮助'
+    searchHelper: '搜索帮助',
+    trueText: '是',
+    falseText: '否',
+    emptyValue: '空'
   }
 };

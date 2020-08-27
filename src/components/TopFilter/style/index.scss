@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-14 10:28:41
+ * @Last Modified time: 2020-08-19 17:08:56
  */
 @import '../../style/index.scss';
 
@@ -262,4 +262,25 @@ $prefix-cls: '#{$v-prefix}-top-filter';
       }
     }
   }
+}
+.ep-search-helper-popper {
+  width: auto !important;
+  min-width: 250px;
+  max-width: 50%;
+  ul {
+    li:first-child {
+      cursor: default;
+      &:hover {
+        background-color: #fff;
+      }
+    }
+  }
+}
+.ep-search-helper-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  cursor: pointer;
 }

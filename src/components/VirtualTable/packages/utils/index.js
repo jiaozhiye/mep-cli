@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-22 10:39:49
+ * @Last Modified time: 2020-08-20 10:11:38
  */
 import { get, set, transform, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -129,7 +129,7 @@ export const getAllRowKeys = (data, getRowKey, disabled = () => {}) => {
 export const tableDataFlatMap = data => {
   const result = [];
   data.forEach(record => {
-    result.push({ ...record, children: undefined });
+    result.push(record);
     if (record.children) {
       result.push.apply(result, tableDataFlatMap(record.children));
     }

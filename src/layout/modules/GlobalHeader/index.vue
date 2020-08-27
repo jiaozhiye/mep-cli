@@ -17,7 +17,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-27 20:03:17
+ * @Last Modified time: 2020-08-24 11:24:59
  **/
 export default {
   name: 'GlobalHeader'
@@ -33,7 +33,7 @@ export default {
   position: relative;
   z-index: 3;
   .tab-menu {
-    width: calc(100% - 300px);
+    width: calc(100% - 240px);
     position: absolute;
     left: 56px;
     bottom: -1px;

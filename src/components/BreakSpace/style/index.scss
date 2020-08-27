@@ -2,13 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 20:40:03
+ * @Last Modified time: 2020-08-25 08:08:36
  */
 @import '../../style/index.scss';
 
 $prefix-cls: '#{$v-prefix}-form-panel--divider';
 
 .#{$prefix-cls} {
+  position: relative;
   width: 100%;
   height: 32px;
   line-height: 1;
@@ -21,13 +22,14 @@ $prefix-cls: '#{$v-prefix}-form-panel--divider';
         left: -$padding-base;
       }
       .title {
-        display: inline-block;
+        display: flex;
+        align-items: center;
         height: 20px;
         font-size: $font-size-base;
         &::before {
           content: '';
           display: inline-block;
-          width: 6px;
+          width: 5px;
           height: 100%;
           background-color: $primary-color;
           margin-right: 8px;
@@ -36,14 +38,61 @@ $prefix-cls: '#{$v-prefix}-form-panel--divider';
       }
     }
   }
+  .divider-border {
+    height: 100%;
+    margin-left: 4px;
+    font-size: $font-size-base;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-base;
+    background-color: $background-color-cecondary;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: -4px;
+      top: -1px;
+      width: 4px;
+      height: calc(100% + 2px);
+      background-color: $primary-color;
+    }
+    .title {
+      padding-left: $padding-base;
+    }
+    .extra-text {
+      flex: 1;
+      margin: 0 60px 0 $padding-base;
+    }
+  }
+  .collect-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-left: $padding-base;
+  }
+  &.divider-default {
+    .collect-btn {
+      background-color: #fff;
+    }
+  }
+  &.divider-border {
+    .collect-btn {
+      margin-right: $padding-base;
+      background-color: transparent;
+    }
+  }
   // small
   &-sm {
     height: 28px;
     .el-divider--horizontal {
       margin: 14px 0;
     }
-    .title {
-      font-size: $font-size-sm !important;
+    .divider-border {
+      font-size: $font-size-sm;
     }
   }
   // large
@@ -52,8 +101,8 @@ $prefix-cls: '#{$v-prefix}-form-panel--divider';
     .el-divider--horizontal {
       margin: 18px 0;
     }
-    .title {
-      font-size: $font-size-base !important;
+    .divider-border {
+      font-size: $font-size-base;
     }
   }
 }

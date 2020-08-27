@@ -46,7 +46,7 @@
         :containerStyle="{ minHeight: `calc(80vh - 80px)`, height: `100%` }"
         loginUrl="https://portal.faw-vw.com/pkmslogin.form"
         :loginParams="params"
-        pageUrl="https://portal.faw-vw.com/EP/topicSource/toInsert.do"
+        pageUrl="https://portal.faw-vw.com/asjct/SAPAfterSales/pages/dserpclxxcx/clxxcx_result.jsp?vin=LFV2A1BS6D4055070"
         @success="successHandle"
       />
     </base-dialog>
@@ -110,8 +110,8 @@ export default {
       printList: printData.data,
       visible: false,
       params: {
-        username: 'SJ12345R01',
-        password: 'Faw12345678',
+        username: 's741039r01',
+        password: 'JZga2018',
         'login-form-type': 'pwd'
       },
       printDataList: []

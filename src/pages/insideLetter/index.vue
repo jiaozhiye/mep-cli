@@ -1,6 +1,6 @@
 <template>
   <div :class="noticeCls">
-    <SuperTabs :initial-value="defaultTabLabel" :tab-bar-gutter="15" animated>
+    <SuperTabs :initial-value="defaultTabLabel" :tabNavOffsetLeft="15" size="large" animated>
       <tab-panel key="1" :label="noticeList.title">
         <div class="list">
           <ul v-if="noticeList.list.length">
@@ -81,10 +81,9 @@ export default {
   margin: -12px;
   width: 340px;
   .list {
-    margin-top: -10px;
+    margin-top: -5px;
     ul > li {
-      padding: 10px 15px;
-      line-height: 20px;
+      padding: 6px 15px;
       font-size: $textSize;
       border-bottom: 1px solid $borderColorSecondary;
     }

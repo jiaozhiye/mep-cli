@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-03 11:28:05
+ * @Last Modified time: 2020-08-19 11:04:47
  */
 export default {
   sex: [
@@ -1941,39 +1941,54 @@ export default {
     { value: '2', cnText: '以采访，未曝光' },
     { value: '3', cnText: '已曝光' },
     { value: '9', cnText: '其他' }
-  ], // 投诉人身份
+  ],
+  // 投诉人身份
   CareTsrIdentity: [
     { value: '0', cnText: '一般记者' },
     { value: '1', cnText: '政府' },
     { value: '2', cnText: '记者' },
     { value: '3', cnText: '网约车/出租车' },
     { value: '9', cnText: '其他' }
-  ], // 车辆问题
+  ],
+  // 车辆问题
   CareCarProblem: [
     { value: '0', cnText: '一般瑕疵' },
     { value: '1', cnText: '一般批量问题（异响、双层漆等）' },
     { value: '2', cnText: '新车问题，涉及安全或动力总成问题' },
     { value: '3', cnText: '敏感批量问题（异味，DSG、后轴、烧机油）' },
     { value: '9', cnText: '其他' }
-  ], // 额外财产损失
-
+  ],
+  // 额外财产损失
   CarePropertyDamage: [
     { value: '0', cnText: '0-10万' },
     { value: '1', cnText: '10-30万' },
     { value: '2', cnText: '30-100万' },
     { value: '3', cnText: '100万以上' },
     { value: '9', cnText: '其他' }
-  ], // 人身损失
+  ],
+  // 人身损失
   CarePersonDamage: [
     { value: '0', cnText: '轻伤' },
     { value: '1', cnText: '重伤' },
     { value: '2', cnText: '一人死亡' },
     { value: '3', cnText: '多人死亡' },
     { value: '9', cnText: '其他' }
-  ], // 投诉解决状态
+  ],
+  // 投诉解决状态
   CareResloveStatus: [
     { value: '0', cnText: '需求单未解决' },
     { value: '1', cnText: '需求单已解决' },
     { value: '2', cnText: '需求单已作废' }
-  ]
+  ],
+  // 发货方式
+  CLBtheDeliveryWay: [{ value: '0', cnText: '兑换码发放' }],
+  // 兑换码类型
+  CLBexchangeCodeType: [
+    { value: '0', cnText: '维修保养' },
+    { value: '1', cnText: '购车低值' },
+    { value: '2', cnText: '金融保险' },
+    { value: '3', cnText: '其他' }
+  ],
+  // 支付方式
+  CLBmethodOfPayment: [{ value: '0', cnText: '积分' }]
 };

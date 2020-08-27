@@ -11,6 +11,7 @@
     "build-tst": "cross-env NODE_ENV=production ENV_CONFIG=tst node --max-old-space-size=32768 build/prod.js",
     "build-uat": "cross-env NODE_ENV=production ENV_CONFIG=uat node --max-old-space-size=32768 build/prod.js",
     "build-pre": "cross-env NODE_ENV=production ENV_CONFIG=pre node --max-old-space-size=32768 build/prod.js",
+    "build-gray": "cross-env NODE_ENV=production ENV_CONFIG=gray node --max-old-space-size=32768 build/prod.js",
     "lint": "eslint --ext .js,.vue ./src",
     "lint:fix": "eslint --fix --ext .js,.vue ./src",
     "format": "prettier --write \"./src/**/*.{js,vue,jsx,css,scss}\""
@@ -46,6 +47,7 @@
     "nprogress": "^0.2.0",
     "resize-observer-polyfill": "^1.5.1",
     "screenfull": "^4.2.0",
+    "scroll-into-view-if-needed": "^2.2.25",
     "vue": "2.6.11",
     "vue-i18n": "^8.17.4",
     "vue-router": "^3.3.2",

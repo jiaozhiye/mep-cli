@@ -2,15 +2,16 @@
 
 ### SuperTabs
 
-| 参数           | 说明                                       | 类型           | 默认值 |
-| -------------- | ------------------------------------------ | -------------- | ------ |
-| initialValue   | 初始化选中面板(TabPanel)的 key，必要参数   | string         | -      |
-| tabBarGutter   | tabs 之间的间隙，单位 px                   | number         | 0      |
-| size           | 尺寸                                       | small \| large | small  |
-| animated       | 是否开启选项卡切换时动画                   | boolean        | false  |
-| lazyLoad       | 是否延迟加载选项卡组件                     | boolean        | true   |
-| destroyOnClose | 切换选项卡并处于隐藏状态时，是否销毁子组件 | boolean        | false  |
-| containerStyle | 组件最外层容器的 css 样式                  | object         | -      |
+| 参数             | 说明                                     | 类型                      | 默认值 |
+| ---------------- | ---------------------------------------- | ------------------------- | ------ |
+| initialValue     | 初始化选中面板(TabPanel)的 key，必要参数 | string                    | -      |
+| tabType          | 风格类型                                 | card \| border-card       | -      |
+| tabPosition      | 选项卡所在位置                           | top \| left               | top    |
+| size             | 尺寸                                     | small \| default \| large | -      |
+| animated         | 是否开启选项卡切换时动画                 | boolean                   | false  |
+| lazyLoad         | 是否延迟加载选项卡组件                   | boolean                   | true   |
+| tabNavOffsetLeft | 选项卡导航的左边距                       | number \| string          | 0      |
+| containerStyle   | 组件最外层容器的 css 样式                | object                    | -      |
 
 ### 事件
 

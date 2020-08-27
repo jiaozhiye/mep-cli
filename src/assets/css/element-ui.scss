@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 15:16:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-14 11:11:54
+ * @Last Modified time: 2020-08-27 16:48:58
  */
 .el-notification {
   a {
@@ -68,6 +68,36 @@
 }
 .el-autocomplete-suggestion {
   .el-autocomplete-suggestion__list > li {
+    padding: 0 $modulePadding;
+  }
+}
+.el-tabs {
+  .el-tabs__header.is-top {
+    margin-bottom: $moduleMargin;
+  }
+  .el-tabs__nav-wrap.is-top {
+    .el-tabs__item {
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+      }
+      &::after {
+        content: '';
+        display: inline-block;
+        width: 6px;
+      }
+    }
+    &::after {
+      height: 1px;
+    }
+  }
+  .el-tabs__nav-wrap.is-left {
+    &::after {
+      width: 1px;
+    }
+  }
+  .el-tabs__item {
     padding: 0 $modulePadding;
   }
 }

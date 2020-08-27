@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 11:48:57
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-01 16:00:24
+ * @Last Modified time: 2020-08-21 10:15:21
  */
 import './style';
 import locale from './locale';
@@ -22,6 +22,7 @@ import { default as JsonToExcel } from './JsonToExcel';
 import { default as MultiuseButton } from './MultiuseButton';
 import { default as PortalPage } from './PortalPage';
 import { default as SearchHelper } from './SearchHelper';
+import { default as SlideVerify } from './SlideVerify';
 import { default as Spin } from './Spin';
 import { default as SuperTabs } from './SuperTabs';
 import { default as SvgIcon } from './SvgIcon';
@@ -49,6 +50,7 @@ const components = [
   MultiuseButton,
   PortalPage,
   SearchHelper,
+  SlideVerify,
   Spin,
   SuperTabs,
   SvgIcon,
@@ -98,6 +100,7 @@ export default {
   JsonToExcel,
   MultiuseButton,
   SearchHelper,
+  SlideVerify,
   Spin,
   SuperTabs,
   SvgIcon,

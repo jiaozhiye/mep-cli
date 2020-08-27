@@ -2,16 +2,15 @@
 
 ### FormPanel
 
-| 参数            | 说明                                            | 类型                | 默认值  |
-| --------------- | ----------------------------------------------- | ------------------- | ------- |
-| list            | 表单组件数据数组，[配置项](#formItem)，必要参数 | array               | -       |
-| initialValue    | 表单组件的初始值，只在组件首次加载时生效        | obkect              | -       |
-| formType        | 表单的类型                                      | default \| onlyShow | default |
-| loading         | 提交按钮的 loading 效果                         | boolean             | false   |
-| cols            | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number              | -       |
-| labelWidth      | label 标签的宽度，单位 px                       | number              | 80      |
-| scrollContainer | 具有滚动条的容器，用于表单校验信息的锚点定位    | HTMLNode            | -       |
-| isSubmitBtn     | 是否显示保存、重置按钮                          | boolean             | false   |
+| 参数         | 说明                                            | 类型                | 默认值  |
+| ------------ | ----------------------------------------------- | ------------------- | ------- |
+| list         | 表单组件数据数组，[配置项](#formItem)，必要参数 | array               | -       |
+| initialValue | 表单组件的初始值，只在组件首次加载时生效        | obkect              | -       |
+| formType     | 表单的类型                                      | default \| onlyShow | default |
+| loading      | 提交按钮的 loading 效果                         | boolean             | false   |
+| cols         | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number              | -       |
+| labelWidth   | label 标签的宽度，单位 px                       | number              | 80      |
+| isSubmitBtn  | 是否显示保存、重置按钮                          | boolean             | false   |
 
 ### 事件
 
@@ -28,6 +27,7 @@
 | RESET_FORM       | 重置表单控件                 | -                          | -                                             |
 | SET_FIELDS_VALUE | 设置表单字段的值             | Function(values:object)    | -                                             |
 | SET_FORM_VALUES  | 可以设置除了表单字段的额外值 | Function(values:object)    | -                                             |
+| CREATE_FOCUS     | 设置表单元素获得焦点方法     | Function(fieldName:string) | -                                             |
 | GET_FORM_DATA    | 获取表单数据，异步方法       | -                          | 返回错误前置的数组 [error, formValue]         |
 | GET_FIELD_VALUE  | 获取表单项的值               | Function(fieldName:string) | 返回表单字段值                                |
 
@@ -67,7 +67,7 @@
 | --------------- | ------------------------------------------------------------- | ------------------- | -------- |
 | type            | 表单类型                                                      | [配置项](#formType) | string   | - |
 | label           | 标题名称                                                      | string              | -        |
-| labelWidth      | label 标签的的宽度，需要加单位 px                             | string              | 80       |
+| labelWidth      | label 标签的的宽度，需要加单位 px                             | string              | 80px     |
 | fieldName       | 表单项字段 key                                                | string              | -        |
 | style           | 表单元素的 css 样式                                           | object              | -        |
 | rules           | 表单校验规则，用法请参考 Element-Ui                           | array               | -        |
@@ -84,6 +84,7 @@
 | options         | 表单元素的外配置，[配置项](#options)                          | object              | -        |
 | request         | 表单项的 ajax 请求配置，[配置项](#request)                    | object              | -        |
 | upload          | 表单附件上传的配置，[配置项](#upload)                         | object              | -        |
+| collapse        | 表单分隔符区域的展开/收起配置，[配置项](#collapse)            | object              | -        |
 | labelOptions    | label 标签的自定义渲染，[配置项](#labelOption)                | object              | -        |
 | descOptions     | 描述信息的自定义渲染，[配置项](#descOption)                   | object              | -        |
 | searchHelper    | 搜索帮助配置，参考 SearchHelper 组件，[配置项](#searchHelper) | object              | -        |
@@ -110,6 +111,7 @@
 | precision     | 数值精度 - INPUT_NUMBER/RANGE_INPUT_NUMBER                       | number                               | -        |
 | disabled      | 是否禁用列表项 - SELECT/MULTIPLE_SELECT/MULTIPLE_CHECKBOX/RADIO/ | boolean                              | false    |
 | noInput       | 不允许手动输入，支持清除操作 - INPUT                             | boolean                              | false    |
+| divider       | 分隔符的类型 - BREAK_SPACE                                       | default \| border                    | default  |
 | trueValue     | 选中的值 - CHECKBOX                                              | number \| string                     | 1        |
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string                     | 0        |
 | dateType      | 日期控件的类型，[配置项](#dateType) - DATE/RANGE_DATE            | string                               | -        |
@@ -169,6 +171,23 @@
 | isTooltip | 是否以 Tooltip 形式显示描述信息 | boolean            | false  |
 | style     | 描述文本容器的 css 样式         | object             | -      |
 | content   | 描述信息的内容                  | string \| JSX Node | -      |
+
+### collapse
+
+`只对 BREAK_SPACE 有效`
+
+| 参数          | 说明                                                             | 类型    | 默认值 |
+| ------------- | ---------------------------------------------------------------- | ------- | ------ |
+| defaultExpand | 默认的展开状态                                                   | boolean | false  |
+| showLimit     | 默认显示表单项的数量                                             | number  | -      |
+| remarkItems   | 指定被隐藏的表单作为摘要显示到分隔符区域，[配置项](#remarkItems) | array   | -      |
+
+### remarkItems
+
+| 参数      | 说明                        | 类型   | 默认值 |
+| --------- | --------------------------- | ------ | ------ |
+| fieldName | 表单项的字段名(fieldName)   | string | -      |
+| isLabel   | 是否显示表单项的 label 名称 | string | -      |
 
 ### request
 

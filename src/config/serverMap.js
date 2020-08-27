@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 13:28:28
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-23 13:40:50
+ * @Last Modified time: 2020-08-20 15:50:55
  */
 const config = {
   dev: {
@@ -22,4 +22,4 @@ const config = {
   }
 };
 
-export default config[process.env.ENV_CONFIG];
+export default config[process.env.ENV_CONFIG] || config[`prod`];

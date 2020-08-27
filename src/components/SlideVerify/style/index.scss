@@ -1,0 +1,120 @@
+/*
+ * @Author: 焦质晔
+ * @Date: 2020-05-23 13:14:53
+ * @Last Modified by: 焦质晔
+ * @Last Modified time: 2020-08-21 15:18:02
+ */
+@import '../../style/index.scss';
+
+.slide-verify {
+  position: relative;
+}
+
+.slider-verify-loading {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 999;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 9;
+  }
+}
+
+.slide-verify-block {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.slide-verify-refresh-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  background: url('./icon_light.png') 0 -437px;
+  background-size: 34px 471px;
+}
+
+.slide-verify-slider {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  height: 40px;
+  line-height: 38px;
+  margin-top: 5px;
+  background: $background-color-cecondary;
+  border: 1px solid $border-color-secondary;
+  box-sizing: border-box;
+}
+
+.slide-verify-slider-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 38px;
+}
+
+.slide-verify-slider-mask-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.2s linear;
+}
+
+.slide-verify-slider-mask-item:hover {
+  background: $primary-color;
+}
+
+.slide-verify-slider-mask-item:hover .slide-verify-slider-mask-item-icon {
+  background-position: 0 -13px;
+}
+
+.slide-verify-slider-mask-item-icon {
+  position: absolute;
+  top: 14px;
+  left: 13px;
+  width: 14px;
+  height: 12px;
+  background: url('./icon_light.png') 0 -26px;
+  background-size: 34px 471px;
+}
+
+.container-success .slide-verify-slider-mask-item {
+  background-color: $success-color !important;
+}
+
+.container-success .slide-verify-slider-mask-item-icon {
+  background-position: 0 0 !important;
+}
+
+.container-fail .slide-verify-slider-mask-item {
+  background-color: $error-color !important;
+}
+
+.container-fail .slide-verify-slider-mask-item-icon {
+  top: 14px;
+  background-position: 0 -82px !important;
+}
+
+.container-active .slide-verify-slider-text,
+.container-success .slide-verify-slider-text,
+.container-fail .slide-verify-slider-text {
+  display: none;
+}

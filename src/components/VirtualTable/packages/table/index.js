@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-17 15:52:00
+ * @Last Modified time: 2020-08-22 16:50:53
  */
 import baseProps from './props';
 import Store from '../store';
@@ -192,6 +192,9 @@ export default {
     isTableEmpty() {
       return !this.tableData.length;
     },
+    isTreeTable() {
+      return this.tableFullData.some(x => Array.isArray(x.children) && x.children.length);
+    },
     isFetch() {
       return !!this.fetch;
     },
@@ -299,6 +302,7 @@ export default {
     [`rowSelection.selectedRowKeys`](next) {
       this.$$tableBody.setClickedValues([next[0], 'index']);
       this.selectionKeys = this.createSelectionKeys();
+      this.rowExpandedKeys = this.createRowExpandedKeys();
     },
     highlightKey(next) {
       if (!this.rowHighlight) return;
@@ -331,8 +335,6 @@ export default {
     } else {
       this.getTableData();
     }
-    // 设置展开行
-    this.rowExpandedKeys = this.createRowExpandedKeys();
     // 加载表格数据
     this.loadTableData().then(() => {
       this.doLayout();

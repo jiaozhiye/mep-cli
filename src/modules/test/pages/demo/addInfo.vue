@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
     <anchor :labelList="labels">
-      <form-panel ref="formPanel" :initial-value="formDefaultValue" :list="formList" :formType="type" :scrollContainer="$scrollNode" />
+      <form-panel ref="formPanel" :initial-value="formDefaultValue" :list="formList" :formType="type" />
       <break-space id="aaa3" label="标题3" />
       <VirtualTable
         ref="table"
@@ -47,7 +47,6 @@ export default {
   inject: ['$$drawer'], // 注入抽屉组件
   data() {
     this.selectedKeys = [];
-    this.$scrollNode = null;
     this.i = 0;
     return {
       labels: [
@@ -91,19 +90,20 @@ export default {
       return this.$refs.formPanel;
     }
   },
-  mounted() {
-    // 没有锚点组件，使用这个滚动容器
-    // this.$scrollNode = this.$parent.$el.querySelector('.container');
-    // 有锚点组件
-    this.$scrollNode = this.$el.querySelector('.scroll-wrapper');
-  },
   methods: {
     createFormList() {
       return [
         {
           type: 'BREAK_SPACE',
           label: '标题1',
-          id: 'aaa1'
+          id: 'aaa1',
+          options: {
+            divider: 'border'
+          },
+          collapse: {
+            showLimit: 4,
+            remarkItems: [{ fieldName: 'e' }, { fieldName: 'f', isLabel: true }, { fieldName: 'startTime|endTime' }]
+          }
         },
         {
           type: 'INPUT',

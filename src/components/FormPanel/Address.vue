@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-tabs v-model="tabsActive" type="card" :stretch="true" @tab-click="tabsChange">
       <el-tab-pane label="省份" name="province">
         <div class="province">
@@ -29,9 +29,9 @@
         </ul>
       </el-tab-pane>
     </el-tabs>
-    <div style="text-align: right">
-      <el-button type="primary" @click="confirmBtn">确 定</el-button>
-    </div>
+    <!--    <div style="text-align: right">-->
+    <!--      <el-button type="primary" @click="confirmBtn">确 定</el-button>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -40,7 +40,7 @@
    * @Author: 田暹琪
    * @Date: 2020-07-10 10:00:00
    * @Last Modified by: 田暹琪
-   * @Last Modified time: 2020-08-06 10:40:22
+   * @Last Modified time: 2020-8-19 11:40:35
    **/
   import PropTypes from '../_utils/vue-types';
 
@@ -52,10 +52,12 @@
       fetch: PropTypes.shape({
         fetchApi: PropTypes.func.isRequired, // api 接口
         params: PropTypes.object // 接口参数
-      })
+      }),
+      visible: PropTypes.bool
     },
     data() {
       return {
+        loading: false,
         pinyinList: [
           ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
           ['H', 'I', 'J', 'K', 'L', 'M', 'N'],
@@ -80,6 +82,7 @@
     },
     watch: {
       async value(val) {
+        if (this.visible) return;
         this.tabsActive = 'province';
         let cur = val.find(x => x.vLevel == 1);
         if (cur) {
@@ -141,7 +144,7 @@
       async provinceChange(val) {
         this.currentID.province = val;
         if (val) {
-          this.computedList(val, 1);
+          this.loading = true;
           this.currentID.city = {};
           this.list.city = [];
           this.currentList = this.currentList.filter(x => x.vLevel != 2);
@@ -152,7 +155,10 @@
           this.list.street = [];
           this.currentList = this.currentList.filter(x => x.vLevel != 4);
           let res = await this.fetch.fetchApi({ ...this.fetch.params, iD: val.iD, vLevel: 2 });
+          this.loading = false;
           this.list.city = res.data;
+          this.tabsActive = 'city';
+          this.computedList(val, 1);
         } else {
           this.currentList = this.currentList.filter(x => x.vLevel != 1);
         }
@@ -160,7 +166,7 @@
       async cityChange(val) {
         this.currentID.city = val;
         if (val) {
-          this.computedList(val, 2);
+          this.loading = true;
           this.currentID.county = {};
           this.list.county = [];
           this.currentList = this.currentList.filter(x => x.vLevel != 3);
@@ -168,7 +174,10 @@
           this.list.street = [];
           this.currentList = this.currentList.filter(x => x.vLevel != 4);
           let res = await this.fetch.fetchApi({ ...this.fetch.params, iD: val.iD, vLevel: 3 });
+          this.loading = false;
           this.list.county = res.data;
+          this.tabsActive = 'county';
+          this.computedList(val, 2);
         } else {
           this.currentList = this.currentList.filter(x => x.vLevel != 2);
         }
@@ -176,12 +185,15 @@
       async countyChange(val) {
         this.currentID.county = val;
         if (val) {
-          this.computedList(val, 3);
+          this.loading = true;
           this.currentID.street = {};
           this.list.street = [];
           this.currentList = this.currentList.filter(x => x.vLevel != 4);
           let res = await this.fetch.fetchApi({ ...this.fetch.params, iD: val.iD, vLevel: 4 });
+          this.loading = false;
           this.list.street = res.data;
+          this.tabsActive = 'street';
+          this.computedList(val, 3);
         } else {
           this.currentList = this.currentList.filter(x => x.vLevel != 3);
         }
@@ -209,12 +221,17 @@
         this.currentList.sort((a, b) => {
           return a.vLevel - b.vLevel;
         });
-      },
-      confirmBtn() {
-        this.$emit('input', JSON.parse(JSON.stringify(this.currentList)));
-        this.$emit('change', JSON.parse(JSON.stringify(this.currentList)));
-        this.$emit('close', false);
+        if (this.visible) {
+          this.$emit('input', JSON.parse(JSON.stringify(this.currentList)));
+          this.$emit('change', JSON.parse(JSON.stringify(this.currentList)));
+          if (vLevel == 4) this.$emit('close', false);
+        }
       }
+      // confirmBtn() {
+      //   this.$emit('input', JSON.parse(JSON.stringify(this.currentList)));
+      //   this.$emit('change', JSON.parse(JSON.stringify(this.currentList)));
+      //   this.$emit('close', false);
+      // }
     }
   };
 </script>

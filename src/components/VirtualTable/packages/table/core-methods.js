@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-17 09:00:27
+ * @Last Modified time: 2020-08-22 13:44:27
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -32,6 +32,8 @@ export default {
     // 设置表格数据
     this.tableFullData = [...results];
     this.tableOriginData = [...results];
+    // 设置展开行
+    this.rowExpandedKeys = this.createRowExpandedKeys();
   },
   // ajax 获取数据
   async getTableData() {
@@ -49,8 +51,6 @@ export default {
       // 处理数据
       this.createTableData(data.items.slice(start, end));
       this.setRecordsTotal(data.total);
-      // 设置展开行
-      this.rowExpandedKeys = this.createRowExpandedKeys();
     } else {
       try {
         const res = await fetch.api(fetchParams);
@@ -74,8 +74,6 @@ export default {
           this.createTableData([]);
           this.setRecordsTotal(0);
         }
-        // 设置展开行
-        this.rowExpandedKeys = this.createRowExpandedKeys();
       } catch (e) {}
     }
     if (hasOwn(this.fetch, 'stopToFirst')) {

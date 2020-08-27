@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-12 11:43:11
+ * @Last Modified time: 2020-08-21 08:19:43
  */
 'use strict';
 const path = require('path');
@@ -16,7 +16,7 @@ module.exports = {
     // 请求代理配置 -> can be modified
     proxyTable: {
       '/api': {
-        target: 'http://192.168.66.30:9008',
+        target: 'http://62.234.197.49:80',
         changeOrigin: true, // 支持跨域
         // secure: false, // 支持 https
         pathRewrite: {
@@ -47,7 +47,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: process.env.ENV_CONFIG === 'gray' ? '/gray/' : '/',
 
     // Source Maps
     productionSourceMap: false,

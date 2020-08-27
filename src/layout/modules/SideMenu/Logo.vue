@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <router-link to="/" :title="title">
-      <img :class="imgClassName" :src="imgUrl" alt="" />
+      <SvgIcon :icon-class="imgUrl" :class="imgClassName" />
     </router-link>
   </div>
 </template>
@@ -11,11 +11,8 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-17 16:20:04
+ * @Last Modified time: 2020-08-25 09:31:41
  **/
-const logoEp = require('@/assets/img/logo_ep.png');
-const logo = require('@/assets/img/logo.png');
-
 export default {
   name: 'Logo',
   props: {
@@ -35,10 +32,10 @@ export default {
   },
   computed: {
     imgUrl() {
-      return !this.collapsed ? logoEp : logo;
+      return !this.collapsed ? 'logo-right' : 'logo-left';
     },
     imgClassName() {
-      const res = !this.collapsed ? `img1` : `img2`;
+      const res = !this.collapsed ? 'img1' : 'img2';
       return this.isInitial ? `${res} none` : res;
     }
   },
@@ -60,19 +57,19 @@ export default {
   overflow: hidden;
   a {
     width: 100%;
-    display: block;
-    img {
-      display: inline-block;
-      vertical-align: middle;
+    padding: 10px 0;
+    svg {
+      display: block;
+      margin-left: 16px;
     }
     .img1 {
-      width: 140px;
-      margin-left: 24px;
+      width: 170px;
+      height: 30px;
       animation: show 0.3s ease both;
     }
     .img2 {
-      width: 140px;
-      margin-left: 16px;
+      width: 30px;
+      height: 30px;
       animation: hide 0.3s ease both;
     }
     .none {
@@ -87,17 +84,19 @@ export default {
   }
   100% {
     opacity: 1;
-    width: 140px;
+    width: 170px;
   }
 }
 @keyframes hide {
   0% {
     opacity: 0;
     width: 50px;
+    height: 50px;
   }
   100% {
     opacity: 1;
     width: 30px;
+    height: 30px;
   }
 }
 </style>

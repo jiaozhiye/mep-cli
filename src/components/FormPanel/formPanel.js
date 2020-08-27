@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-17 15:36:46
+ * @Last Modified time: 2020-08-27 19:17:51
  **/
-import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction, isElement } from 'lodash';
+import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import PropTypes from '../_utils/vue-types';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
@@ -22,6 +23,7 @@ import SearchHelper from '../SearchHelper';
 import BaseDialog from '../BaseDialog';
 import Address from './Address';
 import EpCascader from './EpCascader';
+import EpSearchHelper from './EpSearchHelper';
 
 const noop = () => {};
 
@@ -42,7 +44,6 @@ export default {
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
     isSubmitBtn: PropTypes.bool.def(false),
-    scrollContainer: PropTypes.any.def(null),
     defultValueOnClear: PropTypes.bool.def(false)
   },
   data() {
@@ -50,16 +51,17 @@ export default {
     return {
       form: {}, // 表单的值
       desc: {}, // 描述信息
-      visible: {}
+      view: {}, // 视图数据
+      visible: {},
+      expand: {}
     };
   },
   computed: {
     formItemList() {
       const result = [];
       this.list
-        .filter(x => x.fieldName)
+        .filter(x => x.type !== 'BREAK_SPACE' && x.fieldName)
         .forEach(x => {
-          if (x.type === 'BREAK_SPACE') return;
           if (isObject(x.labelOptions) && x.labelOptions.fieldName) {
             result.push(x.labelOptions);
           }
@@ -75,16 +77,32 @@ export default {
     fieldNames() {
       return this.formItemList.map(x => x.fieldName);
     },
+    dividers() {
+      return this.list.filter(x => x.type === 'BREAK_SPACE');
+    },
+    blockFieldNames() {
+      const result = [];
+      for (let i = 0, len = this.dividers.length; i < len; i++) {
+        let index = this.list.findIndex(x => x === this.dividers[i]);
+        let nextIndex = this.list.findIndex(x => x === this.dividers[i + 1]);
+        nextIndex = nextIndex > -1 ? nextIndex : undefined;
+        result.push(this.list.slice(index, nextIndex).map(x => ({ label: x.label, fieldName: x.fieldName })));
+      }
+      return result;
+    },
     rules() {
-      const res = {};
+      const result = {};
       this.formItemList.forEach(x => {
         if (!x.rules) return;
-        res[x.fieldName] = x.rules;
+        result[x.fieldName] = x.rules;
       });
-      return res;
+      return result;
     },
     descContents() {
       return this.formItemList.filter(x => isObject(x.descOptions)).map(x => ({ fieldName: x.fieldName, content: x.descOptions.content }));
+    },
+    isCollapse() {
+      return this.dividers.some(x => !!x.collapse);
     }
   },
   watch: {
@@ -135,6 +153,10 @@ export default {
       // Object.assign(this.form, this.createFormValue());
       this.initialValues = cloneDeep(this.form);
       this.initialExtras = cloneDeep(this.desc);
+      // 设置 收起 状态
+      const target = {};
+      this.dividers.forEach(x => (target[x.label] = !!x.collapse?.defaultExpand));
+      this.expand = Object.assign({}, this.expand, target);
     },
     getInitialValue(item) {
       const { type = '', fieldName, options = {}, readonly } = item;
@@ -163,6 +185,12 @@ export default {
         target[x.fieldName] = this.getInitialValue(x);
       });
       return Object.assign({}, this.initialValue, target);
+    },
+    setViewValue(fieldName, val) {
+      if (!this.isCollapse) return;
+      if (val !== this.view[fieldName]) {
+        this.view = Object.assign({}, this.view, { [fieldName]: val });
+      }
     },
     createInputFocus() {
       const { type, fieldName } = this.list.filter(x => x.fieldName && !x.hidden)[0] ?? {};
@@ -295,6 +323,7 @@ export default {
           this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
         }
       }
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -365,10 +394,12 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
       const { maxlength, min = 0, max, step, precision, controls = !1 } = options;
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <InputNumber
+            ref={`INPUT_NUMBER-${fieldName}`}
             v-model={form[fieldName]}
             min={min}
             max={max}
@@ -389,6 +420,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, readonly, disabled, onChange = noop } = option;
       const [startFieldName, endFieldName] = fieldName.split('|');
+      this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -419,38 +451,33 @@ export default {
       const { label, fieldName, labelWidth, labelOptions, options = {}, readonly, disabled, onChange = noop } = option;
       const { min = 0, max, step = 1, precision } = options;
       const [startVal = min, endVal = max] = form[fieldName];
+      this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-input-number
+          <InputNumber
             v-model={form[fieldName][0]}
-            controls-position="right"
             min={min}
             max={endVal}
             step={step}
             precision={precision}
-            placeholder={!disabled ? this.t('form.startValue') : ''}
-            readonly={readonly}
-            disabled={disabled}
             controls={false}
+            placeholder={!disabled ? this.t('form.startValue') : ''}
+            disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
-            clearable
             onChange={() => onChange(form[fieldName])}
           />
           <span style="display: inline-block; text-align: center; width: 14px;">-</span>
-          <el-input-number
+          <InputNumber
             v-model={form[fieldName][1]}
-            controls-position="right"
             min={startVal}
             max={max}
             step={step}
             precision={precision}
-            placeholder={!disabled ? this.t('form.endValue') : ''}
-            readonly={readonly}
-            disabled={disabled}
             controls={false}
+            placeholder={!disabled ? this.t('form.endValue') : ''}
+            disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
-            clearable
             onChange={() => onChange(form[fieldName])}
           />
         </el-form-item>
@@ -466,6 +493,8 @@ export default {
           data: itemList
         }
       };
+      this[`${fieldName}TreeText`] = this.createInputTreeValue(fieldName, itemList);
+      this.setViewValue(fieldName, this[`${fieldName}TreeText`]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -506,7 +535,7 @@ export default {
             </div>
             <el-input
               slot="reference"
-              value={this.createInputTreeValue(fieldName, itemList)}
+              value={this[`${fieldName}TreeText`]}
               placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
@@ -525,6 +554,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.selectPlaceholder'), readonly, disabled, onChange = noop } = option;
       const { itemList, titles = [], mustCheckLast } = options;
+      this.setViewValue(fieldName, this[`${fieldName}CascaderText`]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -540,7 +570,7 @@ export default {
                 mustCheckLast={mustCheckLast}
                 style={style}
                 onChange={() => {
-                  onChange(form[fieldName], this[`${fieldName}CascaderTexts`]);
+                  onChange(form[fieldName], this[`${fieldName}CascaderText`]);
                 }}
                 onClose={val => {
                   this.visible[fieldName] = val;
@@ -549,7 +579,7 @@ export default {
             </div>
             <el-input
               slot="reference"
-              value={this[`${fieldName}CascaderTexts`]}
+              value={this[`${fieldName}CascaderText`]}
               placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
@@ -557,7 +587,7 @@ export default {
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.cascaderChangeHandle(fieldName, []);
-                onChange(form[fieldName], this[`${fieldName}CascaderTexts`]);
+                onChange(form[fieldName], this[`${fieldName}CascaderText`]);
               }}
             />
           </el-popover>
@@ -567,7 +597,7 @@ export default {
     INPUT_ADDRESS(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
-      this[`${fieldName}AddressTexts`] = (form[fieldName] ?? []).map(x => x.vName).join(' / ');
+      this[`${fieldName}AddressText`] = (form[fieldName] ?? []).map(x => x.vName).join(' / ');
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -575,13 +605,14 @@ export default {
             <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
               <Address
                 value={form[fieldName]}
+                visible={this.visible[fieldName]}
                 onInput={val => {
                   this.addressChangeHandle(fieldName, val);
                 }}
                 fetch={request}
                 style={style}
                 onChange={() => {
-                  onChange(form[fieldName], this[`${fieldName}AddressTexts`]);
+                  onChange(form[fieldName], this[`${fieldName}AddressText`]);
                 }}
                 onClose={val => {
                   this.visible[fieldName] = val;
@@ -590,7 +621,7 @@ export default {
             </div>
             <el-input
               slot="reference"
-              value={this[`${fieldName}AddressTexts`]}
+              value={this[`${fieldName}AddressText`]}
               placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
@@ -598,7 +629,7 @@ export default {
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.addressChangeHandle(fieldName, []);
-                onChange(form[fieldName], this[`${fieldName}AddressTexts`]);
+                onChange(form[fieldName], this[`${fieldName}AddressText`]);
               }}
             />
           </el-popover>
@@ -624,6 +655,77 @@ export default {
         </el-form-item>
       );
     },
+    EP_SEARCH_HELPER(option) {
+      const { form, formType } = this;
+      const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, searchHelper, onChange = noop } = option;
+      const { onlySelect = true } = options;
+      const searchRef = this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
+      if (onlySelect) {
+        this[`${fieldName}PrevValue`] = form[fieldName];
+      }
+      let fieldKeys = [...Object.keys(searchHelper.fieldAliasMap?.() ?? {}), ...Object.values(searchHelper.fieldsDefine ?? {})];
+      if (!this[`${fieldName}ExtraKeys`]) {
+        this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
+      }
+      this.setViewValue(fieldName, form[fieldName]);
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <EpSearchHelper
+            ref={`EP_SEARCH_HELPER-${fieldName}`}
+            value={form[fieldName]}
+            formType={formType}
+            option={option}
+            onClose={(data, alias) => {
+              if (isObject(data) && Object.keys(alias).length) {
+                const extraKeys = [];
+                for (let key in alias) {
+                  if (key !== 'extra') {
+                    form[key] = data[alias[key]];
+                    if (key !== fieldName) {
+                      extraKeys.push(key);
+                    } else {
+                      onChange(form[key], false);
+                    }
+                  } else {
+                    this.desc[fieldName] = data[alias[key]];
+                  }
+                }
+                if (extraKeys.length) {
+                  this[`${fieldName}ExtraKeys`] = extraKeys;
+                }
+              }
+              if (onlySelect) {
+                this[`${fieldName}PrevValue`] = form[fieldName];
+              }
+              searchRef.currentValue = form[fieldName];
+              const { closed = noop } = searchHelper;
+              closed(data);
+              searchRef.visible = false;
+            }}
+            onOpen={() => {
+              const { open = () => true } = searchHelper;
+              if (!open(this.form)) return;
+              searchRef.visible = true;
+            }}
+            onChange={val => {
+              if (!val.trim() || !onlySelect) {
+                if (Array.isArray(this[`${fieldName}ExtraKeys`]) && this[`${fieldName}ExtraKeys`].length) {
+                  this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
+                }
+                this.desc[fieldName] = '';
+                this[`${fieldName}PrevValue`] = '';
+                form[fieldName] = val.trim();
+                onChange(form[fieldName], !onlySelect);
+              } else if (val && onlySelect && val !== this[`${fieldName}PrevValue`]) {
+                searchRef.currentValue = form[fieldName] = this[`${fieldName}PrevValue`];
+              }
+            }}
+          />
+          {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
+        </el-form-item>
+      );
+    },
     SEARCH_HELPER(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
@@ -631,6 +733,7 @@ export default {
       if (!isFunction(fieldAliasMap)) {
         console.error('[SEARCH_HELPER] 类型的 `fieldAliasMap` 参数不正确');
       }
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -678,6 +781,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, options = {}, labelOptions, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
       const { itemList } = options;
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -763,6 +867,7 @@ export default {
           }
         }
       ];
+      this.setViewValue(fieldName, form[fieldName]?.slice(0, 10));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -874,6 +979,7 @@ export default {
           }
         }
       ];
+      this.setViewValue(fieldName, form[fieldName].map(x => x?.slice(0, 10)).join('-'));
       const cls = [`range-date`, { [`disabled`]: disabled }];
       return (
         <el-form-item key={fieldName} ref={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -981,6 +1087,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm:ss', style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
       const { defaultTime } = options;
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1002,6 +1109,7 @@ export default {
     RANGE_TIME(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, valueFormat = 'HH:mm:ss', style = {}, disabled, onChange = noop } = option;
+      this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1026,6 +1134,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
       const { defaultTime, startTime = '00:00', endTime = '23:45', stepTime = '00:15' } = options;
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1052,6 +1161,7 @@ export default {
       const { startTime = '00:00', endTime = '23:45', stepTime = '00:15' } = options;
       const stepMinute = moment(stepTime, valueFormat).minute();
       const [startVal, endVal] = form[fieldName];
+      this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1105,6 +1215,7 @@ export default {
       const { form } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, disabled, onChange = noop } = option;
       const { trueValue = '1', falseValue = '0' } = options;
+      this.setViewValue(fieldName, form[fieldName] === trueValue ? this.t('form.trueText') : this.t('form.falseText'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1117,6 +1228,11 @@ export default {
       const { form } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, disabled, onChange = noop } = option;
       const { itemList, limit } = options;
+      const textVal = itemList
+        .filter(x => form[fieldName].includes(x.value))
+        .map(x => x.text)
+        .join(',');
+      this.setViewValue(fieldName, textVal);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1137,6 +1253,8 @@ export default {
       const { form } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options, style = {}, disabled, onChange = noop } = option;
       const { itemList } = options;
+      const textVal = itemList.find(x => x.value === form[fieldName])?.text;
+      this.setViewValue(fieldName, textVal);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1155,10 +1273,12 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
       const { rows = 2, maxrows, maxlength = 200, onInput = noop } = options;
+      this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-input
+            ref={`TEXT_AREA-${fieldName}`}
             type="textarea"
             value={form[fieldName]}
             onInput={val => {
@@ -1243,8 +1363,37 @@ export default {
       );
     },
     BREAK_SPACE(option) {
-      const { label = this.t('form.breakSpace'), id, style = {} } = option;
-      return <BreakSpace label={label} id={id} labelStyle={style} />;
+      const { label, id, style = {}, options = {}, collapse } = option;
+      const { divider = 'default' } = options;
+      const { showLimit, remarkItems = [] } = collapse || {};
+      let result = [];
+      if (remarkItems.length) {
+        const blockList = this.blockFieldNames.find(arr => arr[0].label === label) ?? [];
+        const index = showLimit ?? blockList.length - 1;
+        blockList.slice(index + 1).forEach(x => {
+          const item = remarkItems.find(k => k.fieldName === x.fieldName);
+          if (!item) return;
+          let label = item.isLabel ? `${x.label}：` : '';
+          let text = this.view[x.fieldName] ?? '';
+          let desc = this.desc[x.fieldName] ?? '';
+          if (text === '') return;
+          result.push({ ...x, text: `${label}${text} ${desc}` });
+        });
+      }
+      return (
+        <BreakSpace
+          id={id}
+          label={label}
+          type={divider}
+          extra={result.map(x => x.text).join(' | ')}
+          collapse={!!collapse}
+          defaultExpand={this.expand[label]}
+          labelStyle={style}
+          onChange={val => {
+            this.expand = Object.assign({}, this.expand, val);
+          }}
+        />
+      );
     },
     createSelectHandle(option, multiple = false) {
       const { form, formType } = this;
@@ -1272,6 +1421,13 @@ export default {
           this.querySelectOptions(request, fieldName);
         }
       }
+      const textVal = !multiple
+        ? itemList.find(x => x.value === form[fieldName])?.text
+        : itemList
+            .filter(x => form[fieldName].includes(x.value))
+            .map(x => x.text)
+            .join(',');
+      this.setViewValue(fieldName, textVal);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1288,14 +1444,7 @@ export default {
             multipleLimit={limit}
             collapseTags={multiple}
             filterable={filterable}
-            title={
-              multiple
-                ? itemList
-                    .filter(x => form[fieldName].includes(x.value))
-                    .map(x => x.text)
-                    .join(',')
-                : null
-            }
+            title={multiple ? textVal : null}
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
@@ -1311,7 +1460,7 @@ export default {
               const text = !multiple
                 ? itemList.find(x => x.value === val)?.text
                 : itemList
-                    .filter(x => form[fieldName].includes(x.value))
+                    .filter(x => val.includes(x.value))
                     .map(x => x.text)
                     .join(',');
               onChange(val, text);
@@ -1403,8 +1552,7 @@ export default {
     },
     // 创建树节点的值
     createInputTreeValue(fieldName, itemList) {
-      let { text = '' } = this.deepFind(itemList, this.form[fieldName]) || {};
-      return text;
+      return this.deepFind(itemList, this.form[fieldName])?.text ?? '';
     },
     // 树控件顶部文本帅选方法
     treeFilterTextHandle(key) {
@@ -1424,14 +1572,14 @@ export default {
     // 级联选择器值变化处理方法
     cascaderChangeHandle(fieldName, data) {
       this.form[fieldName] = data.map(x => x.value).join(',') || undefined;
-      this[`${fieldName}CascaderTexts`] = data.map(x => x.text).join('/');
+      this[`${fieldName}CascaderText`] = data.map(x => x.text).join('/');
       // 强制重新渲染组件
       this.$forceUpdate();
     },
     // 省市区选择器值变化处理方法
     addressChangeHandle(fieldName, data = []) {
       this.form[fieldName] = data;
-      this[`${fieldName}AddressTexts`] = data.map(x => x.vName).join(' / ');
+      this[`${fieldName}AddressText`] = data.map(x => x.vName).join(' / ');
       // 强制重新渲染组件
       this.$forceUpdate();
     },
@@ -1459,7 +1607,14 @@ export default {
     doFormItemValidate(fieldName) {
       this.$refs.form.validateField(fieldName);
     },
-    excuteFormData(form) {
+    // 锚点定位没有通过校验的表单项
+    scrollToField(fields) {
+      const ids = Object.keys(fields);
+      if (!ids.length) return;
+      scrollIntoView(document.getElementById(ids[0]), { scrollMode: 'if-needed', block: 'nearest' });
+    },
+    // 处理 from 数据
+    excuteFormValue(form) {
       this.formItemList
         .filter(x => ['RANGE_DATE', 'RANGE_INPUT_NUMBER', 'RANGE_TIME_SELECT'].includes(x.type))
         .map(x => x.fieldName)
@@ -1475,8 +1630,7 @@ export default {
           }
         });
       for (let attr in form) {
-        // 可能会影响业务代码
-        if (form[attr] === '') {
+        if (form[attr] === '' || form[attr] === null) {
           form[attr] = undefined;
         }
         if (attr.includes('|') && Array.isArray(form[attr])) {
@@ -1486,39 +1640,18 @@ export default {
         }
       }
     },
-    getNodeOffset(elem, container, rest = { left: 0, top: 0 }) {
-      if (elem) {
-        const parentElem = elem.parentNode;
-        rest.top += elem.offsetTop;
-        rest.left += elem.offsetLeft;
-        if (parentElem && parentElem !== document.documentElement && parentElem !== document.body) {
-          rest.top -= parentElem.scrollTop;
-          rest.left -= parentElem.scrollLeft;
-        }
-        if (container && (elem === container || elem.offsetParent === container) ? 0 : elem.offsetParent) {
-          return this.getNodeOffset(elem.offsetParent, container, rest);
-        }
+    // 对返回数据进行格式化
+    formatFormValue(form) {
+      const formData = {};
+      for (let key in form) {
+        if (typeof form[key] !== 'undefined') continue;
+        formData[key] = '';
       }
-      return rest;
-    },
-    // 计算目标元素相对于滚动容器的上边距
-    calcOffsetTop(_id) {
-      const $target = document.getElementById(`fp-${_id}`);
-      const $container = this.scrollContainer.offsetParent;
-      return this.getNodeOffset($target, $container).top - this.scrollContainer.offsetTop;
-    },
-    // 锚点定位没有通过校验的表单项
-    createAnchorFixed(ids) {
-      const res = [];
-      for (let key in ids) {
-        res.push({ fieldName: key, disY: this.calcOffsetTop(key) });
-      }
-      res.sort((a, b) => a.disY - b.disY);
-      this.scrollContainer.scrollTop = res[0].disY || 0;
+      return Object.assign({}, form, formData);
     },
     // 获取表单组件的值
     getFormData() {
-      this.excuteFormData(this.form);
+      this.excuteFormValue(this.form);
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((valid, fields) => {
           if (!valid) {
@@ -1530,18 +1663,16 @@ export default {
       });
     },
     emitFormChange() {
-      this.$emit('change', { ...this.form });
+      this.$emit('change', this.formatFormValue(this.form));
     },
     submitForm(ev) {
       ev?.preventDefault();
+      this.excuteFormValue(this.form);
       let isErr;
-      this.excuteFormData(this.form);
       this.$refs.form.validate((valid, fields) => {
         isErr = !valid;
         if (!valid) {
-          if (isElement(this.scrollContainer)) {
-            this.createAnchorFixed(fields);
-          }
+          this.scrollToField(fields);
         } else {
           this.emitFormChange();
         }
@@ -1564,7 +1695,7 @@ export default {
       this.$refs.form.resetFields();
       this.desc = Object.assign({}, this.initialExtras);
       Object.assign(this.form, noResetValue);
-      this.excuteFormData(this.form);
+      this.excuteFormValue(this.form);
       // 解决 附件/图片 重复校验的 bug
       this.$nextTick(() => {
         this.formItemList.forEach(x => {
@@ -1574,25 +1705,43 @@ export default {
         });
       });
     },
+    getElementDisplay({ type, fieldName }) {
+      if (type === 'BREAK_SPACE') {
+        return !0;
+      }
+      for (let i = 0, len = this.blockFieldNames.length; i < len; i++) {
+        let arr = this.blockFieldNames[i];
+        let divider = this.dividers.find(x => x.label === arr[0].label);
+        let limit = divider.collapse?.showLimit ?? arr.length - 1;
+        for (let k = 1; k < arr.length; k++) {
+          let x = arr[k];
+          if (x.fieldName === fieldName && k > limit) {
+            return this.expand[arr[0].label];
+          }
+        }
+      }
+      return !0;
+    },
     createFormLayout() {
-      const { flexCols: cols } = this;
+      const { flexCols: cols, isCollapse } = this;
       const unfixTypes = ['MULTIPLE_CHECKBOX', 'TEXT_AREA', 'TINYMCE', 'UPLOAD_IMG', 'UPLOAD_FILE'];
       const colSpan = 24 / cols;
       const formItems = this.createFormItem().filter(item => item !== null);
-      const colFormItems = formItems.map((Node, i) => {
-        const spans = isUndefined(Node.cols) ? colSpan : Node.cols * colSpan;
-        const offsetLeft = isUndefined(Node.offsetLeft) ? 0 : Node.offsetLeft * colSpan;
-        const offsetRight = isUndefined(Node.offsetRight) ? 0 : this.toPercent(Node.offsetRight / cols);
+      const colFormItems = formItems.map((vNode, i) => {
+        const spans = isUndefined(vNode.cols) ? colSpan : vNode.cols * colSpan;
+        const offsetLeft = isUndefined(vNode.offsetLeft) ? 0 : vNode.offsetLeft * colSpan;
+        const offsetRight = isUndefined(vNode.offsetRight) ? 0 : this.toPercent(vNode.offsetRight / cols);
+        const isDisplay = isCollapse ? this.getElementDisplay(vNode) : !0;
         return (
           <el-col
             key={i}
-            type={unfixTypes.includes(Node.type) ? 'UN_FIXED' : 'FIXED'}
-            id={Node.type !== 'BREAK_SPACE' ? `fp-${Node.fieldName}` : null}
+            type={unfixTypes.includes(vNode.type) ? 'UN_FIXED' : 'FIXED'}
+            id={vNode.type !== 'BREAK_SPACE' ? `${vNode.fieldName}` : null}
             offset={offsetLeft}
-            span={Node.type !== 'BREAK_SPACE' ? spans : 24}
-            style={{ marginRight: offsetRight }}
+            span={vNode.type !== 'BREAK_SPACE' ? spans : 24}
+            style={{ marginRight: offsetRight, display: isDisplay ? 'block' : 'none' }}
           >
-            {Node}
+            {vNode}
           </el-col>
         );
       });
@@ -1734,7 +1883,7 @@ export default {
     // 外部通过组件实例调用的方法
     SUBMIT_FORM() {
       const err = this.submitForm();
-      return !err ? this.form : null;
+      return !err ? this.formatFormValue(this.form) : null;
     },
     RESET_FORM() {
       this.resetForm();
@@ -1752,14 +1901,17 @@ export default {
         this.form[key] = values[key] ?? undefined;
       }
     },
+    CREATE_FOCUS(fieldName) {
+      const formItem = this.formItemList.find(x => x.fieldName === fieldName);
+      if (!formItem) return;
+      this.$refs[`${formItem.type}-${fieldName}`]?.focus();
+    },
     async GET_FORM_DATA() {
       try {
         const res = await this.getFormData();
-        return [false, { ...res }];
+        return [false, this.formatFormValue(res)];
       } catch (err) {
-        if (isElement(this.scrollContainer)) {
-          this.createAnchorFixed(err);
-        }
+        this.scrollToField(err);
         return [err, null];
       }
     },

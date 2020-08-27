@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-17 08:26:55
+ * @Last Modified time: 2020-08-21 08:19:19
  */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -12,7 +12,7 @@ import routes from './routes';
 Vue.use(VueRouter);
 
 const BasicLayout = () => import('@/layout/BasicLayout');
-const Login = () => import('@/pages/login');
+const Login = () => import('@/modules/common/pages/login');
 const Dashboard = () => import('@/pages/dashboard');
 const Redirect = () => import('@/pages/redirect');
 const Nomatch = () => import('@/pages/nomatch');
@@ -69,7 +69,8 @@ VueRouter.prototype.push = function push(location) {
 };
 
 export default new VueRouter({
-  mode: 'history',
+  mode: process.env.ENV_CONFIG === 'gray' ? 'hash' : 'history',
+  base: process.env.ENV_CONFIG === 'gray' ? '/gray' : '/',
   routes: constantRouterMap,
   scrollBehavior: () => ({ y: 0 })
 });

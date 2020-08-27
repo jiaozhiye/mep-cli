@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 18:35:43
+ * @Last Modified time: 2020-08-27 18:47:49
  **/
+import scrollIntoView from 'scroll-into-view-if-needed';
 import PropTypes from '../_utils/vue-types';
 import { isIE, debounce } from '../_utils/tool';
 import Size from '../_utils/mixins/size';
@@ -69,10 +70,14 @@ export default {
       e.stopPropagation();
       this.state = 'stop';
       this.activeKey = key;
-      if (isIE()) {
-        this.$scroll.scrollTop = document.getElementById(key).offsetTop;
-      } else {
-        this.$scroll.scrollTo({ top: document.getElementById(key).offsetTop, behavior: 'smooth' });
+      // if (isIE()) {
+      //   this.$scroll.scrollTop = document.getElementById(key).offsetTop;
+      // } else {
+      //   this.$scroll.scrollTo({ top: document.getElementById(key).offsetTop, behavior: 'smooth' });
+      //   setTimeout(() => (this.state = 'ready'), 400);
+      // }
+      scrollIntoView(document.getElementById(key), { scrollMode: 'always', block: 'start', behavior: 'smooth' });
+      if (!isIE()) {
         setTimeout(() => (this.state = 'ready'), 400);
       }
     },
