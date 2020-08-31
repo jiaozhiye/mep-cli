@@ -5,7 +5,7 @@
       <span v-if="!collapsed" class="text">{{ $t('sidebar.allNavTitle') }}</span>
     </div>
     <div :class="['mask', poperShow]" :style="{ left: asideWidth }" />
-    <div :style="{ left: asideWidth }" :class="['poper', poperShow]" @click.stop>
+    <div :style="{ left: asideWidth }" :class="['popper', poperShow]" @click.stop>
       <div class="box">
         <slot :visible="visible" />
       </div>
@@ -18,7 +18,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 20:12:31
+ * @Last Modified time: 2020-08-31 10:05:52
  **/
 import addEventListener from 'add-dom-event-listener';
 
@@ -107,7 +107,7 @@ export default {
       opacity: 0.2;
     }
   }
-  .poper {
+  .popper {
     position: absolute;
     top: 0;
     width: 650px;
