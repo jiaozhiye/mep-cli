@@ -3,7 +3,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-31 09:43:29
+ * @Last Modified time: 2020-08-28 10:59:53
  **/
 import { mapActions } from 'vuex';
 import addEventListener from 'add-dom-event-listener';
@@ -14,7 +14,10 @@ export default {
   name: 'MultiTab',
   mixins: [size],
   data() {
-    const localRoutes = this.getLocalTabNav().map(x => this.getRouteByPath(x.key));
+    // 本地路由
+    const localRoutes = this.getLocalTabNav()
+      .map(x => this.getRouteByPath(x.key))
+      .filter(x => !!x);
     return {
       activeKey: this.$route.path,
       pages: uniqBy([...localRoutes, ...(this.$route.path === '/home' ? [this.$route] : [this.getRouteByPath('/home'), this.$route])], 'path'),

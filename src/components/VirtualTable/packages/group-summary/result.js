@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-05 15:36:52
+ * @Last Modified time: 2020-08-29 17:19:04
  */
 import { maxBy, minBy, sumBy } from 'lodash';
 import { groupBy, getCellValue, setCellValue } from '../utils';
@@ -23,9 +23,9 @@ export default {
     }));
     const summaryColumns = this.summary.map(x => {
       if (x.summary === config.groupSummary.total.value) {
-        return { dataIndex: x.summary, title: config.groupSummary.total.text };
+        return { dataIndex: x.summary, title: config.groupSummary.total.text, formula: x.formula };
       }
-      return { dataIndex: x.summary, ...this.formatColumn(x.summary) };
+      return { dataIndex: x.summary, ...this.formatColumn(x.summary), formula: x.formula };
     });
     return {
       loading: !1,
@@ -61,7 +61,7 @@ export default {
         [config.groupSummary.groupbyFieldName]: this.group.map(x => `${x.group}`).join(','),
         usedJH: 2
       });
-      return Object.assign({}, fetch, { params });
+      return Object.assign({}, fetch, { params, xhrAbort: !1 });
     },
     createvTableColumns(groupColumns, summaryColumns) {
       return [
@@ -81,7 +81,7 @@ export default {
         ...summaryColumns.map(x => ({
           title: x.title,
           dataIndex: x.dataIndex,
-          summation: this.$$table.isFetch ? { dataKey: x.dataIndex } : {}
+          ...(x.formula === 'count' || x.formula === 'sum' ? { summation: this.$$table.isFetch ? { dataKey: x.dataIndex } : {} } : null)
         }))
       ];
     },

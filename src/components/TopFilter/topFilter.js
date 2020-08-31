@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-25 19:09:44
+ * @Last Modified time: 2020-08-29 11:32:18
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -676,8 +676,17 @@ export default {
             }}
             scopedSlots={{
               default: ({ item }) => {
-                const single = columns.length === 1;
-                return columns.map(x => <td key={x.dataIndex}>{single ? <span>{item[x.dataIndex]}</span> : <span>{`${x.title}：${item[x.dataIndex]}`}</span>}</td>);
+                return item.__isThead__
+                  ? columns.map(x => (
+                      <th key={x.dataIndex} width={x.width} style="pointer-events: none;">
+                        <span>{x.title}</span>
+                      </th>
+                    ))
+                  : columns.map(x => (
+                      <td key={x.dataIndex}>
+                        <span>{item[x.dataIndex]}</span>
+                      </td>
+                    ));
               }
             }}
           />
@@ -1092,6 +1101,7 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-select
+            ref={`SELECT-${fieldName}`}
             value={form[fieldName]}
             onInput={val => {
               if (!(multiple && filterable)) {
@@ -1107,7 +1117,7 @@ export default {
             title={
               multiple
                 ? itemList
-                    .filter(x => form[fieldName].includes(x.value))
+                    .filter(x => form[fieldName]?.includes(x.value))
                     .map(x => x.text)
                     .join(',')
                 : null
@@ -1137,7 +1147,11 @@ export default {
             }}
             filterMethod={queryString => {
               if (!filterable) return;
-              this.filterMethodHandle(fieldName, queryString);
+              const res = this.filterMethodHandle(fieldName, queryString);
+              if (!multiple && res.length === 1) {
+                this.form[fieldName] = res[0].value;
+                this.$refs[`SELECT-${fieldName}`].blur();
+              }
             }}
           >
             {itemList.map(x => (
@@ -1164,6 +1178,7 @@ export default {
         this[`${fieldName}ItemList`] = res;
       }
       this.$forceUpdate();
+      return res;
     },
     // 获取下拉框数据
     async querySelectOptions({ fetchApi, params = {}, datakey = '', valueKey = 'value', textKey = 'text' }, fieldName) {
@@ -1197,13 +1212,14 @@ export default {
     },
     // 创建搜索帮助数据列表
     createSerachHelperList(list, columns) {
-      return list.map(x => {
+      const res = list.map(x => {
         const item = {};
         columns.forEach(k => {
           item[k.dataIndex] = x[k.dataIndex];
         });
         return item;
       });
+      return res.length ? [{ __isThead__: !0 }, ...res] : res;
     },
     querySearchHandle(fieldName, itemList = [], queryString = '', cb) {
       const res = queryString ? itemList.filter(this.createSearchHelpFilter(queryString)) : itemList;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-19 17:08:56
+ * @Last Modified time: 2020-08-29 10:18:02
  */
 @import '../../style/index.scss';
 
@@ -248,16 +248,22 @@ $prefix-cls: '#{$v-prefix}-top-filter';
 }
 .search-helper-popper {
   .el-autocomplete-suggestion__wrap {
+    padding: 0;
     ul {
       width: 100%;
       display: table;
       li {
         display: table-row;
+        th,
         td {
           line-height: 28px;
+          border-bottom: 1px solid $border-color-secondary;
           span {
             padding: 0 $padding-base;
           }
+        }
+        th {
+          background-color: $background-color-cecondary;
         }
       }
     }

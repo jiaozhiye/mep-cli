@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 22:17:28
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-22 13:04:12
+ * @Last Modified time: 2020-08-29 13:20:28
  */
 import addEventListener from 'add-dom-event-listener';
 import { addResizeListener, removeResizeListener } from '../../../_utils/resize-event';
@@ -58,7 +58,7 @@ export default {
     addResizeListener(this.$vTable, this.resizeListener);
     if (this.height === 'auto') {
       this.resizeEvent = addEventListener(window, 'resize', this.calcTableHeight);
-      this.calcTableHeight();
+      setTimeout(() => this.calcTableHeight(), 0);
     }
   },
   removeEvents() {

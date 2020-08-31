@@ -2,7 +2,7 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: 申庆柱
- * @LastEditTime: 2020-08-24 14:29:48
+ * @LastEditTime: 2020-08-29 08:47:02
  */
 
 import { get, isObject, template } from 'lodash';
@@ -82,6 +82,11 @@ export default {
         header[item.dataIndex] = item.title;
       });
       return [header, ...list];
+    },
+    focus() {
+      setTimeout(() => {
+        this.$refs.autocomplete.focus();
+      }, 0);
     }
   },
   render() {

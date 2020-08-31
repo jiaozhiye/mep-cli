@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-17 09:43:59
+ * @Last Modified time: 2020-08-31 08:18:09
  */
 import localforage from 'localforage';
 import { stringify, array_format, isBracketBalance } from '../filter-sql';
-import { createUidKey } from '../utils';
+import { createUidKey, hasOwn } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
 
@@ -310,9 +310,13 @@ export default {
       } catch (err) {}
     },
     confirmHandle() {
+      const { clearTableFilter, createSuperSearch, fetch } = this.$$table;
       this.loading = !0;
-      this.$$table.clearTableFilter();
-      this.$$table.createSuperSearch(this.query);
+      if (hasOwn(fetch ?? {}, 'xhrAbort')) {
+        this.$$table.fetch.xhrAbort = !1;
+      }
+      clearTableFilter();
+      createSuperSearch(this.query);
       this.$nextTick(() => this.$$table.$refs[`tableHeader`]?.filterHandle(this.query));
       setTimeout(() => this.cancelHandle(), 200);
     },

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 15:16:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-27 16:48:58
+ * @Last Modified time: 2020-08-28 13:29:50
  */
 .el-notification {
   a {
@@ -99,5 +99,8 @@
   }
   .el-tabs__item {
     padding: 0 $modulePadding;
+  }
+  .el-tabs__content {
+    position: static;
   }
 }
