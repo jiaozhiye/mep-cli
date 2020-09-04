@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-04 10:00:52
+ * @Last Modified time: 2020-09-04 17:21:01
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -454,7 +454,7 @@ export default {
             transition="el-zoom-in-top"
             placement="bottom-start"
             trigger="click"
-            style={{ width: '100%' }}
+            style={{ width: '100%', display: 'inline-flex' }}
             on-after-leave={() => {
               this[`${fieldName}TreeFilterTexts`] = '';
               this.treeFilterTextHandle(fieldName);
@@ -508,7 +508,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click" style={{ width: '100%' }}>
+          <el-popover v-model={this.visible[fieldName]} transition="el-zoom-in-top" placement="bottom-start" trigger="click" style={{ width: '100%', display: 'inline-flex' }}>
             <div style={{ maxHeight: '250px', overflowY: 'auto', ...style }}>
               <Cascader
                 value={form[fieldName]}
