@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-17 10:04:38
+ * @Last Modified time: 2020-09-04 14:35:49
  **/
 import axios from 'axios';
 import { cloneDeep } from 'lodash';
@@ -36,6 +36,14 @@ export default {
       fileList: this.initialValue
     };
   },
+  computed: {
+    $buttonEl() {
+      return this.$refs[`upload`]?.$el.querySelector('.el-upload > .el-button') ?? null;
+    }
+  },
+  mounted() {
+    this.buttonIconClassName = this.$buttonEl.getElementsByTagName('i')[0]?.classList.value;
+  },
   watch: {
     initialValue(val) {
       this.fileList = val;
@@ -51,13 +59,17 @@ export default {
     beforeUploadHandle(file) {
       const isType = this.fileTypes.includes(file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase());
       const isLt5M = file.size / 1024 / 1024 < this.fileSize;
+      const result = isType && isLt5M;
       if (!isType) {
         Message.warning(this.t('uploadFile.tooltip', { type: this.fileTypes.join(',') }));
       }
       if (!isLt5M) {
         Message.warning(this.t('uploadFile.sizeLimit', { size: this.fileSize }));
       }
-      return isType && isLt5M;
+      if (result) {
+        this.startLoading();
+      }
+      return result;
     },
     removeFileHandle(file, fileList) {
       this.fileList = fileList;
@@ -66,11 +78,15 @@ export default {
       if (res.code === 200) {
         this.fileList = [...this.fileList, { name: file.name, url: res.data || '' }];
         this.$emit('success', res.data);
+      } else {
+        this.$message.error(res.msg);
       }
+      this.stopLoading();
     },
     errorHandle(err) {
       this.$emit('error', err);
       this.$message.error(this.t('uploadFile.uploadError'));
+      this.stopLoading();
     },
     async previewFileHandle(file) {
       try {
@@ -99,10 +115,24 @@ export default {
         a.click();
         a = null;
       }
+    },
+    startLoading() {
+      this.$buttonEl.classList.add('is-loading');
+      const $icon = this.$buttonEl.getElementsByTagName('i')[0];
+      if ($icon) {
+        $icon.className = 'el-icon-loading';
+      }
+    },
+    stopLoading() {
+      this.$buttonEl.classList.remove('is-loading');
+      const $icon = this.$buttonEl.getElementsByTagName('i')[0];
+      if ($icon) {
+        $icon.className = this.buttonIconClassName;
+      }
     }
   },
   render() {
-    const { $props, $attrs, $slots, $listeners, fileList, fileTypes, fileSize, containerStyle } = this;
+    const { $props, $attrs, $slots, $listeners, fileList, fileTypes, fileSize } = this;
     const wrapProps = {
       props: {
         action: $props.actionUrl,
