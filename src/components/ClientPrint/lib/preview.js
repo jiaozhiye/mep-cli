@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-10 10:49:44
+ * @Last Modified time: 2020-08-31 10:39:31
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
@@ -64,10 +64,14 @@ export default {
     },
     printerItems() {
       const LODOP = getLodop();
-      const iPrinterCount = LODOP.GET_PRINTER_COUNT();
       const result = [{ text: '默认打印机', value: -1 }];
-      for (let i = 0; i < iPrinterCount; i++) {
-        result.push({ text: LODOP.GET_PRINTER_NAME(i), value: i });
+      try {
+        const iPrinterCount = LODOP.GET_PRINTER_COUNT();
+        for (let i = 0; i < iPrinterCount; i++) {
+          result.push({ text: LODOP.GET_PRINTER_NAME(i), value: i });
+        }
+      } catch (err) {
+        console.error(`[ClientPrint]: 请安装 LODOP 打印插件`);
       }
       return result;
     },

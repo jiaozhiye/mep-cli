@@ -94,6 +94,8 @@
 | step          | 数值变化的步长 - INPUT_NUMBER/RANGE_INPUT_NUMBER                 | number           | 1        |
 | precision     | 数值精度 - INPUT_NUMBER/RANGE_INPUT_NUMBER                       | number           | -        |
 | disabled      | 是否禁用列表项 - SELECT/MULTIPLE_SELECT/MULTIPLE_CHECKBOX/RADIO/ | boolean          | false    |
+| startDisabled | 是否禁用开始项 - RANGE_DATE                                      | boolean          | -        |
+| endDisabled   | 是否禁用结束项 - RANGE_DATE                                      | boolean          | -        |
 | noInput       | 不允许手动输入，支持清除操作 - INPUT                             | boolean          | false    |
 | trueValue     | 选中的值 - CHECKBOX                                              | number \| string | 1        |
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string | 0        |

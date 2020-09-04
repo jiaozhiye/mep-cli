@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-17 15:08:34
+ * @Last Modified time: 2020-09-04 10:26:38
  */
 import axios from '@/api/fetch';
 
@@ -16,10 +16,13 @@ export const getNavList = params => axios.post(`/api/sys/sysLogin/user/getUserMe
 export const getAllDict = params => axios.post(`/api/sys/sysLogin/user/getDictionary`, params);
 
 // 获取收藏导航
-export const getStarMenuList = params => axios.get(`/api/sys/sysLogin/test`, { params });
+export const getStarMenuList = params => axios.get(`/api/sys/user/sysLogin/test`, { params });
+
+// 设置收藏导航
+export const setStarMenuList = params => axios.post(`/api/sys/user/sysLogin/test`, params);
 
 // 获取常用导航
-export const getCommonMenuList = params => axios.get(`/api/sys/sysLogin/test`, { params });
+export const getCommonMenuList = params => axios.get(`/api/sys/user/sysLogin/test`, { params });
 
 // 菜单埋点
 export const createMenuPoint = params => axios.post(`/api/sys/sysLogin/user/clickMenu`, params);

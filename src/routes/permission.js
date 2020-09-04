@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-24 10:41:05
+ * @Last Modified time: 2020-09-04 10:34:22
  */
 import router from '@/routes';
 import store from '@/store';
@@ -20,7 +20,7 @@ NProgress.configure({ showSpinner: false });
 const whiteList = ['/login'];
 
 // 权限白名单
-const whiteAuth = ['/login', '/home', '/iframe', '/redirect', '/404', '/user-center', '/test', '/cors'];
+const whiteAuth = ['/login', '/home', '/iframe', '/redirect', '/404', '/user-center', '/test'];
 
 // 路由重定向
 const redirect = (next, path) => {
@@ -48,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
       redirect(next, '/');
     } else {
-      if (!isIframe(to.path) && !store.state.app.navList.length) {
+      if (!store.state.app.navList.length) {
         // 通过 vuex 管理导航数据
         let bool = await store.dispatch('app/createNavList');
         bool ? next({ ...to, replace: true }) : redirect(next, false);

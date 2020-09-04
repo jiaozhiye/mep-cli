@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-10 11:34:05
+ * @Last Modified time: 2020-09-03 09:18:29
  **/
 import PropTypes from '../_utils/vue-types';
 import { sleep } from '../_utils/tool';
@@ -20,7 +20,7 @@ export default {
   mixins: [Locale],
   props: {
     dataSource: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-    templateRender: PropTypes.func.isRequired,
+    templateRender: PropTypes.any.isRequired,
     uniqueKey: PropTypes.string,
     closeOnPrinted: PropTypes.bool.def(false),
     type: PropTypes.string,

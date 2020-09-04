@@ -32,7 +32,7 @@
     >
       <template slot="default">
         <el-button type="primary" icon="el-icon-plus" @click="addInfoHandle">新建</el-button>
-        <client-print uniqueKey="cprint_jzy" :dataSource="printDataList" :click="printHandle3" :templateRender="() => import(`@test/pages/printTemplate/demo2`)">客户端打印</client-print>
+        <client-print uniqueKey="cprint_jzy" :dataSource="printDataList" :click="printHandle3" :templateRender="templateRender">客户端打印</client-print>
         <web-print :click="printHandle">pdf 打印</web-print>
         <el-button icon="el-icon-printer" @click="printHandle2">插件打印</el-button>
         <el-button type="danger" icon="el-icon-delete" @click="removeHandle">删除</el-button>
@@ -64,6 +64,8 @@ import { notifyAction, confirmAction, sleep } from '@/utils';
 import AddInfo from './addInfo';
 import tableData from '@/mock/tableData';
 import printData from '@/mock/printData';
+
+import PrintTemplate from '@test/pages/printTemplate/demo2';
 
 import './lang'; // mep 没有多语言功能
 
@@ -114,7 +116,8 @@ export default {
         password: 'JZga2018',
         'login-form-type': 'pwd'
       },
-      printDataList: []
+      printDataList: [],
+      templateRender: null
     };
   },
   computed: {
@@ -138,6 +141,7 @@ export default {
       for (let i = 0; i < 100; i++) {
         res[i] = i;
       }
+      this.templateRender = PrintTemplate;
       this.printDataList = res;
     },
     asdasd() {

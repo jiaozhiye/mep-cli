@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-29 17:19:04
+ * @Last Modified time: 2020-09-02 13:49:33
  */
 import { maxBy, minBy, sumBy } from 'lodash';
 import { groupBy, getCellValue, setCellValue } from '../utils';
@@ -50,6 +50,7 @@ export default {
       const column = this.columns.find(x => x.dataIndex === dataIndex);
       return {
         title: column.title,
+        ...(column.precision >= 0 ? { precision: column.precision } : null),
         dictItems: column.dictItems ?? []
       };
     },
@@ -57,9 +58,11 @@ export default {
       const { isFetch, fetchParams, fetch } = this.$$table;
       if (!isFetch) return null;
       const params = Object.assign({}, fetchParams, {
+        [config.sorterFieldName]: undefined,
         [config.groupSummary.summaryFieldName]: this.summary.map(x => `${x.formula}|${x.summary}`).join(','),
         [config.groupSummary.groupbyFieldName]: this.group.map(x => `${x.group}`).join(','),
-        usedJH: 2
+        usedJH: 2,
+        currentPage: 1
       });
       return Object.assign({}, fetch, { params, xhrAbort: !1 });
     },
@@ -79,8 +82,7 @@ export default {
           dictItems: x.dictItems
         })),
         ...summaryColumns.map(x => ({
-          title: x.title,
-          dataIndex: x.dataIndex,
+          ...x,
           ...(x.formula === 'count' || x.formula === 'sum' ? { summation: this.$$table.isFetch ? { dataKey: x.dataIndex } : {} } : null)
         }))
       ];

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-07 15:44:20
+ * @Last Modified time: 2020-09-01 13:58:16
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import moment from 'moment';
@@ -32,6 +32,12 @@ export default {
           }
           .fs14 {
             font-size: 14px;
+          }
+          .fw500 {
+            font-weight: 500;
+          }
+          .fw700 {
+            font-weight: 700;
           }
           .fl {
             float: left;

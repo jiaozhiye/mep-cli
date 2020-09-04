@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-31 09:02:57
+ * @Last Modified time: 2020-09-04 10:20:35
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -112,16 +112,16 @@ const actions = {
         if (res.code === 200 && res.data.length) {
           data = res.data;
         } else {
-          return dispatch('createLogout');
+          dispatch('createLogout');
         }
       } catch (err) {
-        return dispatch('createLogout');
+        dispatch('createLogout');
       }
     }
     formateNavList(data, router.options.routes);
     commit({ type: types.NAVLIST, data });
     commit({ type: types.MENULIST, data: flattenNavList(data) });
-    return true;
+    return !!data.length;
   },
   clearNavList({ dispatch, commit, state }, params) {
     commit({
@@ -139,7 +139,7 @@ const actions = {
     } else {
       const res = await getStarMenuList();
       if (res.code === 200) {
-        data = res.data;
+        data = res.data ?? [];
       }
     }
     commit({ type: types.STAR_MENU, data });
@@ -153,7 +153,7 @@ const actions = {
     } else {
       const res = await getCommonMenuList();
       if (res.code === 200) {
-        data = res.data;
+        data = res.data ?? [];
       }
     }
     commit({ type: types.COMMON_MENU, data });

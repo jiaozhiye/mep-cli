@@ -1,18 +1,16 @@
 <template>
   <div class="menu-list">
     <div class="search">
-      <div class="top">
-        <el-autocomplete v-model="menuPath" value-key="title" :fetch-suggestions="querySearch" :placeholder="$t('sidebar.allNavPlaceholder')" @select="handleSelect">
-          <i slot="prefix" class="el-icon-search el-input__icon" />
-          <template slot-scope="{ item }">
-            <span class="name">{{ item.title }}</span>
-          </template>
-        </el-autocomplete>
-      </div>
+      <el-autocomplete v-model="menuPath" value-key="title" :fetch-suggestions="querySearch" :placeholder="$t('sidebar.allNavPlaceholder')" @select="handleSelect">
+        <i slot="prefix" class="el-icon-search el-input__icon" />
+        <template slot-scope="{ item }">
+          <span class="name">{{ item.title }}</span>
+        </template>
+      </el-autocomplete>
     </div>
     <div class="main">
       <el-tabs tab-position="right">
-        <el-tab-pane v-for="item in packMenuList" :key="item.key" :label="item.title" lazy>
+        <el-tab-pane v-for="item in tabMenuList" :key="item.key" :label="item.title" lazy>
           <div class="column-wrap">
             <div v-for="sub in item.children" :key="sub.key" class="box">
               <h4>{{ sub.title }}</h4>
@@ -35,11 +33,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 10:48:52
+ * @Last Modified time: 2020-09-04 10:32:33
  **/
 import { mapState, mapActions } from 'vuex';
 import { flatten } from 'lodash';
 import { notifyAction } from '@/utils';
+import { setStarMenuList } from '@/api/login';
 import pinyin, { STYLE_FIRST_LETTER } from '@/components/Pinyin/index';
 
 export default {
@@ -57,7 +56,7 @@ export default {
   },
   computed: {
     ...mapState('app', ['menuList', 'starMenuList']),
-    packMenuList() {
+    tabMenuList() {
       return this.createMenuList(this.menu);
     }
   },
@@ -105,6 +104,8 @@ export default {
       } else {
         this.removeStarMenuList(key);
       }
+      if (process.env.MOCK_DATA === 'true') return;
+      setStarMenuList(this.starMenuList);
     }
   }
 };
@@ -112,6 +113,8 @@ export default {
 
 <style lang="scss" scoped>
 .menu-list {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   &::after {
     content: '';
@@ -123,26 +126,24 @@ export default {
     background: $menuBg;
   }
   /deep/ .search {
-    height: 120px;
-    .top {
-      padding: 60px 0 0 100px;
-      .el-autocomplete {
-        width: 300px;
-        .el-input__inner {
-          color: #fff;
-          font-size: $textSize;
-          border-radius: 0;
-          background: $allMenuBgColor;
-          border: none;
-          border-bottom: 1px solid #626466;
-          &:-ms-input-placeholder {
-            color: $menuText !important;
-          }
+    padding: 50px 0 20px 100px;
+    .el-autocomplete {
+      width: 300px;
+      .el-input__inner {
+        color: #fff;
+        font-size: $textSize;
+        border-radius: 0;
+        background: $allMenuBgColor;
+        border: none;
+        border-bottom: 1px solid #626466;
+        &:-ms-input-placeholder {
+          color: $menuText !important;
         }
       }
     }
   }
   /deep/ .main {
+    flex: 1;
     position: relative;
     height: calc(100% - 120px);
     .el-tabs {

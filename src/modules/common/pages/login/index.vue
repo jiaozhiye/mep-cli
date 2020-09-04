@@ -88,7 +88,7 @@
 import { mapActions } from 'vuex';
 
 import { sleep } from '@/utils';
-import { doLogin, getBgImage } from '@common/api/login';
+import { doLogin } from '@common/api/login';
 
 import Account from './account';
 import Phone from './phone';
@@ -139,9 +139,6 @@ export default {
       this.curLabel = this.labels[0].key;
     }
   },
-  created() {
-    // this.getLoginBg();
-  },
   methods: {
     ...mapActions('app', ['createLoginInfo']),
     isBrowseType(type) {
@@ -158,12 +155,6 @@ export default {
     },
     backClickHandle() {
       this.curPanel = 'sign';
-    },
-    async getLoginBg() {
-      const res = await getBgImage();
-      if (res.code === 200) {
-        localStorage.setItem('login_bg', res.data || '');
-      }
     },
     async loginHandle() {
       const ref_str = this.curPanel === 'sign' ? `${this.curPanel}-${this.curLabel}` : this.curPanel;
@@ -356,8 +347,7 @@ export default {
   left: 0;
   right: 0;
   line-height: 2;
-  color: #f5222d;
-  background-color: #faad14;
+  background-color: rgb(255, 255, 190);
   a {
     color: #1587ce;
     text-decoration: underline;

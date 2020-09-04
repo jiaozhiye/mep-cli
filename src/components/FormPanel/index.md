@@ -25,6 +25,7 @@
 | ---------------- | ---------------------------- | -------------------------- | --------------------------------------------- |
 | SUBMIT_FORM      | 执行表单提交                 | -                          | 通过校验，返回表单对象；未通过校验，返回 null |
 | RESET_FORM       | 重置表单控件                 | -                          | -                                             |
+| CLEAR_FORM       | 清空表单及额外字段值         | -                          | -                                             |
 | SET_FIELDS_VALUE | 设置表单字段的值             | Function(values:object)    | -                                             |
 | SET_FORM_VALUES  | 可以设置除了表单字段的额外值 | Function(values:object)    | -                                             |
 | CREATE_FOCUS     | 设置表单元素获得焦点方法     | Function(fieldName:string) | -                                             |
@@ -110,11 +111,14 @@
 | step          | 数值变化的步长 - INPUT_NUMBER/RANGE_INPUT_NUMBER                 | number                               | 1        |
 | precision     | 数值精度 - INPUT_NUMBER/RANGE_INPUT_NUMBER                       | number                               | -        |
 | disabled      | 是否禁用列表项 - SELECT/MULTIPLE_SELECT/MULTIPLE_CHECKBOX/RADIO/ | boolean                              | false    |
+| startDisabled | 是否禁用开始项 - RANGE_DATE                                      | boolean                              | -        |
+| endDisabled   | 是否禁用结束项 - RANGE_DATE                                      | boolean                              | -        |
 | noInput       | 不允许手动输入，支持清除操作 - INPUT                             | boolean                              | false    |
 | divider       | 分隔符的类型 - BREAK_SPACE                                       | default \| border                    | default  |
 | trueValue     | 选中的值 - CHECKBOX                                              | number \| string                     | 1        |
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string                     | 0        |
 | dateType      | 日期控件的类型，[配置项](#dateType) - DATE/RANGE_DATE            | string                               | -        |
+| timeFormat    | 时间控件得格式，[配置项](#timeFormat) - TIME/RANGE_TIME          | string                               | -        |
 | minDateTime   | 最小日期，小于该时间的日期段将被禁用                             | string                               | -        |
 | maxDateTime   | 最大日期，大于该时间的日期段将被禁用                             | string                               | -        |
 | defaultTime   | 默认的时间，格式 HH:mm:ss                                        | string                               | -        |
@@ -144,6 +148,13 @@
 | exactdaterange | 严格日期时间区间类型，值的格式 yyyy-MM-dd      | string | -      |
 | month          | 月份类型，值的格式 yyyy-MM                     | string | -      |
 | monthrange     | 月份区间类型，值的格式 yyyy-MM                 | string | -      |
+
+### timeFormat
+
+| 参数     | 说明          | 类型  | 默认值 |
+| -------- | ------------- | ----- | ------ |
+| HH:mm:ss | 时:分:秒 格式 | tring | 默认   |
+| HH:mm    | 时:分 格式    | tring | -      |
 
 ### searchHelper
 

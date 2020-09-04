@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-29 11:32:18
+ * @Last Modified time: 2020-09-04 10:00:52
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -214,7 +214,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <div class="desc-text" style={{ ...style }}>
+          <div class="desc-text" style={{ width: '100%', ...style }}>
             {render()}
           </div>
         </el-form-item>
@@ -857,14 +857,14 @@ export default {
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
-      const { dateType = 'daterange', minDateTime, maxDateTime } = options;
+      const { dateType = 'daterange', minDateTime, maxDateTime, startDisabled, endDisabled } = options;
       const [startDate = minDateTime, endDate = maxDateTime] = form[fieldName];
       // 日期区间快捷键方法
       const createPicker = (picker, days) => {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
-        form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`;
+        !endDisabled && (form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`);
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -897,7 +897,7 @@ export default {
       return (
         <el-form-item key={fieldName} ref={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <div class={cls} style={{ ...style }}>
+          <div class={cls} style={{ width: '100%', ...style }}>
             <el-date-picker
               ref={`RANGE_DATE-${fieldName}-start`}
               type={dateType.replace('exact', '').slice(0, -5)}
@@ -915,7 +915,7 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
-              disabled={disabled}
+              disabled={disabled || startDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
                 this.isDateChange = !0;
@@ -963,7 +963,7 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
-              disabled={disabled}
+              disabled={disabled || endDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
                 this.isDateChange = !0;
@@ -1325,7 +1325,7 @@ export default {
         if (typeof form[key] !== 'undefined') continue;
         // formData[key] = '';
       }
-      return Object.assign({}, form, formData);
+      return cloneDeep(Object.assign({}, form, formData));
     },
     // 获取表单组件的值
     getFormData() {
@@ -1396,7 +1396,6 @@ export default {
     createButton(rows, total) {
       const { flexCols: cols, expand, showCollapse, loading, isDisabled } = this;
       const colSpan = 24 / cols;
-      // 默认收起
       let offset = rows * cols - total > 0 ? rows * cols - total - 1 : 0;
       // 展开
       if (!showCollapse || expand) {

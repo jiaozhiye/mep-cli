@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-27 17:35:21
+ * @Last Modified time: 2020-09-03 08:38:46
  **/
 import PropTypes from '../_utils/vue-types';
 import { filterEmpty } from '../_utils/props-util';
@@ -13,7 +13,8 @@ export default {
   name: 'SuperTabs',
   mixins: [Size, PrefixCls],
   props: {
-    initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     size: PropTypes.oneOf(['small', 'default', 'large']),
     tabType: PropTypes.oneOf(['card', 'border-card']),
     tabPosition: PropTypes.oneOf(['top', 'left']).def('top'),
@@ -24,7 +25,7 @@ export default {
   },
   data() {
     return {
-      activeKey: this.initialValue
+      activeKey: this.value || this.initialValue
     };
   },
   mounted() {
@@ -43,6 +44,7 @@ export default {
       return val;
     },
     handleClick() {
+      this.$emit('input', this.activeKey);
       this.$emit('change', this.activeKey);
     },
     createTabMenus(vNodes) {

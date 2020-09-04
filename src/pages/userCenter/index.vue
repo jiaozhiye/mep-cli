@@ -4,7 +4,7 @@
       <div :class="userCenterCls">
         <div class="user-avatar">
           <span class="avatar">
-            <img class="img" src="@/assets/img/avatar.jpg" />
+            <img class="img" :src="info.profileUrl || avatarImg" />
           </span>
           <span class="name">{{ username }}</span>
         </div>
@@ -15,10 +15,10 @@
           </div>
           <div class="content">
             <div>
-              <span class="text_overflow_cut" title="客户服务部"><i class="iconfont icon-user" /> 客户服务部</span>
-              <span class="text_overflow_cut" title="客户服务部"><i class="iconfont icon-apartment" /> 客户服务部</span>
+              <span class="text_overflow_cut" :title="info.vLogin"><i class="iconfont icon-user" /> {{ info.vLogin }}</span>
+              <span class="text_overflow_cut" :title="info.vOrgName"><i class="iconfont icon-apartment" /> {{ info.vOrgName }}</span>
             </div>
-            <span class="text_overflow_cut" title="xxxxxxxxx@163.com"><i class="iconfont icon-mail" /> xxxxxxxxx@163.com</span>
+            <span class="text_overflow_cut" :title="info.vEmail"><i class="iconfont icon-mail" /> {{ info.vEmail }}</span>
           </div>
         </div>
         <div class="user-box">
@@ -26,9 +26,7 @@
             <span class="text">系统角色</span>
           </div>
           <div class="content">
-            <li class="text_overflow_cut" title="客客服总监客服总监客服总监服总监">客客服总监客服总监客服总监服总监</li>
-            <li class="text_overflow_cut" title="销售顾问">销售顾问</li>
-            <li class="text_overflow_cut" title="整车订单计划员">整车订单计划员</li>
+            <li v-for="text in info.vRoles" :key="text" class="text_overflow_cut" :title="text">{{ text }}</li>
           </div>
         </div>
         <div class="user-action">
@@ -37,7 +35,7 @@
         </div>
       </div>
       <span slot="reference" class="avatar">
-        <img class="img" src="@/assets/img/avatar.jpg" />
+        <img class="img" :src="info.profileUrl || avatarImg" />
       </span>
     </el-popover>
   </div>
@@ -48,10 +46,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-24 11:16:37
+ * @Last Modified time: 2020-09-03 09:42:06
  **/
 import { mapActions } from 'vuex';
 import { getUser } from '@/utils/cookies';
+import { getUserInfo } from '@/api/login';
 
 import { size } from '@/mixins/sizeMixin';
 
@@ -59,8 +58,17 @@ export default {
   name: 'UserCenter',
   mixins: [size],
   data() {
+    this.avatarImg = require('@/assets/img/avatar.jpg');
     return {
       username: getUser() || '管理员',
+      info: {
+        profileUrl: '', // 头像
+        vEmail: '', // Email
+        vLogin: '', // P 码
+        vOrgName: '', // 部门
+        vPersonName: '', // 姓名
+        vRoles: [] // 角色列表
+      },
       visible: false
     };
   },
@@ -73,6 +81,9 @@ export default {
       };
     }
   },
+  created() {
+    this.getUserData();
+  },
   methods: {
     ...mapActions('app', ['clearKeepAliveCache', 'createLogout']),
     closePopperHandle() {
@@ -81,6 +92,19 @@ export default {
     clearCacheHandle() {
       this.clearKeepAliveCache();
       setTimeout(() => window.history.go(0), 0);
+    },
+    async getUserData() {
+      if (process.env.MOCK_DATA === 'true') {
+        const res = require('@/mock/userInfo').default;
+        this.info = res;
+      } else {
+        const res = await getUserInfo();
+        if (res.code === 200) {
+          for (let key in this.info) {
+            this.info[key] = res.data[key];
+          }
+        }
+      }
     },
     logoutHandle() {
       // 需要走后台推出接口

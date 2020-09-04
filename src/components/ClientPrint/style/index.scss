@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-10 09:46:17
+ * @Last Modified time: 2020-09-01 13:58:17
  */
 @import '../../style/index.scss';
 
@@ -133,6 +133,12 @@ $prefix-vpcls: '#{$v-prefix}-cviewport--wrapper';
     }
     .fs14 {
       font-size: 14px;
+    }
+    .fw500 {
+      font-weight: 500;
+    }
+    .fw700 {
+      font-weight: 700;
     }
     .fl {
       float: left;

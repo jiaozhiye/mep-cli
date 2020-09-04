@@ -2,7 +2,7 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: 申庆柱
- * @LastEditTime: 2020-08-12 08:48:16
+ * @LastEditTime: 2020-08-31 15:09:04
  */
 
 import { get } from 'lodash';
@@ -123,7 +123,7 @@ export default {
     const { filterable = false, showAllLevels = true, valueAllLevels = false, checkStrictly = false } = options;
     const props = { value: 'value', label: 'text', checkStrictly };
     return (
-      <div style="position: relative">
+      <div style="flex: 1;position: relative">
         <el-cascader
           ref="cascader"
           v-model={this.currentValue}

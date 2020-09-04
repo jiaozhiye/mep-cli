@@ -1,7 +1,7 @@
 <template>
   <el-form ref="form" size="medium" class="v-form" :model="form" :rules="rules">
     <el-form-item prop="username">
-      <el-input v-model="form.username" placeholder="账号或手机号" auto-complete="on" />
+      <el-input v-model="form.username" placeholder="账号/手机号/邮箱" auto-complete="on" />
     </el-form-item>
     <el-form-item prop="password">
       <el-input v-model="form.password" :type="passwordType" placeholder="密码" auto-complete="on" @keyup.enter.native="enterHandle" />

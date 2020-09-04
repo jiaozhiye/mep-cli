@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-29 11:29:47
+ * @Last Modified time: 2020-09-04 10:00:32
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -253,7 +253,7 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <div class="desc-text" style={{ ...style }}>
+          <div class="desc-text" style={{ width: '100%', ...style }}>
             {render()}
           </div>
         </el-form-item>
@@ -952,14 +952,14 @@ export default {
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
-      const { dateType = 'daterange', minDateTime, maxDateTime } = options;
+      const { dateType = 'daterange', minDateTime, maxDateTime, startDisabled, endDisabled } = options;
       const [startDate = minDateTime, endDate = maxDateTime] = form[fieldName];
       // 日期区间快捷键方法
       const createPicker = (picker, days) => {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
-        form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`;
+        !endDisabled && (form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`);
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -993,7 +993,7 @@ export default {
       return (
         <el-form-item key={fieldName} ref={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <div class={cls} style={{ ...style }}>
+          <div class={cls} style={{ width: '100%', ...style }}>
             <el-date-picker
               ref={`RANGE_DATE-${fieldName}-start`}
               type={dateType.replace('exact', '').slice(0, -5)}
@@ -1011,7 +1011,7 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
-              disabled={disabled}
+              disabled={disabled || startDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
                 this.isDateChange = !0;
@@ -1059,7 +1059,7 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 5px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
-              disabled={disabled}
+              disabled={disabled || endDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
                 this.isDateChange = !0;
@@ -1094,8 +1094,8 @@ export default {
     },
     TIME(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm:ss', style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
-      const { defaultTime } = options;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
+      const { timeFormat = 'HH:mm:ss', defaultTime } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -1103,10 +1103,11 @@ export default {
           <el-time-picker
             v-model={form[fieldName]}
             pickerOptions={{
-              format: valueFormat
+              format: timeFormat
             }}
-            default-value={defaultTime}
-            value-format={valueFormat}
+            default-value={defaultTime ? `1970-01-01 ${defaultTime}` : defaultTime}
+            value-format={timeFormat}
+            format={timeFormat}
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
             style={{ ...style }}
@@ -1117,7 +1118,8 @@ export default {
     },
     RANGE_TIME(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, valueFormat = 'HH:mm:ss', style = {}, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
+      const { timeFormat = 'HH:mm:ss' } = options;
       this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -1128,7 +1130,11 @@ export default {
             onInput={val => {
               form[fieldName] = val ?? [];
             }}
-            value-format={valueFormat}
+            pickerOptions={{
+              format: timeFormat
+            }}
+            value-format={timeFormat}
+            format={timeFormat}
             range-separator="-"
             start-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
             end-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
@@ -1154,7 +1160,7 @@ export default {
               end: endTime,
               step: stepTime
             }}
-            default-value={defaultTime}
+            default-value={defaultTime ? defaultTime.slice(0, 5) : defaultTime}
             value-format={valueFormat}
             placeholder={!disabled ? placeholder : ''}
             disabled={disabled}
@@ -1167,7 +1173,7 @@ export default {
     RANGE_TIME_SELECT(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, disabled, onChange = noop } = option;
-      const { startTime = '00:00', endTime = '23:45', stepTime = '00:15' } = options;
+      const { startTime = '00:00', endTime = '23:45', stepTime = '00:15', startDisabled, endDisabled } = options;
       const stepMinute = moment(stepTime, valueFormat).minute();
       const [startVal, endVal] = form[fieldName];
       this.setViewValue(fieldName, form[fieldName].join('-'));
@@ -1191,7 +1197,7 @@ export default {
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
-            disabled={disabled}
+            disabled={disabled || startDisabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
           />
@@ -1213,7 +1219,7 @@ export default {
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
-            disabled={disabled}
+            disabled={disabled || endDisabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
           />
@@ -1663,7 +1669,7 @@ export default {
         if (typeof form[key] !== 'undefined') continue;
         formData[key] = '';
       }
-      return Object.assign({}, form, formData);
+      return cloneDeep(Object.assign({}, form, formData));
     },
     // 获取表单组件的值
     getFormData() {
@@ -1720,6 +1726,11 @@ export default {
           }
         });
       });
+    },
+    clearForm() {
+      for (let key in this.form) {
+        this.form[key] = Array.isArray(this.form[key]) ? [] : undefined;
+      }
     },
     getElementDisplay({ type, fieldName }) {
       if (type === 'BREAK_SPACE') {
@@ -1903,6 +1914,9 @@ export default {
     },
     RESET_FORM() {
       this.resetForm();
+    },
+    CLEAR_FORM() {
+      this.clearForm();
     },
     // 设置表单项的值，参数是表单值得集合 { fieldName: val, ... }
     SET_FIELDS_VALUE(values = {}) {

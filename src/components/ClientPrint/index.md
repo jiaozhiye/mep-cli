@@ -2,15 +2,15 @@
 
 ### ClientPrint
 
-| 参数           | 说明                                                                          | 类型            | 默认值 |
-| -------------- | ----------------------------------------------------------------------------- | --------------- | ------ |
-| templateRender | 打印模板组件(异步)，通过 () => import(`@test/pages/printTemplate/demo2`) 赋值 | object          | -      |
-| dataSource     | 打印数据                                                                      | array \| object | -      |
-| uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                                      | string          | -      |
-| closeOnPrinted | 打印后是否关闭预览窗口                                                        | boolean         | false  |
-| type           | 打印按钮的类型                                                                | string          | -      |
-| disabled       | 打印按钮的禁用状态                                                            | boolean         | false  |
-| click          | 点击事件(异步方法)，用于获取接口打印数据，给 dataSource 赋值                  | func            | -      |
+| 参数           | 说明                                                         | 类型            | 默认值 |
+| -------------- | ------------------------------------------------------------ | --------------- | ------ |
+| templateRender | 打印模板组件，必要参数，[配置项](#template)                  | object          | -      |
+| dataSource     | 打印数据，必要参数                                           | array \| object | -      |
+| uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                     | string          | -      |
+| closeOnPrinted | 打印后是否关闭预览窗口                                       | boolean         | false  |
+| type           | 打印按钮的类型                                               | string          | -      |
+| disabled       | 打印按钮的禁用状态                                           | boolean         | false  |
+| click          | 点击事件(异步方法)，用于获取接口打印数据，给 dataSource 赋值 | func            | -      |
 
 ### 事件
 
@@ -21,12 +21,21 @@
 | open     | 打印预览窗口，打开时触发             | -              |
 | close    | 打印预览窗口，关闭时触发             | -              |
 
+### template
+
+| 参数名称       | 说明                                                      | 类型   |
+| -------------- | --------------------------------------------------------- | ------ |
+| templateRender | 异步组件，() => import(`@test/pages/printTemplate/demo2`) | func   |
+| templateRender | 模板组件，可实现动态切换模板组件                          | object |
+
 ### 打印模板，标签支持的类属型
 
 - .bor: 单元格全边框，加在 td 标签上
 - .fs12: 字体的大小为 12px，加在 table 标签
 - .fs13: 字体的大小为 13px，加在 table 标签
 - .fs14: 字体的大小为 14px，加在 table 标签
+- .fw500: 字体粗细 font-weight: 500
+- .fw700: 字体粗细 font-weight: 700
 - .fl: 左浮动
 - .fr: 右浮动
 - .tc: 文本居中对齐

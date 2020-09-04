@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-27 09:35:14
+ * @Last Modified time: 2020-09-04 10:22:05
  */
 import axios from 'axios';
 import qs from 'qs';
@@ -39,9 +39,7 @@ const getConfigHeaders = () => {
     Authorization: getToken() || '', // token
     lang: store.state.app.lang, // 多语言
     userAgent: 'pc', // 设备
-    appId: 'JDMC',
-    msec: 1,
-    request_time: +new Date().getTime()
+    appId: 'JDMC'
   };
 };
 
