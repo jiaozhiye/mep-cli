@@ -55,6 +55,7 @@ $ npm run build
 - MultiuseButton 多功能按钮的组件，可实现权限控制及 ajax 防止重复提交
 - Pinyin 中文字符转换成拼音插件
 - PortalPage 对接大众 portal 系统组件
+- Qrcode 生成二维码组件
 - SearchHelper 搜索帮助组件
 - Spin 加载中组件
 - SuperTabs 选项卡组件，支持动画切换及顶部插槽扩展功能

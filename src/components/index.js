@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 11:48:57
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-21 10:15:21
+ * @Last Modified time: 2020-09-05 11:37:27
  */
 import './style';
 import locale from './locale';
@@ -21,6 +21,7 @@ import { default as FormPanel } from './FormPanel';
 import { default as JsonToExcel } from './JsonToExcel';
 import { default as MultiuseButton } from './MultiuseButton';
 import { default as PortalPage } from './PortalPage';
+import { default as Qrcode } from './Qrcode';
 import { default as SearchHelper } from './SearchHelper';
 import { default as SlideVerify } from './SlideVerify';
 import { default as Spin } from './Spin';
@@ -49,6 +50,7 @@ const components = [
   JsonToExcel,
   MultiuseButton,
   PortalPage,
+  Qrcode,
   SearchHelper,
   SlideVerify,
   Spin,
@@ -99,6 +101,8 @@ export default {
   FormPanel,
   JsonToExcel,
   MultiuseButton,
+  PortalPage,
+  Qrcode,
   SearchHelper,
   SlideVerify,
   Spin,

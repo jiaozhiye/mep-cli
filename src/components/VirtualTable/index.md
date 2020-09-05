@@ -194,11 +194,11 @@
 
 ### rule
 
-| 参数      | 说明           | 类型                           | 默认值 |
-| --------- | -------------- | ------------------------------ | ------ |
-| required  | 是否必填       | boolean                        | -      |
-| message   | 提示信息       | string                         | -      |
-| validator | 自定义校验规则 | Function(cellValue) => boolean | -      |
+| 参数      | 说明                                      | 类型                           | 默认值 |
+| --------- | ----------------------------------------- | ------------------------------ | ------ |
+| required  | 是否必填                                  | boolean                        | -      |
+| message   | 提示信息                                  | string                         | -      |
+| validator | 自定义校验规则，返回值 true，表示通过校验 | Function(cellValue) => boolean | -      |
 
 ### summation
 

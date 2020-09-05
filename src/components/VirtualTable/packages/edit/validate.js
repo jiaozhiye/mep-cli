@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 10:36:41
+ * @Last Modified time: 2020-09-04 11:58:05
  */
 import { isEmpty } from '../utils';
 import { isFunction } from 'lodash';
@@ -21,7 +21,7 @@ const validateMixin = {
         if (x.required && isEmpty(val)) {
           this.store.addToRequired({ x: rowKey, y: columnKey, text: x.message });
         }
-        if (isFunction(x.validator) && x.validator(val)) {
+        if (isFunction(x.validator) && !x.validator(val)) {
           this.store.addToValidate({ x: rowKey, y: columnKey, text: x.message });
         }
       });

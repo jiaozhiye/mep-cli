@@ -4,7 +4,7 @@
       <el-form-item prop="account">
         <el-input v-model="form.account" placeholder="手机号" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="captcha">
         <el-input v-model="form.captcha" placeholder="短信验证码" />
         <el-button type="text" style="position: absolute; right: 0; top: 3px;" :disabled="btnState.disabled" @click="clickHandle">{{
           (!btnState.disabled && '获取验证码') || `重新发送 ${btnState.time} s`
@@ -34,7 +34,8 @@ export default {
         captcha: ''
       },
       rules: {
-        account: [{ required: true, validator: phoneValidate, trigger: 'blur' }]
+        account: [{ required: true, validator: phoneValidate, trigger: 'blur' }],
+        captcha: [{ required: true, message: '验证码不能为空', trigger: 'blur' }]
       },
       btnState: {
         time: 60,
@@ -57,10 +58,23 @@ export default {
       }
       return false;
     },
+    doAccountValidate() {
+      return new Promise((resolve, reject) => {
+        this.$refs.form.validateField('account', err => {
+          if (err) {
+            reject({ errMsg: err });
+          } else {
+            resolve();
+          }
+        });
+      });
+    },
     async clickHandle() {
-      const res = await this.doValidate();
-      if (!res) return;
-      this.visible = true;
+      try {
+        const res = await this.doAccountValidate();
+        if (res) return;
+        this.visible = true;
+      } catch (err) {}
     },
     async successHandle() {
       await sleep(500);
@@ -76,9 +90,9 @@ export default {
         }
       }, 1000);
       this.$message.warning('验证码发送中..');
-      const res = await getCaptcha({ vPhone: this.form.account });
+      const res = await getCaptcha({ vMobile: this.form.account });
       if (res.code === 200) {
-        // ...
+        this.$message.success('验证码发送成功，请查收！');
       }
     },
     failHandle() {},
