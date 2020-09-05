@@ -32,10 +32,6 @@ $ npm run build
 ```
 1. framework - 架构
 2. system - 系统
-3. sales - 销售
-4. service - 服务 + 备件 + 工具
-5. usedcar - 二手车
-6. others - 其他
 
 注意：npm 依赖需要统一管理，不允许私自安装；公共的表单校验规则统一管理
 ```

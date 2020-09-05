@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-21 08:23:09
+ * @Last Modified time: 2020-09-05 07:58:01
  */
 'use strict';
 
@@ -48,14 +48,7 @@ module.exports = {
       '@': utils.resolve('src'),
       '@test': utils.resolve('src/modules/test'),
       '@common': utils.resolve('src/modules/common'),
-      '@system': utils.resolve('src/modules/system'),
-      '@sales': utils.resolve('src/modules/sales'),
-      '@service': utils.resolve('src/modules/service'),
-      '@usedcar': utils.resolve('src/modules/usedcar'),
-      '@customercare': utils.resolve('src/modules/customercare'),
-      '@salesapp': utils.resolve('src/modules/salesapp'),
-      '@presales': utils.resolve('src/modules/presales'),
-      '@others': utils.resolve('src/modules/others')
+      '@system': utils.resolve('src/modules/system')
     }
   },
   module: {

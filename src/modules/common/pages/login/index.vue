@@ -158,16 +158,17 @@ export default {
     },
     async loginHandle() {
       const ref_str = this.curPanel === 'sign' ? `${this.curPanel}-${this.curLabel}` : this.curPanel;
+      const loginType = this.curPanel === 'sign' ? (this.curLabel === 'account' ? 1 : 0) : 2;
       const [err, data] = await this.$refs[ref_str].GET_VALUE?.();
       if (err) return;
       this.loading = !0;
       try {
         const res = await doLogin({
-          name: data.username,
-          pwd: data.password,
-          vcode: data.vcode,
-          phone: data.phone,
-          captcha: data.captcha
+          loginType,
+          vLogin: data.account,
+          vPwd: data.password,
+          imgCheck: data.vcode,
+          msgCode: data.captcha
         });
         if (res.code === 200) {
           const { jwt, rData = {} } = res.data;
@@ -178,6 +179,10 @@ export default {
           });
           this.$router.push({ path: '/' }).catch(() => {});
           await sleep(1000);
+        }
+        if (res.code === 991) {
+          this.$refs[ref_str].isVcode = !0;
+          this.$refs[ref_str].handleChangeCheckCode();
         }
       } catch (err) {}
       this.loading = !1;

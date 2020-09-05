@@ -1,7 +1,7 @@
 <template>
   <el-form ref="form" size="medium" class="v-form" :model="form" :rules="rules">
-    <el-form-item prop="username">
-      <el-input v-model="form.username" placeholder="账号/手机号/邮箱" auto-complete="on" />
+    <el-form-item prop="account">
+      <el-input v-model="form.account" placeholder="账号/手机号/邮箱" auto-complete="on" />
     </el-form-item>
     <el-form-item prop="password">
       <el-input v-model="form.password" :type="passwordType" placeholder="密码" auto-complete="on" @keyup.enter.native="enterHandle" />
@@ -26,12 +26,12 @@ export default {
   data() {
     return {
       form: {
-        username: '',
+        account: '',
         password: '',
         vcode: ''
       },
       rules: {
-        username: [{ required: true, message: '账号不能为空', trigger: 'blur' }],
+        account: [{ required: true, message: '账号不能为空', trigger: 'blur' }],
         password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
       },
       passwordType: 'password',
@@ -49,7 +49,7 @@ export default {
       return false;
     },
     async handleChangeCheckCode() {
-      const res = await getCheckCode({ t: new Date().getTime() });
+      const res = await getCheckCode({ vLogin: this.form.account, t: new Date().getTime() });
       if (res.code === 200) {
         this.randCodeImage = res.data;
       }

@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-form ref="form" size="medium" class="v-form" :model="form" :rules="rules">
-      <el-form-item prop="phone">
-        <el-input v-model="form.phone" placeholder="手机号" />
+      <el-form-item prop="account">
+        <el-input v-model="form.account" placeholder="手机号" />
       </el-form-item>
       <el-form-item>
         <el-input v-model="form.captcha" placeholder="短信验证码" />
@@ -30,11 +30,11 @@ export default {
     this.timer = null;
     return {
       form: {
-        phone: '',
+        account: '',
         captcha: ''
       },
       rules: {
-        phone: [{ required: true, validator: phoneValidate, trigger: 'blur' }]
+        account: [{ required: true, validator: phoneValidate, trigger: 'blur' }]
       },
       btnState: {
         time: 60,
@@ -76,7 +76,7 @@ export default {
         }
       }, 1000);
       this.$message.warning('验证码发送中..');
-      const res = await getCaptcha({ vPhone: this.form.phone });
+      const res = await getCaptcha({ vPhone: this.form.account });
       if (res.code === 200) {
         // ...
       }

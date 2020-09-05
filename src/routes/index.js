@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-21 08:19:19
+ * @Last Modified time: 2020-09-05 08:06:38
  */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -26,12 +26,6 @@ export const constantRouterMap = [
     hidden: true
   },
   ...routes.map(x => x.iframes).flat(),
-  // 大屏
-  {
-    path: '/iframe/big-screen/demo',
-    component: () => import(/* webpackChunkName: "bigScreen/demo" */ '@/pages/bigScreen/index')
-  },
-  // 大屏 END
   {
     path: '/',
     meta: { title: i18n.t('app.home') },

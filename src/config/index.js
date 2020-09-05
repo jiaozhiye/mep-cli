@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-29 12:53:02
+ * @Last Modified time: 2020-09-05 08:00:33
  */
 import i18n from '@/lang';
 
@@ -17,7 +17,6 @@ const config = {
   showCustomTheme: true, // 是否显示自定义主题
   showLangSelect: true, // 是否显示多语言
   showSizeSelect: true, // 是否显示尺寸选择
-  showCTICenter: true, // 是否显示 CTI
   showNotification: true, // 是否显示通知
   onlyOneMessage: false, // 是否只显示一条提示信息
   notifyDuration: 3000, // 通知消息组件显示时间
