@@ -79,7 +79,7 @@
       <a title="下载" href="https://dl.google.com/release2/chrome/SUNIxoKtCgg7dyJg8AWJDw_83.0.4103.116/83.0.4103.116_chrome_installer.exe">谷歌浏览器</a>
     </div>
     <BaseDialog :visible.sync="visible" title="忘记密码" width="400px" :showFullScreen="false" destroy-on-close>
-      <BackPwd />
+      <BackPwd @close="backPwdColose" />
     </BaseDialog>
   </section>
 </template>
@@ -186,6 +186,9 @@ export default {
         }
       } catch (err) {}
       this.loading = !1;
+    },
+    backPwdColose() {
+      this.visible = !1;
     }
   }
 };

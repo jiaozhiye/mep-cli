@@ -2,16 +2,40 @@
   <div class="app-download">
     <span><i class="iconfont icon-mobile"></i> 移动办公</span>
     <div>
-      <el-button type="text" size="medium">销售App</el-button>
-      <el-button type="text" size="medium">售后App</el-button>
-      <el-button type="text" size="medium">销售iPad</el-button>
-      <el-button type="text" size="medium">售后iPad</el-button>
+      <el-button v-for="(item, index) in list" :key="item.vAppName" type="text" size="medium" @click="clickHandle(index)">{{ item.vAppName }}</el-button>
     </div>
+    <BaseDialog :visible.sync="visible" title="移动办公" width="400px" :showFullScreen="false" destroy-on-close>
+      <Qrcode :text="qrUrl" />
+    </BaseDialog>
   </div>
 </template>
 
 <script>
-export default {};
+import { getAppDownload } from '@common/api/login';
+
+export default {
+  data() {
+    return {
+      list: [],
+      qrUrl: '',
+      visible: false
+    };
+  },
+  mounted() {
+    this.getAppList();
+  },
+  methods: {
+    async getAppList() {
+      const res = await getAppDownload({ hostName: window.location.hostname });
+      if (res.code === 200) {
+        this.list = res.data ?? [];
+      }
+    },
+    clickHandle(index) {
+      this.qrUrl = this.list[index].vUrl;
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-26 17:08:14
+ * @Last Modified time: 2020-09-07 14:23:13
  */
 import PropTypes from '../../../_utils/vue-types';
+import { template } from 'lodash';
 
 export default {
   name: 'InputText',
@@ -13,6 +14,8 @@ export default {
     size: PropTypes.string,
     maxlength: PropTypes.number,
     placeholder: PropTypes.string,
+    readonly: PropTypes.bool.def(false),
+    clearable: PropTypes.bool.def(false),
     disabled: PropTypes.bool.def(false)
   },
   data() {
@@ -38,6 +41,7 @@ export default {
       this.currentValue = val;
     },
     emitEventHandle(val) {
+      // 触发 input & change 事件
       this.$emit('input', val);
       this.$emit('change', val);
     },
@@ -49,24 +53,28 @@ export default {
     }
   },
   render() {
-    const { inputTextSize, currentValue, maxlength, placeholder, disabled } = this;
+    const { inputTextSize, currentValue, maxlength, placeholder, readonly, clearable, disabled, $slots } = this;
     return (
       <el-input
         ref="input"
         size={inputTextSize}
         value={currentValue}
         onInput={val => {
+          if (readonly) return;
           this.currentValue = val;
           this.$emit('nativeInput', val);
         }}
         maxlength={maxlength}
         placeholder={placeholder}
         disabled={disabled}
+        clearable={clearable}
         onChange={val => {
           this.setValueHandle(val);
           this.emitEventHandle(val);
         }}
-      />
+      >
+        <template slot="append">{$slots[`append`]}</template>
+      </el-input>
     );
   }
 };

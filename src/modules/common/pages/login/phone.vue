@@ -71,8 +71,8 @@ export default {
     },
     async clickHandle() {
       try {
-        const res = await this.doAccountValidate();
-        if (res) return;
+        const errMsg = await this.doAccountValidate();
+        if (errMsg) return;
         this.visible = true;
       } catch (err) {}
     },
@@ -89,7 +89,7 @@ export default {
           clearInterval(this.timer);
         }
       }, 1000);
-      this.$message.warning('验证码发送中..');
+      this.$message.warning('验证码发送中...');
       const res = await getCaptcha({ vMobile: this.form.account });
       if (res.code === 200) {
         this.$message.success('验证码发送成功，请查收！');

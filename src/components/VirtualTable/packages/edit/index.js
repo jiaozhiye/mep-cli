@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-26 17:09:21
+ * @Last Modified time: 2020-09-07 14:28:13
  */
 import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -230,8 +230,7 @@ export default {
       const { dataIndex, precision } = column;
       const { extra = {}, helper, rules = [], onClick = noop, onChange = noop } = this.options;
       // 设置搜索帮助的值
-      const setHelperValues = (val, others) => {
-        let isChange = false;
+      const setHelperValues = (val = '', others) => {
         // 对其他单元格赋值 & 校验
         if (isObject(others) && Object.keys(others).length) {
           for (let otherDataIndex in others) {
@@ -242,17 +241,13 @@ export default {
             if (!Array.isArray(otherOptions?.rules)) continue;
             this.$$table.createFieldValidate(otherOptions.rules, otherValue, this.rowKey, otherDataIndex);
           }
-          isChange = !0;
         }
         // 修改当前单元格的值
-        if (typeof val !== 'undefined') {
-          setCellValue(row, dataIndex, val, precision);
-          this.createFieldValidate(rules, val);
-          this.store.addToUpdated(row);
-          onChange({ [this.dataKey]: val }, row);
-          isChange = !0;
-        }
-        isChange && this.$$table.dataChangeHandle();
+        setCellValue(row, dataIndex, val, precision);
+        this.createFieldValidate(rules, val);
+        this.store.addToUpdated(row);
+        onChange({ [this.dataKey]: val }, row);
+        this.$$table.dataChangeHandle();
       };
       const dialogProps = {
         props: {
@@ -298,14 +293,18 @@ export default {
       const prevValue = getCellValue(row, dataIndex);
       return (
         <div class="search-helper">
-          <el-input
+          <InputText
             ref={`search-helper-${this.dataKey}`}
             size={this.size}
             value={prevValue}
+            onInput={val => {
+              setCellValue(row, dataIndex, val);
+            }}
+            readonly={extra.readonly ?? !0}
             clearable={extra.clearable ?? !0}
             disabled={extra.disabled}
-            onClear={() => {
-              setHelperValues('');
+            onChange={val => {
+              setHelperValues(val);
             }}
           >
             <el-button
@@ -322,7 +321,7 @@ export default {
                 }
               }}
             />
-          </el-input>
+          </InputText>
           {isObject(helper) && (
             <BaseDialog {...dialogProps}>
               <SearchHelper {...shProps} />

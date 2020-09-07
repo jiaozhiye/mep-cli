@@ -3,15 +3,13 @@
     <div class="left">
       <div class="logo-wrap">
         <span>
-          <img src="@/assets/img/logo_ep.png" width="140" />
+          <img src="@/assets/img/logo_left.png" width="140" />
         </span>
         <span>
-          <img src="@/assets/img/logo_audi.png" width="240" />
+          <img src="@/assets/img/logo_right.png" width="240" />
         </span>
       </div>
-      <div class="copy-wrap">
-        <!-- <img src="@/assets/img/login_copy.png" width="640" /> -->
-      </div>
+      <div class="copy-wrap"></div>
       <div class="btn-wrap">
         <a href="javascript:;" class="audi-button">
           <span>{{ $t('login.viewDetails') }}</span>
@@ -86,13 +84,13 @@
     </div>
     <BaseDialog :visible.sync="actionWx.visible" :title="actionWx.title" width="500px" destroy-on-close>
       <div class="tc">
-        <img :src="wxLoginQrcode" width="300" />
+        微信登录
       </div>
       <div class="tc" style="padding-bottom: 15px;">{{ actionApp.desc }}</div>
     </BaseDialog>
     <BaseDialog :visible.sync="actionApp.visible" :title="actionApp.title" width="500px" destroy-on-close>
       <div class="tc">
-        <img :src="appDevQrcode" width="300" />
+        App下载
       </div>
       <div class="tc" style="padding-bottom: 15px;">{{ actionApp.desc }}</div>
     </BaseDialog>
@@ -111,13 +109,6 @@ import { language } from '@/mixins/langMixin';
 
 import backPwd from './backPwd.vue';
 
-// app 在 dev 和 prod 环境的下载二维码
-const appDevQrcode = require('@/assets/img/app_dev_qrcode.png');
-const appProdQrcode = require('@/assets/img/app_prod_qrcode.png');
-
-// 微信登录的二维码
-const wxLoginQrcode = require('@/assets/img/wx_qrcode.png');
-
 export default {
   name: 'Login',
   components: {
@@ -130,10 +121,6 @@ export default {
       { text: this.$t('login.loginMethodByUser'), value: 'user' },
       { text: this.$t('login.loginMethodByPhone'), value: 'phone' }
     ];
-    // app 二维码
-    this.appDevQrcode = appDevQrcode;
-    this.appProdQrcode = appProdQrcode;
-    this.wxLoginQrcode = wxLoginQrcode;
     return {
       form: {
         username: '',
