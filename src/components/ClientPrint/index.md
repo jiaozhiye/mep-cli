@@ -34,12 +34,12 @@
 - .fs12: 字体的大小为 12px，加在 table 标签
 - .fs13: 字体的大小为 13px，加在 table 标签
 - .fs14: 字体的大小为 14px，加在 table 标签
-- .fw500: 字体粗细 font-weight: 500
-- .fw700: 字体粗细 font-weight: 700
+- .fw500: 字体粗细 font-weight: 500，加在 td 标签上
+- .fw700: 字体粗细 font-weight: 700，加在 td 标签上
 - .fl: 左浮动
 - .fr: 右浮动
-- .tc: 文本居中对齐
-- .tr: 文本居右对齐
+- .tc: 文本居中对齐，加在 td 标签上
+- .tr: 文本居右对齐，加在 td 标签上
 - .bor-t：单元格上边框，加在 td 标签上
 - .bor-b：单元格下边框，加在 td 标签上
 - .bor-l：单元格左边框，加在 td 标签上

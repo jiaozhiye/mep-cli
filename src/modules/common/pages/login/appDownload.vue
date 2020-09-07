@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     async getAppList() {
+      if (process.env.MOCK_DATA === 'true') return;
       const res = await getAppDownload({ hostName: window.location.hostname });
       if (res.code === 200) {
         this.list = res.data ?? [];
