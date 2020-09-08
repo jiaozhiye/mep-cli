@@ -32,6 +32,7 @@
     >
       <template slot="default">
         <el-button type="primary" icon="el-icon-plus" @click="addInfoHandle">新建</el-button>
+        <el-button icon="el-icon-printer" @click="printHandle1">方法打印</el-button>
         <client-print uniqueKey="cprint_jzy" :dataSource="printDataList" :click="printHandle3" :templateRender="templateRender">客户端打印</client-print>
         <web-print :click="printHandle">pdf 打印</web-print>
         <el-button icon="el-icon-printer" @click="printHandle2">插件打印</el-button>
@@ -50,6 +51,7 @@
         @success="successHandle"
       />
     </base-dialog>
+    <client-print ref="print1" uniqueKey="cprint_jzy" :dataSource="printDataList" :templateRender="templateRender" />
     <base-print ref="print" :data="printList" alwaysPrint :isPreview="false" :render="() => import(`@test/pages/printTemplate/demo`)" />
   </div>
 </template>
@@ -59,7 +61,7 @@ import { dictionary } from '@/mixins/dictMixin'; // 数据字典
 import { language } from '@/mixins/langMixin'; // 多语言 - mep 没有多语言功能
 import { authority } from '@/mixins/authMixin'; // 权限
 
-import { notifyAction, confirmAction, sleep } from '@/utils';
+import { notifyAction, confirmAction, sleep, loadScript } from '@/utils';
 
 import AddInfo from './addInfo';
 import tableData from '@/mock/tableData';
@@ -133,8 +135,21 @@ export default {
   },
   mounted() {
     this.rowHighlight = { currentRowKey: 1 };
+    loadScript('http://pv.sohu.com/cityjson?ie=utf-8', () => {
+      console.log(`IP: ${returnCitySN['cip']}; CityID: ${returnCitySN['cid']}; City: ${returnCitySN['cname']}`);
+    });
   },
   methods: {
+    async printHandle1() {
+      await sleep(1000);
+      let res = [];
+      for (let i = 0; i < 100; i++) {
+        res[i] = i;
+      }
+      this.templateRender = PrintTemplate;
+      this.printDataList = res;
+      this.$refs.print1.DO_PRINT();
+    },
     async printHandle3() {
       await sleep(1000);
       let res = [];
@@ -352,10 +367,11 @@ export default {
             type: 'text'
           },
           editRender: row => {
-            return {
+            const obj = {
               type: 'search-helper',
               // editable: true,
               extra: {
+                readonly: false,
                 maxlength: 10,
                 disabled: row.id === 3
               },
@@ -390,9 +406,17 @@ export default {
                 },
                 fieldAliasMap: () => {
                   return { 'person.name': 'date', 'person.age': 'date' };
+                },
+                closed: () => {
+                  obj.helper.initialValue = { a: '' };
                 }
               },
-              rules: [{ required: true, message: '姓名不能为空' }]
+              rules: [{ required: true, message: '姓名不能为空' }],
+              onChange: (cellVal, row) => {
+                const keys = Object.keys(cellVal)[0].split('|');
+                obj.helper.initialValue = { a: '1234' };
+                this.$table.OPEN_SEARCH_HELPER(keys[0], keys[1]);
+              }
               // onClick: (cell, row, column, cb, ev) => {
               //   this.tableShProps = Object.assign({}, this.tableShProps, {
               //     dataIndex: column.dataIndex,
@@ -404,6 +428,7 @@ export default {
               //   this.visible_table = true;
               // }
             };
+            return obj;
           }
         },
         {

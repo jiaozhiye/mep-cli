@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-20 08:49:55
+ * @Last Modified time: 2020-09-08 14:35:25
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import moment from 'moment';
@@ -182,4 +182,27 @@ export const createUidKey = (key = '') => {
     return v.toString(16);
   });
   return key + uuid;
+};
+
+/**
+ * @description 动态加载 js 文件
+ * @param {string} url js 文件地址
+ * @param {func} callback 回调函数
+ * @returns
+ */
+export const loadScript = (url, callback) => {
+  let head = document.getElementsByTagName('head')[0];
+  let script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = url;
+  script.onload = script.onreadystatechange = function() {
+    if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
+      callback && callback();
+      script.onload = script.onreadystatechange = null;
+      if (head && script.parentNode) {
+        head.removeChild(script);
+      }
+    }
+  };
+  head.appendChild(script);
 };

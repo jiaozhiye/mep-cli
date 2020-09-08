@@ -140,6 +140,7 @@
 | search-helper   | 搜索帮助      |
 | date            | 日期类型      |
 | datetime        | 日期-时间类型 |
+| time            | 时间类型      |
 
 ### shParams
 

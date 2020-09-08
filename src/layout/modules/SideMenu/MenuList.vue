@@ -145,7 +145,7 @@ export default {
   /deep/ .main {
     flex: 1;
     position: relative;
-    height: calc(100% - 120px);
+    overflow-y: auto;
     .el-tabs {
       height: 100%;
       overflow-y: auto;

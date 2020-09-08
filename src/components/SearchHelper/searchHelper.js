@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-21 11:28:40
+ * @Last Modified time: 2020-09-08 09:20:53
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -47,7 +47,7 @@ export default {
       columns: this.createTableColumns(),
       fetch: {
         api: fetch.api,
-        params: cloneDeep(fetch.params ?? {}),
+        params: cloneDeep(Object.assign({}, fetch.params, this.initialValue)),
         dataKey: fetch.dataKey
       },
       loading: false,

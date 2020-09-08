@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-07 14:28:13
+ * @Last Modified time: 2020-09-08 09:13:49
  */
 import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -203,6 +203,36 @@ export default {
     datetimeHandle(row, column) {
       return this.dateHandle(row, column, true);
     },
+    timeHandle(row, column) {
+      const { dataIndex } = column;
+      const { extra = {}, rules = [], onChange = noop } = this.options;
+      const timeFormat = 'HH:mm:ss';
+      const prevValue = getCellValue(row, dataIndex);
+      return (
+        <el-time-picker
+          size={this.size}
+          value={prevValue}
+          onInput={val => {
+            setCellValue(row, dataIndex, val);
+          }}
+          pickerOptions={{
+            format: timeFormat
+          }}
+          format={timeFormat}
+          value-format={timeFormat}
+          style={{ width: '100%' }}
+          clearable={extra.clearable ?? !0}
+          placeholder={this.t('table.editable.datetimePlaceholder')}
+          onChange={val => {
+            this.createFieldValidate(rules, val);
+            this.store.addToUpdated(row);
+            onChange({ [this.dataKey]: val }, row);
+            this.$$table.dataChangeHandle();
+          }}
+          disabled={extra.disabled}
+        />
+      );
+    },
     checkboxHandle(row, column) {
       const { dataIndex } = column;
       const { extra = {}, onChange = noop } = this.options;
@@ -259,7 +289,11 @@ export default {
           containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
         },
         on: {
-          'update:visible': val => (this.shVisible = val)
+          'update:visible': val => (this.shVisible = val),
+          closed: () => {
+            const { closed = noop } = helper;
+            closed(row);
+          }
         }
       };
       const shProps = {
@@ -284,8 +318,6 @@ export default {
               // 对表格单元格赋值
               setHelperValues(current, result);
             }
-            const { closed = noop } = helper;
-            closed(data);
             this.shVisible = visible;
           }
         }
@@ -300,6 +332,7 @@ export default {
             onInput={val => {
               setCellValue(row, dataIndex, val);
             }}
+            maxlength={extra.maxlength}
             readonly={extra.readonly ?? !0}
             clearable={extra.clearable ?? !0}
             disabled={extra.disabled}

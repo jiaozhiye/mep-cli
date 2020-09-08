@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-17 09:11:39
+ * @Last Modified time: 2020-09-07 17:04:04
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -32,6 +32,12 @@ export default {
       updated: updated.filter(row => ![...intersection(updated, inserted), ...intersection(updated, removed)].includes(row)),
       removed: removed.filter(row => !intersections.includes(row))
     };
+  },
+  // 打开单元格搜索帮助面板
+  OPEN_SEARCH_HELPER(rowKey, dataIndex) {
+    const editableCell = this.$$tableBody.$refs[`${rowKey}-${dataIndex}`];
+    if (!editableCell) return;
+    editableCell.shVisible = !0;
   },
   // 清空表格数据
   CLEAR_TABLE_DATA() {

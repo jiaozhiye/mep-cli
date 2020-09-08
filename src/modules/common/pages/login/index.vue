@@ -28,7 +28,7 @@
         <!-- 账号/免密 登录 END -->
         <!-- 微信授权后 -->
         <div v-if="curPanel === 'wechat'">
-          <Weixin ref="wechat" />
+          <WeChat ref="wechat" />
         </div>
         <!-- 微信授权后 END -->
         <!-- 微信授权后，手机号绑定 -->
@@ -92,7 +92,7 @@ import { doLogin } from '@common/api/login';
 
 import Account from './account';
 import Phone from './phone';
-import Weixin from './weixin';
+import WeChat from './weChat';
 import AppDownload from './appDownload';
 import BackPwd from './backPwd';
 
@@ -101,7 +101,7 @@ import defaultBg from './assets/login-default.jpg';
 
 export default {
   name: 'Login',
-  components: { Account, Phone, Weixin, AppDownload, BackPwd },
+  components: { Account, Phone, WeChat, AppDownload, BackPwd },
   data() {
     this.labels = [
       { key: 'account', text: '用户名登录' },

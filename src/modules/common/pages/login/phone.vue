@@ -5,7 +5,7 @@
         <el-input v-model="form.account" placeholder="手机号" />
       </el-form-item>
       <el-form-item prop="captcha">
-        <el-input v-model="form.captcha" placeholder="短信验证码" />
+        <el-input v-model="form.captcha" placeholder="验证码" />
         <el-button type="text" style="position: absolute; right: 0; top: 3px;" :disabled="btnState.disabled" @click="clickHandle">{{
           (!btnState.disabled && '获取验证码') || `重新发送 ${btnState.time} s`
         }}</el-button>

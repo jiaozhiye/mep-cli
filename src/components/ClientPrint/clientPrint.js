@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-03 09:18:29
+ * @Last Modified time: 2020-09-08 15:16:16
  **/
 import PropTypes from '../_utils/vue-types';
 import { sleep } from '../_utils/tool';
@@ -46,6 +46,13 @@ export default {
       } catch (err) {
         this.loading = !1;
       }
+    },
+    async DO_PRINT() {
+      this.loading = !0;
+      this.visible = !0;
+      await sleep(500);
+      this.$refs.preview.$refs.container.SHOW_PREVIEW();
+      this.loading = !1;
     }
   },
   render() {
@@ -85,13 +92,17 @@ export default {
         close: () => (this.visible = !1)
       }
     };
-    return (
+    return $slots['default'] ? (
       <el-button {...btnProps}>
         {$slots['default']}
         <BaseDialog {...dialogProps}>
           <Preview {...previewProps} />
         </BaseDialog>
       </el-button>
+    ) : (
+      <BaseDialog {...dialogProps}>
+        <Preview {...previewProps} />
+      </BaseDialog>
     );
   }
 };
