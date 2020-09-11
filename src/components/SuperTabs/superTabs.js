@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-03 08:38:46
+ * @Last Modified time: 2020-09-08 16:11:11
  **/
 import PropTypes from '../_utils/vue-types';
 import { filterEmpty } from '../_utils/props-util';
@@ -28,6 +28,12 @@ export default {
       activeKey: this.value || this.initialValue
     };
   },
+  watch: {
+    value(next, prev) {
+      if (next === prev) return;
+      this.activeKey = next;
+    }
+  },
   mounted() {
     if (this.tabPosition === 'top' && this.tabNavOffsetLeft) {
       this.$el.querySelector('.el-tabs__nav-wrap').style.paddingLeft = this.pxToNumber(this.tabNavOffsetLeft) + 'px';
@@ -43,9 +49,12 @@ export default {
       }
       return val;
     },
-    handleClick() {
-      this.$emit('input', this.activeKey);
+    clickHandle() {
       this.$emit('change', this.activeKey);
+    },
+    inputHandle(val) {
+      this.activeKey = val;
+      this.$emit('input', val);
     },
     createTabMenus(vNodes) {
       return vNodes.map(x => ({
@@ -79,7 +88,7 @@ export default {
     return (
       <div class={cls} style={{ ...containerStyle, position: 'relative' }}>
         {$slots['extraContent'] && tabPosition === 'top' ? <div class="tap-top-exta">{$slots['extraContent']}</div> : null}
-        <el-tabs value={activeKey} tab-position={tabPosition} type={tabType} onInput={val => (this.activeKey = val)} on-tab-click={this.handleClick}>
+        <el-tabs value={activeKey} tab-position={tabPosition} type={tabType} onInput={this.inputHandle} on-tab-click={this.clickHandle}>
           {this.createTabsContent(tabProps)}
         </el-tabs>
       </div>

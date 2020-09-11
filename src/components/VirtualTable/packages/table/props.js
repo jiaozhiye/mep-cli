@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-17 09:16:42
+ * @Last Modified time: 2020-09-09 17:00:01
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -193,13 +193,15 @@ export default {
 
 /**
  * 方法：
+ * CALCULATE_HEIGHT: 计算表格高度
  * DO_REFRESH: 刷新表格数据，同时会清空列选中状态
  * INSERT_RECORDS: 插入表格行数据，参数 row|rows, bottom(默认)|top
  * REMOVE_RECORDS: 移除表格数据，参数 rowKeys|rows|row
  * FORM_VALIDATE: 触发表格中的表单校验，返回值：object
+ * OPEN_SEARCH_HELPER: 打开单元格搜索帮助面板，参数 rowKey, dataIndex
  * GET_LOG: 获取操作记录，非空校验、格式校验、数据操作记录，返回值：object
- * CLEAR_LOG：清空表格操作记录
- * CALCULATE_HEIGHT：计算表格高度
+ * CLEAR_LOG: 清空表格操作记录
+ * CLEAR_TABLE_DATA: 清空表格数据
  */
 
 // 清空高级检索: 1. fetch.params 变化  2. headFilters 变化  3. 点击清空按钮

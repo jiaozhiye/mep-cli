@@ -30,8 +30,8 @@
           </div>
         </div>
         <div class="user-action">
-          <span class="button" @click="clearCacheHandle">清理缓存</span>
-          <span class="button" @click="logoutHandle">退出登录</span>
+          <span class="item" @click="clearCacheHandle">清理缓存</span>
+          <span class="item" @click="logoutHandle">退出登录</span>
         </div>
       </div>
       <span slot="reference" class="avatar">
@@ -201,7 +201,7 @@ export default {
     border-bottom-left-radius: $borderRadius;
     border-bottom-right-radius: $borderRadius;
     box-sizing: border-box;
-    .button {
+    .item {
       width: 50%;
       display: flex;
       justify-content: center;
@@ -211,7 +211,7 @@ export default {
       &:hover {
         background-color: $backgroundColorSecondary;
       }
-      + .button {
+      + .item {
         border-left: 1px solid $borderColor;
       }
     }

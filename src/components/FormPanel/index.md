@@ -119,6 +119,7 @@
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string                     | 0        |
 | dateType      | 日期控件的类型，[配置项](#dateType) - DATE/RANGE_DATE            | string                               | -        |
 | timeFormat    | 时间控件得格式，[配置项](#timeFormat) - TIME/RANGE_TIME          | string                               | -        |
+| shortCuts     | 是否显示日期组件的快捷选项 - DATE                                | boolean                              | true     |
 | minDateTime   | 最小日期，小于该时间的日期段将被禁用                             | string                               | -        |
 | maxDateTime   | 最大日期，大于该时间的日期段将被禁用                             | string                               | -        |
 | defaultTime   | 默认的时间，格式 HH:mm:ss                                        | string                               | -        |
@@ -251,6 +252,8 @@
 </template>
 
 # js
+import { getConfigHeaders } from '@/api/fetch';
+
 export default {
   data() {
     return {
@@ -381,6 +384,7 @@ export default {
           label: '上传文件',
           fieldName: 'n',
           upload: {
+            headers: getConfigHeaders(),
             actionUrl: '/api/file/oss/upload',
             limit: 2,
             params: {},
@@ -392,12 +396,18 @@ export default {
           label: '上传图片',
           fieldName: 'o',
           upload: {
+            headers: getConfigHeaders(),
             actionUrl: '/api/file/oss/upload',
             fixedSize: [5, 3],
             isCalcHeight: true,
             limit: 1,
             params: {}
           }
+        },
+        {
+          type: 'TINYMCE',
+          label: '表单项12',
+          fieldName: 'z'
         }
       ];
     }

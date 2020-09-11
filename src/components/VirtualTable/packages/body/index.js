@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-15 18:01:27
+ * @Last Modified time: 2020-09-10 16:32:28
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains } from '../utils';
@@ -350,11 +350,10 @@ export default {
   },
   render() {
     const { bodyWidth, wrapStyle, tableData, isDraggable } = this;
-    const { tableFullData } = this.$$table;
     const dragProps = {
       props: {
         tag: 'tbody',
-        value: tableFullData,
+        value: this.$$table.tableFullData,
         options: { animation: 200 }
       },
       on: {

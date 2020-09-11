@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-08 14:35:25
+ * @Last Modified time: 2020-09-09 19:26:37
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import moment from 'moment';
@@ -109,12 +109,12 @@ export const confirmAction = async (msg = i18n.t('information.confirm'), type = 
  * @param {number} delay 延迟的时间，单位 毫秒，如果值是 0，为手动关闭模式
  * @returns
  */
-export const notifyAction = async (msg = '', type = 'success', delay = config.notifyDuration) => {
+export const notifyAction = async (msg = '', type = 'success', delay = 3000) => {
   if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
   await sleep(0);
   Notification({ title: i18n.t('information.title'), message: msg, type, duration: delay, dangerouslyUseHTMLString: true });
-  await sleep(config.notifyDuration);
+  await sleep(3000);
   store.dispatch('app/createNotifyState', false);
 };
 
@@ -128,8 +128,8 @@ export const messageAction = async (msg = '', type = 'info') => {
   if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
   await sleep(0);
-  Message({ message: msg, showClose: true, type, duration: config.notifyDuration });
-  await sleep(config.notifyDuration);
+  Message({ message: msg, showClose: true, type, duration: 3000 });
+  await sleep(3000);
   store.dispatch('app/createNotifyState', false);
 };
 

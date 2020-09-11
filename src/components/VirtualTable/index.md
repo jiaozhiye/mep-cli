@@ -271,7 +271,6 @@ return <Table rowKey={record => record.uid} />;
   <VirtualTable
     ref="table"
     uniqueKey="jzyDemoTable"
-    height="auto"
     :columns="columns"
     :fetch="fetch"
     :rowKey="record => record.id"
@@ -374,11 +373,40 @@ export default {
                 maxlength: 10,
                 disabled: row.id === 3
               },
-              rules: [{ required: true, message: '姓名不能为空' }],
-              onClick: (cell, row, column, cb, ev) => {
-                this.tableShProps = { row, dataIndex: column.dataIndex, callback: cb };
-                this.visible_table = true;
-              }
+              helper: {
+                filters: [
+                  {
+                    type: 'INPUT',
+                    label: '条件1',
+                    fieldName: 'a'
+                  }
+                ],
+                table: {
+                  columns: [
+                    {
+                      title: '创建时间',
+                      dataIndex: 'date',
+                      filter: {
+                        type: 'date'
+                      }
+                    },
+                    {
+                      title: '姓名',
+                      dataIndex: 'person.name'
+                    }
+                  ],
+                  rowKey: record => record.id,
+                  fetch: {
+                    api: () => {},
+                    params: {},
+                    dataKey: 'items'
+                  }
+                },
+                fieldAliasMap: () => {
+                  return { 'person.name': 'date', 'person.age': 'date' };
+                }
+              },
+              rules: [{ required: true, message: '姓名不能为空' }]
             };
           }
         },

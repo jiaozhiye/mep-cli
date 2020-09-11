@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 22:17:28
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-29 13:20:28
+ * @Last Modified time: 2020-09-09 09:19:21
  */
 import addEventListener from 'add-dom-event-listener';
 import { addResizeListener, removeResizeListener } from '../../../_utils/resize-event';
@@ -68,6 +68,6 @@ export default {
   doLayout() {
     this.updateElsHeight();
     this.updateColumnsWidth();
-    return this.$nextTick().then(() => this.updateElsHeight());
+    this.$nextTick(() => this.updateElsHeight());
   }
 };

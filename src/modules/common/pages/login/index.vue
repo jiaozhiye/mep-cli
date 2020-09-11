@@ -184,6 +184,9 @@ export default {
           this.$refs[ref_str].isVcode = !0;
           this.$refs[ref_str].handleChangeCheckCode();
         }
+        if (res.code === 992) {
+          this.$refs[ref_str].handleChangeCheckCode();
+        }
       } catch (err) {}
       this.loading = !1;
     },

@@ -103,6 +103,7 @@
 | minDateTime   | 最小日期，小于该时间的日期段将被禁用                             | string           | -        |
 | maxDateTime   | 最大日期，大于该时间的日期段将被禁用                             | string           | -        |
 | defaultTime   | 默认的时间，格式 HH:mm:ss                                        | string           | -        |
+| shortCuts     | 是否显示日期组件的快捷选项 - DATE                                | boolean          | true     |
 | titles        | 级联选择器的标题，数组元素为字符串类型 - INPUT_CASCADER          | array            | -        |
 | mustCheckLast | 级联选择器只能选择最后一级 - INPUT_CASCADER                      | bool             | false    |
 | onlySelect    | 只能选择，不支持输入                                             | bool             | true     |

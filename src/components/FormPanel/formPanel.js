@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-04 17:20:01
+ * @Last Modified time: 2020-09-10 19:14:50
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -113,7 +113,11 @@ export default {
         if (prevProps.includes(x)) {
           delete this.form[x];
         } else {
-          this.$set(this.form, x, this.getInitialValue(this.formItemList.find(k => k.fieldName === x)));
+          let item = this.formItemList.find(k => k.fieldName === x);
+          if (this.formType === 'onlyShow') {
+            item.disabled = true;
+          }
+          this.$set(this.form, x, this.getInitialValue(item, this.initialValue[x]));
         }
       });
     },
@@ -123,12 +127,15 @@ export default {
     descContents(val) {
       val.forEach(x => (this.desc[x.fieldName] = x.content));
     },
-    formType(nextProps) {
-      this.formItemList.forEach(x => {
-        if (nextProps === 'onlyShow') {
-          x.disabled = true;
-        }
-      });
+    formType: {
+      handler(nextProps) {
+        this.formItemList.forEach(x => {
+          if (nextProps === 'onlyShow') {
+            x.disabled = true;
+          }
+        });
+      },
+      immediate: true
     },
     form: {
       handler(val) {
@@ -158,13 +165,9 @@ export default {
       this.dividers.forEach(x => (target[x.label] = !!x.collapse?.defaultExpand));
       this.expand = Object.assign({}, this.expand, target);
     },
-    getInitialValue(item) {
-      const { type = '', fieldName, options = {}, readonly } = item;
-      // 初始值
-      let val = this.initialValue[fieldName] ?? undefined;
-      if (this.formType === 'onlyShow') {
-        item.disabled = true;
-      }
+    getInitialValue(item, val) {
+      const { type = '', options = {}, readonly } = item;
+      val = val ?? undefined;
       if (this.arrayTypes.includes(type)) {
         val = val ?? [];
       }
@@ -182,7 +185,7 @@ export default {
     createFormValue() {
       const target = {};
       this.formItemList.forEach(x => {
-        target[x.fieldName] = this.getInitialValue(x);
+        target[x.fieldName] = this.getInitialValue(x, this.initialValue[x.fieldName]);
       });
       return Object.assign({}, this.initialValue, target);
     },
@@ -843,7 +846,7 @@ export default {
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
-      const { dateType = 'date', minDateTime, maxDateTime, defaultTime } = options;
+      const { dateType = 'date', minDateTime, maxDateTime, defaultTime, shortCuts = !0 } = options;
       // 日期快捷键方法
       const createPicker = (picker, days) => {
         const start = new Date();
@@ -897,7 +900,7 @@ export default {
               disabledDate: time => {
                 return this.setDisabledDate(time, [minDateTime, maxDateTime]);
               },
-              shortcuts: pickers
+              shortcuts: shortCuts ? pickers : null
             }}
             nativeOnInput={ev => {
               ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -1887,7 +1890,7 @@ export default {
     },
     difference(object, base) {
       return transform(object, (result, value, key) => {
-        if (!isEqual(value, base[key])) {
+        if (!isEqual(value ?? '', base[key] ?? '')) {
           result[key] = isObject(value) && isObject(base[key]) ? this.difference(value, base[key]) : value;
         }
       });
@@ -1922,13 +1925,18 @@ export default {
     SET_FIELDS_VALUE(values = {}) {
       for (let key in values) {
         if (this.fieldNames.includes(key)) {
-          this.form[key] = values[key] ?? undefined;
+          let item = this.formItemList.find(x => x.fieldName === key);
+          this.form[key] = this.getInitialValue(item, values[key]);
         }
       }
     },
     SET_FORM_VALUES(values = {}) {
       for (let key in values) {
-        this.form[key] = values[key] ?? undefined;
+        if (this.fieldNames.includes(key)) {
+          this.SET_FIELDS_VALUE({ [key]: values[key] });
+        } else {
+          this.form[key] = values[key];
+        }
       }
     },
     CREATE_FOCUS(fieldName) {

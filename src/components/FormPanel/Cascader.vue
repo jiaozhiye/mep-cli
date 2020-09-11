@@ -3,7 +3,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-10 10:58:40
+ * @Last Modified time: 2020-09-10 17:16:31
  **/
 import PropTypes from '../_utils/vue-types';
 import { isEqual, isString } from 'lodash';
@@ -45,10 +45,8 @@ export default {
     currentValues(val) {
       if (val.length || !this.value) {
         if (isEqual(val, this.prevValue)) return;
-        !this.mustCheckLast && this.$emit('input', val);
         if (this.clicked === 'on') {
           this.clicked = 'off';
-          !this.mustCheckLast && this.$emit('change', val);
         }
         this.prevValue = [...val];
       }
@@ -77,6 +75,7 @@ export default {
           }
         });
       }
+      this.emitHandle(res);
       return res;
     },
     clickHandle(ev, index, { value, text, children }) {
@@ -84,11 +83,19 @@ export default {
       this.clicked = 'on';
       this.$set(this.currentValues, index, { value, text });
       this.currentValues.length = index + 1;
+      if (!this.mustCheckLast) {
+        this.emitHandle(this.currentValues);
+      }
       if (!children) {
-        this.mustCheckLast && this.$emit('input', this.currentValues);
-        this.mustCheckLast && this.$emit('change', this.currentValues);
+        if (this.mustCheckLast) {
+          this.emitHandle(this.currentValues);
+        }
         this.$emit('close', false);
       }
+    },
+    emitHandle(val) {
+      this.$emit('input', val);
+      this.$emit('change', val);
     }
   },
   render() {

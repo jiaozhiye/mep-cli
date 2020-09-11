@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-04 17:21:01
+ * @Last Modified time: 2020-09-10 19:15:49
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -96,7 +96,8 @@ export default {
         if (prevProps.includes(x)) {
           delete this.form[x];
         } else {
-          this.$set(this.form, x, this.getInitialValue(this.formItemList.find(k => k.fieldName === x)));
+          let item = this.formItemList.find(k => k.fieldName === x);
+          this.$set(this.form, x, this.getInitialValue(item, this.initialValue[x]));
         }
       });
     },
@@ -134,10 +135,9 @@ export default {
       this.initialValues = cloneDeep(this.form);
       this.initialExtras = cloneDeep(this.desc);
     },
-    getInitialValue(item) {
-      const { type = '', fieldName, options = {} } = item;
-      // 初始值
-      let val = this.initialValue[fieldName] ?? undefined;
+    getInitialValue(item, val) {
+      const { type = '', options = {} } = item;
+      val = val ?? undefined;
       if (this.arrayTypes.includes(type)) {
         val = val ?? [];
       }
@@ -149,7 +149,7 @@ export default {
     createFormValue() {
       const target = {};
       this.formItemList.forEach(x => {
-        target[x.fieldName] = this.getInitialValue(x);
+        target[x.fieldName] = this.getInitialValue(x, this.initialValue[x.fieldName]);
       });
       return Object.assign({}, this.initialValue, target);
     },
@@ -545,14 +545,13 @@ export default {
       );
     },
     EP_CASCADER(option) {
-      const { form, formType } = this;
+      const { form } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, onChange = noop } = option;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <EpCascader
             value={form[fieldName]}
-            formType={formType}
             option={option}
             onChange={(val, item, values) => {
               form[fieldName] = val;
@@ -564,7 +563,7 @@ export default {
       );
     },
     EP_SEARCH_HELPER(option) {
-      const { form, formType } = this;
+      const { form } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, searchHelper, onChange = noop } = option;
       const { onlySelect = true } = options;
       const searchRef = this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
@@ -581,7 +580,6 @@ export default {
           <EpSearchHelper
             ref={`EP_SEARCH_HELPER-${fieldName}`}
             value={form[fieldName]}
-            formType={formType}
             option={option}
             onClose={(data, alias) => {
               if (isObject(data) && Object.keys(alias).length) {
@@ -750,7 +748,7 @@ export default {
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
-      const { dateType = 'date', minDateTime, maxDateTime } = options;
+      const { dateType = 'date', minDateTime, maxDateTime, shortCuts = !0 } = options;
       // 日期快捷键方法
       const createPicker = (picker, days) => {
         const start = new Date();
@@ -802,7 +800,7 @@ export default {
               disabledDate: time => {
                 return this.setDisabledDate(time, [minDateTime, maxDateTime]);
               },
-              shortcuts: pickers
+              shortcuts: shortCuts ? pickers : null
             }}
             nativeOnInput={ev => {
               ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -1493,7 +1491,7 @@ export default {
     },
     difference(object, base) {
       return transform(object, (result, value, key) => {
-        if (!isEqual(value, base[key])) {
+        if (!isEqual(value ?? '', base[key] ?? '')) {
           result[key] = isObject(value) && isObject(base[key]) ? this.difference(value, base[key]) : value;
         }
       });
@@ -1525,13 +1523,18 @@ export default {
     SET_FIELDS_VALUE(values = {}) {
       for (let key in values) {
         if (this.fieldNames.includes(key)) {
-          this.form[key] = values[key] ?? undefined;
+          let item = this.formItemList.find(x => x.fieldName === key);
+          this.form[key] = this.getInitialValue(item, values[key]);
         }
       }
     },
     SET_FORM_VALUES(values = {}) {
       for (let key in values) {
-        this.form[key] = values[key] ?? undefined;
+        if (this.fieldNames.includes(key)) {
+          this.SET_FIELDS_VALUE({ [key]: values[key] });
+        } else {
+          this.form[key] = values[key];
+        }
       }
     },
     CREATE_FOCUS(fieldName) {

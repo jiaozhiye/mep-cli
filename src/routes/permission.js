@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-05 08:08:04
+ * @Last Modified time: 2020-09-09 19:26:03
  */
 import router from '@/routes';
 import store from '@/store';
@@ -84,6 +84,7 @@ router.afterEach(to => {
   document.title = `${config.systemName}-${title}`;
   NProgress.done();
   if (whiteList.includes(to.path) || title === '404') return;
+  if (!config.openBuryPoint) return;
   // 菜单埋点
   store.dispatch('app/createMenuRecord', { path: to.path, title });
 });

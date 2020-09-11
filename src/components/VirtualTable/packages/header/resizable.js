@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-07 19:04:14
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-22 14:15:51
+ * @Last Modified time: 2020-09-09 09:25:06
  */
 import { getNodeOffset } from '../utils';
 import config from '../config';
@@ -33,7 +33,6 @@ export default {
       target.style.left = `${left}px`;
       target.style.display = 'block';
 
-      // 操作表格列 -> 违背了单向数据流原则，后期建议优化
       const renderWidth = this.column.width || this.column.renderWidth;
       let res = renderWidth;
 
@@ -53,10 +52,10 @@ export default {
         $vTable.classList.remove('c--resize');
         target.style.display = 'none';
 
-        _this.column.width = _this.column.renderWidth = res;
-        doLayout();
+        _this.column.renderWidth = res;
+        _this.$set(_this.column, 'width', res);
 
-        // 本地存储列信息
+        doLayout();
         setLocalColumns(columns);
 
         this.onmousemove = null;
