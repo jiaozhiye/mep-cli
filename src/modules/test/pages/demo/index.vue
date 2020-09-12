@@ -358,135 +358,141 @@ export default {
           }
         },
         {
-          title: '姓名',
-          dataIndex: 'person.name',
-          width: 200,
-          required: true,
-          sorter: true,
-          filter: {
-            type: 'text'
-          },
-          editRender: row => {
-            const obj = {
-              type: 'search-helper',
-              // editable: true,
-              extra: {
-                readonly: false,
-                maxlength: 10,
-                disabled: row.id === 3
+          title: '个人信息',
+          dataIndex: 'person',
+          children: [
+            {
+              title: '姓名',
+              dataIndex: 'person.name',
+              width: 200,
+              required: true,
+              sorter: true,
+              filter: {
+                type: 'text'
               },
-              helper: {
-                filters: [
-                  {
-                    type: 'INPUT',
-                    label: '条件1',
-                    fieldName: 'a'
-                  }
-                ],
-                table: {
-                  columns: [
-                    {
-                      title: '创建时间',
-                      dataIndex: 'date',
-                      filter: {
-                        type: 'date'
+              editRender: row => {
+                const obj = {
+                  type: 'search-helper',
+                  // editable: true,
+                  extra: {
+                    readonly: false,
+                    maxlength: 10,
+                    disabled: row.id === 3
+                  },
+                  helper: {
+                    filters: [
+                      {
+                        type: 'INPUT',
+                        label: '条件1',
+                        fieldName: 'a'
+                      }
+                    ],
+                    table: {
+                      columns: [
+                        {
+                          title: '创建时间',
+                          dataIndex: 'date',
+                          filter: {
+                            type: 'date'
+                          }
+                        },
+                        {
+                          title: '姓名',
+                          dataIndex: 'person.name'
+                        }
+                      ],
+                      rowKey: record => record.id,
+                      fetch: {
+                        api: () => {},
+                        params: {},
+                        dataKey: 'items'
                       }
                     },
-                    {
-                      title: '姓名',
-                      dataIndex: 'person.name'
+                    fieldAliasMap: () => {
+                      return { 'person.name': 'date', 'person.age': 'date' };
+                    },
+                    closed: () => {
+                      obj.helper.initialValue = { a: '' };
                     }
-                  ],
-                  rowKey: record => record.id,
-                  fetch: {
-                    api: () => {},
-                    params: {},
-                    dataKey: 'items'
+                  },
+                  rules: [{ required: true, message: '姓名不能为空' }],
+                  onChange: (cellVal, row) => {
+                    const keys = Object.keys(cellVal)[0].split('|');
+                    obj.helper.initialValue = { a: '1234' };
+                    this.$table.OPEN_SEARCH_HELPER(keys[0], keys[1]);
                   }
-                },
-                fieldAliasMap: () => {
-                  return { 'person.name': 'date', 'person.age': 'date' };
-                },
-                closed: () => {
-                  obj.helper.initialValue = { a: '' };
-                }
-              },
-              rules: [{ required: true, message: '姓名不能为空' }],
-              onChange: (cellVal, row) => {
-                const keys = Object.keys(cellVal)[0].split('|');
-                obj.helper.initialValue = { a: '1234' };
-                this.$table.OPEN_SEARCH_HELPER(keys[0], keys[1]);
+                  // onClick: (cell, row, column, cb, ev) => {
+                  //   this.tableShProps = Object.assign({}, this.tableShProps, {
+                  //     dataIndex: column.dataIndex,
+                  //     fieldAliasMap: () => {
+                  //       return { 'person.name': 'date', 'person.age': 'date' };
+                  //     },
+                  //     callback: cb
+                  //   });
+                  //   this.visible_table = true;
+                  // }
+                };
+                return obj;
               }
-              // onClick: (cell, row, column, cb, ev) => {
-              //   this.tableShProps = Object.assign({}, this.tableShProps, {
-              //     dataIndex: column.dataIndex,
-              //     fieldAliasMap: () => {
-              //       return { 'person.name': 'date', 'person.age': 'date' };
-              //     },
-              //     callback: cb
-              //   });
-              //   this.visible_table = true;
-              // }
-            };
-            return obj;
-          }
-        },
-        {
-          title: '性别',
-          dataIndex: 'person.sex',
-          width: 100,
-          dictItems: [
-            { text: '男', value: '1' },
-            { text: '女', value: '0' }
+            },
+            {
+              title: '性别',
+              dataIndex: 'person.sex',
+              width: 100,
+              dictItems: [
+                { text: '男', value: '1' },
+                { text: '女', value: '0' }
+              ]
+            },
+            {
+              title: '年龄',
+              dataIndex: 'person.age',
+              width: 100,
+              sorter: true,
+              filter: {
+                type: 'number'
+              },
+              editRender: row => {
+                return {
+                  type: 'search-helper',
+                  // editable: true,
+                  helper: {
+                    filters: [
+                      {
+                        type: 'INPUT',
+                        label: '条件1',
+                        fieldName: 'a'
+                      }
+                    ],
+                    table: {
+                      columns: [
+                        {
+                          title: '创建时间',
+                          dataIndex: 'date',
+                          filter: {
+                            type: 'date'
+                          }
+                        },
+                        {
+                          title: '姓名',
+                          dataIndex: 'person.name'
+                        }
+                      ],
+                      rowKey: record => record.id,
+                      fetch: {
+                        api: () => {},
+                        params: {},
+                        dataKey: 'items'
+                      }
+                    },
+                    fieldAliasMap: () => {
+                      return { 'person.age': 'date', 'person.name': 'date' };
+                    }
+                  }
+                };
+              }
+            }
           ]
-        },
-        {
-          title: '年龄',
-          dataIndex: 'person.age',
-          width: 100,
-          sorter: true,
-          filter: {
-            type: 'number'
-          },
-          editRender: row => {
-            return {
-              type: 'search-helper',
-              // editable: true,
-              helper: {
-                filters: [
-                  {
-                    type: 'INPUT',
-                    label: '条件1',
-                    fieldName: 'a'
-                  }
-                ],
-                table: {
-                  columns: [
-                    {
-                      title: '创建时间',
-                      dataIndex: 'date',
-                      filter: {
-                        type: 'date'
-                      }
-                    },
-                    {
-                      title: '姓名',
-                      dataIndex: 'person.name'
-                    }
-                  ],
-                  rowKey: record => record.id,
-                  fetch: {
-                    api: () => {},
-                    params: {},
-                    dataKey: 'items'
-                  }
-                },
-                fieldAliasMap: () => {
-                  return { 'person.age': 'date', 'person.name': 'date' };
-                }
-              }
-            };
-          }
         },
         {
           title: '价格',

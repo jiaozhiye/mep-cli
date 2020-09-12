@@ -1,16 +1,10 @@
 <template>
   <el-dropdown class="size-select" trigger="click" placement="bottom-start" @command="languageChangeHandle">
     <i class="iconfont icon-font-size" />
-    <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="size === 'large'" command="large">
-        {{ $t('sizeSelect.large') }}
-      </el-dropdown-item>
-      <el-dropdown-item :disabled="size === 'default'" command="default">
-        {{ $t('sizeSelect.default') }}
-      </el-dropdown-item>
-      <el-dropdown-item :disabled="size === 'small'" command="small">
-        {{ $t('sizeSelect.small') }}
-      </el-dropdown-item>
+    <el-dropdown-menu slot="dropdown" class="size-select-dropdown">
+      <el-dropdown-item class="large" :disabled="size === 'large'" command="large"> {{ $t('sizeSelect.large') }}&nbsp;&nbsp;</el-dropdown-item>
+      <el-dropdown-item class="default" :disabled="size === 'default'" command="default"> {{ $t('sizeSelect.default') }}&nbsp;&nbsp;</el-dropdown-item>
+      <el-dropdown-item class="small" :disabled="size === 'small'" command="small"> {{ $t('sizeSelect.small') }}&nbsp;&nbsp;</el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
@@ -20,7 +14,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-30 15:17:48
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-08 17:28:28
+ * @Last Modified time: 2020-09-12 15:50:24
  */
 import { mapState, mapActions } from 'vuex';
 import Vue from 'vue';
@@ -56,6 +50,17 @@ export default {
   .icon-font-size {
     font-size: 20px;
     cursor: pointer;
+  }
+}
+.size-select-dropdown {
+  .large {
+    font-size: $textSize + 2px;
+  }
+  .default {
+    font-size: $textSize;
+  }
+  .small {
+    font-size: $textSize - 2px;
   }
 }
 </style>

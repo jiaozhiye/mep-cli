@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-20 10:11:38
+ * @Last Modified time: 2020-09-11 09:23:24
  */
 import { get, set, transform, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -140,6 +140,7 @@ export const tableDataFlatMap = data => {
 // 表头分组
 export const convertToRows = originColumns => {
   let maxLevel = 1;
+
   const traverse = (column, parent) => {
     if (parent) {
       column.level = parent.level + 1;

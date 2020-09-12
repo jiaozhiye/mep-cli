@@ -2,12 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-22 10:52:35
+ * @Last Modified time: 2020-09-11 10:24:45
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
 import { where } from '../filter-sql';
-import { convertToRows, getCellValue, createWhereSQL, isEmpty } from '../utils';
+import { hasOwn, convertToRows, deepFindColumn, getCellValue, createWhereSQL, isEmpty } from '../utils';
 
 import Resizable from './resizable';
 import AllSelection from '../selection/all';
@@ -98,9 +98,7 @@ export default {
         sorter,
         isIE
       } = this.$$table;
-      const { dataIndex, colSpan, rowSpan, fixed, align, sorter: isSorter, filter, required } = column;
-      const leftFixedColumns = columns.filter(x => x.fixed === 'left');
-      const rightFixedColumns = columns.filter(x => x.fixed === 'right');
+      const { dataIndex, colSpan, rowSpan, fixed, align, sorter: isSorter, filter, required, lastFixedLeft, firstFixedRight } = column;
       const cls = [
         `v-header--column`,
         `col--ellipsis`,
@@ -113,8 +111,8 @@ export default {
           [`v-column--sort`]: Object.keys(sorter).includes(dataIndex),
           [`v-cell-fix-left`]: fixed === 'left',
           [`v-cell-fix-right`]: fixed === 'right',
-          [`v-cell-fix-left-last`]: !isIE && fixed === 'left' && leftFixedColumns[leftFixedColumns.length - 1].dataIndex === dataIndex,
-          [`v-cell-fix-right-first`]: !isIE && fixed === 'right' && rightFixedColumns[0].dataIndex === dataIndex
+          [`v-cell-fix-left-last`]: !isIE && fixed === 'left' && lastFixedLeft,
+          [`v-cell-fix-right-first`]: !isIE && fixed === 'right' && firstFixedRight
         }
       ];
       const stys = !isIE
@@ -277,6 +275,27 @@ export default {
     // 清空表头筛选
     clearTheadFilter() {
       this.filters = {};
+    },
+    // 处理固定列
+    setFixedColumns(columnRows) {
+      columnRows.forEach((columns, depth) => {
+        const leftFixedColumns = [];
+        const rightFixedColumns = [];
+        columns.forEach(x => {
+          hasOwn(x, 'lastFixedLeft') && delete x.lastFixedLeft;
+          hasOwn(x, 'firstFixedRight') && delete x.firstFixedRight;
+          x.fixed === 'left' && leftFixedColumns.push(x);
+          x.fixed === 'right' && rightFixedColumns.push(x);
+        });
+        const lastColumn = leftFixedColumns[leftFixedColumns.length - 1];
+        const firstColumn = rightFixedColumns[0];
+        if (lastColumn) {
+          lastColumn.lastFixedLeft = depth === 0 ? !0 : deepFindColumn(this.tableColumns, lastColumn.parentDataIndex).lastFixedLeft;
+        }
+        if (firstColumn) {
+          firstColumn.firstFixedRight = depth === 0 ? !0 : deepFindColumn(this.tableColumns, firstColumn.parentDataIndex).firstFixedRight;
+        }
+      });
     }
   },
   render() {
@@ -287,6 +306,8 @@ export default {
     const columnRows = convertToRows(tableColumns);
     // 是否拥有多级表头
     this.$$table.isGroup = columnRows.length > 1;
+    // 处理左右的固定列
+    this.setFixedColumns(columnRows);
     return (
       <div class="v-table--header-wrapper">
         <table class="v-table--header" cellspacing="0" cellpadding="0" border="0" style={{ width: tableBodyWidth ? `${tableBodyWidth}px` : null }}>
