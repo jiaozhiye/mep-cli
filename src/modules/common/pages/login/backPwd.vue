@@ -120,25 +120,27 @@ export default {
       });
     },
     async clickHandle() {
-      const errMsg = await this.doAccountValidate();
-      if (errMsg) return;
-      const isPhoneType = isPhone(this.form.phone);
-      // 获取短信验证码
-      this.btnState.time = isPhoneType ? 60 : 60 * 10;
-      this.btnState.disabled = true;
-      this.timer = setInterval(() => {
-        if (this.btnState.time-- <= 0) {
-          this.btnState.time = boolPhone ? 60 : 60 * 10;
-          this.btnState.disabled = false;
-          clearInterval(this.timer);
+      try {
+        const errMsg = await this.doAccountValidate();
+        if (errMsg) return;
+        const isPhoneType = isPhone(this.form.phone);
+        // 获取短信验证码
+        this.btnState.time = isPhoneType ? 60 : 60 * 10;
+        this.btnState.disabled = true;
+        this.timer = setInterval(() => {
+          if (this.btnState.time-- <= 0) {
+            this.btnState.time = boolPhone ? 60 : 60 * 10;
+            this.btnState.disabled = false;
+            clearInterval(this.timer);
+          }
+        }, 1000);
+        this.$message.warning('验证码发送中...');
+        // 判断是手机号还是邮箱
+        const res = await getForgetCode({ type: isPhoneType ? 0 : 1, vMobileOrEmail: this.form.phone });
+        if (res.code === 200) {
+          this.$message.success(`验证码发送成功，请在${isPhoneType ? '手机' : '邮箱'}查收！`);
         }
-      }, 1000);
-      this.$message.warning('验证码发送中...');
-      // 判断是手机号还是邮箱
-      const res = await getForgetCode({ type: isPhoneType ? 0 : 1, vMobileOrEmail: this.form.phone });
-      if (res.code === 200) {
-        this.$message.success(`验证码发送成功，请在${isPhoneType ? '手机' : '邮箱'}查收！`);
-      }
+      } catch (err) {}
     },
     async nextHandle() {
       try {

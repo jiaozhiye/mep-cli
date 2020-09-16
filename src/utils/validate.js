@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-21 11:52:03
+ * @Last Modified time: 2020-09-14 15:15:36
  */
 import { isFormEmpty } from './index';
 
@@ -154,7 +154,7 @@ export const IDNumber = (rule, value, callback) => {
     82: '澳门',
     91: '国外 '
   };
-  const regExp = /^\d{15}$/ || !/^\d{6}(18|19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
+  const regExp = /^\d{6}(18|19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i;
   const checkLastNumber = val => {
     val = val.split('');
     // ∑(ai×Wi)(mod 11)

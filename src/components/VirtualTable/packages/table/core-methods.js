@@ -2,12 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-22 13:44:27
+ * @Last Modified time: 2020-09-15 17:02:44
  */
-import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, getCellValue, setCellValue } from '../utils';
+import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
 import { get, cloneDeep } from 'lodash';
 
+const noop = () => {};
 const $browse = browse();
 const isWebkit = $browse['webkit'];
 const throttleScrollYDuration = $browse['msie'] ? 20 : 10;
@@ -35,6 +36,15 @@ export default {
     // 设置展开行
     this.rowExpandedKeys = this.createRowExpandedKeys();
   },
+  // 服务端合计
+  createServerSummation(data) {
+    if (!this.isServerSummation) return;
+    this.flattenColumns
+      .filter(x => !!x.summation?.dataKey)
+      .forEach(x => {
+        setCellValue(this.summaries, x.dataIndex, Number(getCellValue(data, x.summation.dataKey)));
+      });
+  },
   // ajax 获取数据
   async getTableData() {
     const { fetch, fetchParams } = this;
@@ -58,23 +68,17 @@ export default {
           const datakey = fetch.dataKey ?? config.dataKey;
           const items = get(res.data, datakey) ?? [];
           const total = get(res.data, datakey.replace(/[^\.]+$/, config.totalKey)) || items.length || 0;
-          // 服务端合计
-          if (this.isServerSummation) {
-            this.flattenColumns
-              .filter(x => !!x.summation?.dataKey)
-              .forEach(x => {
-                setCellValue(this.summaries, x.dataIndex, Number(getCellValue(res.data, x.summation.dataKey)));
-              });
+          const [err, bool = !0] = await errorCapture(this.beforeLoadTable || noop, items);
+          if (!err && bool) {
+            this.createTableData(items);
+            this.setRecordsTotal(total);
+            this.createServerSummation(res.data);
           }
-          // 处理数据
-          this.createTableData(items);
-          this.setRecordsTotal(total);
         } else {
-          // 处理数据
           this.createTableData([]);
           this.setRecordsTotal(0);
         }
-      } catch (e) {}
+      } catch (err) {}
     }
     if (hasOwn(this.fetch, 'stopToFirst')) {
       this.fetch.stopToFirst = false;

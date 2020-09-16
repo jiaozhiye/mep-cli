@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-22 16:28:48
+ * @Last Modified time: 2020-09-14 10:19:46
  */
 @import './common.scss';
 
@@ -55,6 +55,7 @@
     .v-slot {
       flex: 1;
       display: inline-table;
+      height: 100%;
       margin-right: $v-module-distance;
     }
   }

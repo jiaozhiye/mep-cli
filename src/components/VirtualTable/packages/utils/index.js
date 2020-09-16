@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-11 09:23:24
+ * @Last Modified time: 2020-09-15 17:02:27
  */
 import { get, set, transform, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -188,6 +188,16 @@ export const convertToRows = originColumns => {
   });
 
   return rows;
+};
+
+// 捕获基于 Promise 操作的异常
+export const errorCapture = async (asyncFn, ...params) => {
+  try {
+    const res = await asyncFn(...params);
+    return [null, res];
+  } catch (e) {
+    return [e, null];
+  }
 };
 
 // 延迟方法

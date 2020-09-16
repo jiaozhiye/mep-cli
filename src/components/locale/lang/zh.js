@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-24 19:47:40
+ * @Last Modified time: 2020-09-14 13:02:13
  */
 import tableZhLocale from '../../VirtualTable/packages/locale/lang/zh';
 
@@ -94,6 +94,7 @@ export default {
     daterangePlaceholder: ['开始日期', '结束日期'],
     datetimerangePlaceholder: ['开始时间', '结束时间'],
     monthrangePlaceholder: ['开始月份', '结束月份'],
+    yearrangePlaceholder: ['开始年份', '结束年份'],
     datePickers: ['今天', '昨天', '一周前', '一个月前'],
     dateRangePickers: ['最近一周', '最近一个月', '最近三个月', '最近六个月'],
     search: '搜 索',

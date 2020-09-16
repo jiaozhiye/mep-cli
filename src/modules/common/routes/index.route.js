@@ -5,7 +5,7 @@
  * @Last Modified time: 2020-09-02 15:06:52
  */
 export default {
-  // webpackChunkName -> webpack 在打包编译时，生成的文件路径(名)，格式：模块名称/用例名称
+  // webpackChunkName -> webpack 在打包编译时，生成的文件路径(名)，格式：模块名称/用例名称 service/spt1001
   routes: [
     {
       path: '/user-center',

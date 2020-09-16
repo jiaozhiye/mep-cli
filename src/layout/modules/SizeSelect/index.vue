@@ -14,7 +14,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-30 15:17:48
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-12 15:50:24
+ * @Last Modified time: 2020-09-12 16:06:30
  */
 import { mapState, mapActions } from 'vuex';
 import Vue from 'vue';
@@ -25,13 +25,15 @@ export default {
     ...mapState('app', ['size'])
   },
   methods: {
-    ...mapActions('app', ['setSize', 'createElementSize', 'refreshView']),
+    ...mapActions('app', ['setSize', 'createElementSize', 'clearKeepAliveCache', 'refreshView']),
     languageChangeHandle(size) {
       this.setSize(size);
       this.createElementSize(size);
       localStorage.setItem('size', size);
       // 浏览器刷新，重新获取数据
       // window.history.go(0);
+      // 重新加载路由页面
+      this.clearKeepAliveCache();
       this.refreshView({ path: this.$route.path });
       // 可能需要重新获取基础信息
       // ...

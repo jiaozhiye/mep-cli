@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-10 19:15:49
+ * @Last Modified time: 2020-09-14 13:03:24
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -852,6 +852,10 @@ export default {
         monthrange: {
           placeholder: this.t('form.monthrangePlaceholder'),
           valueFormat: 'yyyy-MM'
+        },
+        yearrange: {
+          placeholder: this.t('form.yearrangePlaceholder'),
+          valueFormat: 'yyyy'
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;

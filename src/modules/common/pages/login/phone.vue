@@ -49,7 +49,6 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
-    loginHandle() {},
     async doValidate() {
       try {
         return await this.$refs.form.validate();

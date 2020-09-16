@@ -125,6 +125,8 @@
 | exactdaterange | 严格日期时间区间类型，值的格式 yyyy-MM-dd      | string | -      |
 | month          | 月份类型，值的格式 yyyy-MM                     | string | -      |
 | monthrange     | 月份区间类型，值的格式 yyyy-MM                 | string | -      |
+| year           | 年份类型，值的格式 yyyy                        | string | -      |
+| yearrange      | 年份区间类型，值的格式 yyyy                    | string | -      |
 
 ### searchHelper
 
