@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-02 09:16:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-31 08:46:52
+ * @Last Modified time: 2020-09-27 19:07:07
  */
 export default {
   app: {
@@ -37,22 +37,7 @@ export default {
   },
   login: {
     title: '系统登录',
-    viewDetails: '了解详情',
-    username: '请输入用户名',
-    password: '请输入密码',
-    phone: '请输入手机号',
-    authCode: '验证码',
-    getAuthCode: '获取验证码',
-    forgotPassword: '忘记密码',
-    retrievePassword: '密码找回',
-    resetPassword: '重置密码',
-    loginButton: '登 录',
-    weChat: '微信登录',
-    appDownload: 'App下载',
-    loginMethodByUser: '用户名登录',
-    loginMethodByPhone: '手机号登录',
-    nextStep: '下一步',
-    backHome: '返回首页'
+    weChat: '微信登录'
   },
   noMatch: {
     text: '抱歉，你访问的页面不存在或仍在开发中'

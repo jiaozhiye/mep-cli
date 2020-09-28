@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-20 11:03:02
+ * @Last Modified time: 2020-09-18 08:36:38
  */
 import i18n from '../locale';
 
@@ -36,7 +36,7 @@ const config = {
   },
   // 高级检索
   highSearch: {
-    showSQL: true
+    showSQL: false
   },
   // 树表格
   treeTable: {

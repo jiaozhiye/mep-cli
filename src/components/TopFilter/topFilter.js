@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-14 13:03:24
+ * @Last Modified time: 2020-09-23 19:13:07
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -243,6 +243,7 @@ export default {
             props: {
               visible: this.visible[fieldName],
               title: this.t('form.searchHelper'),
+              width: searchHelper.width ?? '60%',
               showFullScreen: false,
               destroyOnClose: true,
               containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
@@ -259,16 +260,18 @@ export default {
             },
             on: {
               close: (visible, data, alias) => {
-                if (isObject(data) && Object.keys(alias).length) {
+                const aliasKeys = Object.keys(alias);
+                if (isObject(data) && aliasKeys.length) {
                   for (let key in alias) {
                     if (key !== 'extra') {
                       form[key] = data[alias[key]];
-                      if (key === fieldName) {
-                        onChange(form[key]);
-                      }
                     } else {
                       this.desc[fieldName] = data[alias[key]];
                     }
+                  }
+                  if (aliasKeys.includes(fieldName)) {
+                    let id_key = aliasKeys.find(x => x !== fieldName && x !== 'extra');
+                    onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
                   }
                 }
                 const { closed = noop } = searchHelper;
@@ -305,15 +308,17 @@ export default {
             style={{ ...style }}
             clearable
             onChange={val => {
+              form[fieldName] = val.trim();
               // 搜索帮助
+              const extraKeys = this[`${fieldName}ExtraKeys`];
               if (!val && (isSearchHelper || noInput)) {
-                if (Array.isArray(this[`${fieldName}ExtraKeys`]) && this[`${fieldName}ExtraKeys`].length) {
-                  this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
+                if (Array.isArray(extraKeys)) {
+                  extraKeys.forEach(key => (form[key] = ''));
                 }
                 this.desc[fieldName] = '';
               }
-              form[fieldName] = val.trim();
-              onChange(form[fieldName]);
+              const id_key = extraKeys?.find(x => x !== fieldName && x !== 'extra');
+              onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
             }}
             onFocus={onFocus}
             nativeOnKeydown={this.enterEventHandle}

@@ -230,12 +230,14 @@
 
 ### expandable
 
-| 参数                 | 说明                           | 类型                       | 默认值 |
-| -------------------- | ------------------------------ | -------------------------- | ------ |
-| defaultExpandAllRows | 默认展开所有行                 | boolean                    | -      |
-| rowExpandable        | 是否允许行展开                 | Function(row) => boolean   | -      |
-| expandedRowRender    | 额外的展开行渲染方法，必要参数 | Function(row) => JSX Node  | -      |
-| onChange             | 展开的行变化时触发             | Function({ rowKey: bool }) | -      |
+| 参数                 | 说明                           | 类型                                 | 默认值 |
+| -------------------- | ------------------------------ | ------------------------------------ | ------ |
+| defaultExpandAllRows | 默认展开所有行                 | boolean                              | -      |
+| expandedRowKeys      | 展开行的 rowKey 数组           | array                                | -      |
+| rowExpandable        | 是否允许行展开                 | Function(row) => boolean             | -      |
+| expandedRowRender    | 额外的展开行渲染方法，必要参数 | Function(row) => JSX Node            | -      |
+| onExpand             | 点击展开图标时触发             | Function(expanded, row)              | -      |
+| onChange             | 展开的行变化时触发             | Function(expandedKeys, expandedRows) | -      |
 
 ### exportExcel
 

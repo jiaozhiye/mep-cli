@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-23 10:32:15
+ * @Last Modified time: 2020-09-22 10:20:28
  */
 import config from '../config';
 
@@ -25,10 +25,7 @@ const selectionMixin = {
     // 选择列已选中 keys
     createSelectionKeys() {
       const { rowSelection } = this;
-      if (!rowSelection) {
-        return [];
-      }
-      const { type, selectedRowKeys = [] } = rowSelection;
+      const { type, selectedRowKeys = [] } = rowSelection || {};
       return type === 'radio' ? selectedRowKeys.slice(0, 1) : [...selectedRowKeys];
     }
   }

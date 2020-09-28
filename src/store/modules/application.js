@@ -2,13 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-04 10:20:35
+ * @Last Modified time: 2020-09-28 13:04:20
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
 import config from '@/config';
 import router from '@/routes';
-import { setToken, setUser, removeToken, set_vDealerName } from '@/utils/cookies';
+import { setToken, setGray, setUser, removeToken, removeGray, removeWechatAvatar, set_vDealerName } from '@/utils/cookies';
 import variables from '@/assets/css/variables.scss';
 import localDict from '@/utils/localDict';
 import { getNavList, getAllDict, getStarMenuList, getCommonMenuList, createMenuPoint } from '@/api/login';
@@ -63,31 +63,35 @@ const state = {
   loginInfo: {}, // 登录信息
   navList: [], // 导航菜单树
   menuList: [], // 可点击(三级)的子菜单列表
+  tabNavList: [], // 导航选项卡列表
   starMenuList: [], // 收藏导航
   commonMenuList: [], // 常用导航
-  tabNavList: [], // 导航选项卡列表
+  keepAliveList: [], // 路由组件缓存列表
+  iframeList: [], // iframe 列表
   lang: localStorage.getItem('lang') || config.lang, // 多语言
   size: localStorage.getItem('size') || config.size, // 尺寸
   theme: variables.theme, // 主题色
   dict: {}, // 数据字典
-  keepAliveList: [], // 路由组件缓存列表
-  iframeList: [], // iframe 列表
-  isNotifyMark: !1 // 页面中是否已存在消息通知组件
+  isNotifyMark: !1, // 页面中是否已存在消息通知组件
+  weChatOpenId: '' // 微信登录 openId
 };
 
 // actions
 const actions = {
   createLoginInfo({ commit, state }, params) {
     setToken(params.token);
+    params.gray && setGray(params.gray);
     setUser(params.name);
     set_vDealerName(params.vDealerName);
     commit({
       type: types.LOGININFO,
-      data: params
+      data: { name: params.name, dealerName: params.vDealerName }
     });
   },
   createLogout({ dispatch, commit, state }, params) {
     removeToken();
+    removeGray();
+    removeWechatAvatar();
     commit({
       type: types.LOGOUT,
       data: {}
@@ -97,8 +101,14 @@ const actions = {
       router.push({ path: '/login' }).catch(() => {});
     } else {
       // 刷新浏览器，释放内存
-      setTimeout(() => window.history.go(0), 300);
+      setTimeout(() => (window.location = '/login'), 300);
     }
+  },
+  createOpenId({ commit, state }, params) {
+    commit({
+      type: types.OPENID,
+      data: params
+    });
   },
   async createNavList({ dispatch, commit, state }, params) {
     if (state.navList.length) return;
@@ -166,9 +176,6 @@ const actions = {
     localStorage.setItem('tab_nav', JSON.stringify(params));
   },
   checkAuthority({ commit, state }, params) {
-    if (!state.menuList.length) {
-      return false;
-    }
     return state.menuList.some(x => x.key === params);
   },
   async createDictData({ commit, state }, params) {
@@ -311,6 +318,9 @@ const mutations = {
   },
   [types.LOGOUT](state, { data }) {
     state.loginInfo = data;
+  },
+  [types.OPENID](state, { data }) {
+    state.weChatOpenId = data;
   },
   [types.NAVLIST](state, { data }) {
     state.navList = data;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 09:34:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-26 11:05:13
+ * @Last Modified time: 2020-09-23 16:18:09
  */
 import { sleep } from '../../_utils/tool';
 import { mmToPx, pxToMm, insertBefore, isPageBreak } from './utils';
@@ -255,9 +255,9 @@ export default {
     // 加载完成打印模板组件，创建预览工作区
     async SHOW_PREVIEW() {
       if (this.templateEl?.tagName !== 'TABLE') {
-        this.loading = !1;
         return this.throwError();
       }
+      if (this.previewEl.innerHTML) return;
       this.createTemplateCols();
       await sleep(0);
       this.createNodeStyle();

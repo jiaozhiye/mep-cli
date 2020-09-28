@@ -97,6 +97,7 @@ export default {
       props: {
         visible: this.visible,
         title: this.$t('form.searchHelper'),
+        width: searchHelper?.width ?? '60%',
         showFullScreen: false,
         destroyOnClose: true,
         containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }

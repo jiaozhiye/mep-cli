@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-05 08:06:38
+ * @Last Modified time: 2020-09-28 12:49:39
  */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -16,6 +16,7 @@ const Login = () => import('@/modules/common/pages/login');
 const Dashboard = () => import('@/pages/dashboard');
 const Redirect = () => import('@/pages/redirect');
 const Nomatch = () => import('@/pages/nomatch');
+const WeChatCb = () => import('@/modules/common/pages/login/weChatCb');
 
 // 基础路由
 export const constantRouterMap = [
@@ -23,6 +24,12 @@ export const constantRouterMap = [
     path: '/login',
     meta: { title: i18n.t('login.title') },
     component: Login,
+    hidden: true
+  },
+  {
+    path: '/wechat',
+    meta: { title: i18n.t('login.weChat') },
+    component: WeChatCb,
     hidden: true
   },
   ...routes.map(x => x.iframes).flat(),

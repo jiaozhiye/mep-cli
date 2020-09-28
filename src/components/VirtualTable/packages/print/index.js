@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 13:36:43
+ * @Last Modified time: 2020-09-21 20:04:52
  */
 import { convertToRows, deepFindColumn, filterTableColumns, downloadFile, getCellValue } from '../utils';
 import config from '../config';
@@ -187,7 +187,7 @@ export default {
       const { tableFullData, $refs } = this.$$table;
       const summationRows = this.showFooter ? $refs[`tableFooter`].summationRows : [];
       let html = `<table class="v-table--print" width="100%" border="0" cellspacing="0" cellpadding="0">`;
-      html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px"}>`).join('')}</colgroup>`;
+      html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (this.showHeader) {
         html += [
           `<thead>`,

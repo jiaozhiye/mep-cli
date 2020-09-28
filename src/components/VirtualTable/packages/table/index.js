@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-22 16:50:53
+ * @Last Modified time: 2020-09-22 10:05:28
  */
 import baseProps from './props';
 import Store from '../store';
@@ -302,6 +302,18 @@ export default {
     [`rowSelection.selectedRowKeys`](next) {
       this.$$tableBody.setClickedValues([next[0], 'index']);
       this.selectionKeys = this.createSelectionKeys();
+      if (this.isTreeTable) {
+        this.rowExpandedKeys = this.createRowExpandedKeys();
+      }
+    },
+    rowExpandedKeys(next, prev) {
+      if (!this.expandable || isEqual(next, prev)) return;
+      const { onChange = noop } = this.expandable;
+      const expandedRows = tableDataFlatMap(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
+      onChange(next, expandedRows);
+    },
+    [`expandable.expandedRowKeys`](next) {
+      this.$$tableBody.setClickedValues([next[0], 'index']);
       this.rowExpandedKeys = this.createRowExpandedKeys();
     },
     highlightKey(next) {

@@ -1,6 +1,6 @@
 <template>
   <div class="app-download">
-    <span><i class="iconfont icon-mobile"></i> 移动办公</span>
+    <span>移动办公下载</span>
     <div>
       <el-button v-for="(item, index) in list" :key="item.vAppName" type="text" size="medium" @click="clickHandle(index)">{{ item.vAppName }}</el-button>
     </div>
@@ -42,10 +42,10 @@ export default {
 <style lang="scss" scoped>
 .app-download {
   display: flex;
-  height: 60px;
+  height: 42px;
+  margin-bottom: 10px;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
   border-top: 1px solid $borderColor;
 }
 </style>

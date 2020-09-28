@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-10 16:32:28
+ * @Last Modified time: 2020-09-22 09:56:25
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains } from '../utils';
@@ -131,7 +131,7 @@ export default {
       );
     },
     renderRows(list, depth = 0) {
-      const { getRowKey, selectionKeys, highlightKey, expandable, rowExpandedKeys, ellipsis } = this.$$table;
+      const { getRowKey, selectionKeys, highlightKey, rowSelection, expandable, rowExpandedKeys } = this.$$table;
       const rows = [];
       list.forEach(row => {
         // 行记录 索引
@@ -153,17 +153,12 @@ export default {
         // 展开行
         if (expandable) {
           const { rowExpandable = noop } = expandable;
-          const expandColumnCls = [
-            `v-body--expanded-column`,
-            {
-              [`col--ellipsis`]: ellipsis
-            }
-          ];
+          const expandColumnCls = [`v-body--expanded-column`];
           // 展开状态
           if (!rowExpandable(row) && rowExpandedKeys.includes(rowKey)) {
             rows.push(
               <tr key={`expand_${rowKey}`} class="v-body--expanded-row">
-                <td colspan={this.flattenColumns.length} class={expandColumnCls}>
+                <td colspan={this.flattenColumns.length} class={expandColumnCls} style={{ paddingLeft: !rowSelection ? `50px` : `100px` }}>
                   <div class="v-cell">{expandable.expandedRowRender(row)}</div>
                 </td>
               </tr>

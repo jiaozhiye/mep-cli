@@ -4,7 +4,7 @@
       <div :class="userCenterCls">
         <div class="user-avatar">
           <span class="avatar">
-            <img class="img" :src="info.profileUrl || avatarImg" />
+            <img class="img" :src="weChatAvatar || info.profileUrl || avatarImg" />
           </span>
           <span class="name">{{ username }}</span>
         </div>
@@ -46,10 +46,10 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-03 09:42:06
+ * @Last Modified time: 2020-09-28 11:21:07
  **/
 import { mapActions } from 'vuex';
-import { getUser } from '@/utils/cookies';
+import { getUser, getWechatAvatar } from '@/utils/cookies';
 import { getUserInfo } from '@/api/login';
 
 import { size } from '@/mixins/sizeMixin';
@@ -60,7 +60,8 @@ export default {
   data() {
     this.avatarImg = require('@/assets/img/avatar.jpg');
     return {
-      username: getUser() || '管理员',
+      username: getUser() ?? '管理员',
+      weChatAvatar: getWechatAvatar() ?? '',
       info: {
         profileUrl: '', // 头像
         vEmail: '', // Email
@@ -177,6 +178,8 @@ export default {
       flex-wrap: wrap;
       padding-top: 6px;
       line-height: 1.75;
+      max-height: 260px;
+      overflow-y: auto;
       & > div {
         width: 100%;
         display: flex;

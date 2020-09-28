@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-14 13:03:11
+ * @Last Modified time: 2020-09-23 19:12:38
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -285,6 +285,7 @@ export default {
             props: {
               visible: this.visible[fieldName],
               title: this.t('form.searchHelper'),
+              width: searchHelper.width ?? '60%',
               showFullScreen: false,
               destroyOnClose: true,
               containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
@@ -301,16 +302,18 @@ export default {
             },
             on: {
               close: (visible, data, alias) => {
-                if (isObject(data) && Object.keys(alias).length) {
+                const aliasKeys = Object.keys(alias);
+                if (isObject(data) && aliasKeys.length) {
                   for (let key in alias) {
                     if (key !== 'extra') {
                       form[key] = data[alias[key]];
-                      if (key === fieldName) {
-                        onChange(form[key]);
-                      }
                     } else {
                       this.desc[fieldName] = data[alias[key]];
                     }
+                  }
+                  if (aliasKeys.includes(fieldName)) {
+                    let id_key = aliasKeys.find(x => x !== fieldName && x !== 'extra');
+                    onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
                   }
                 }
                 const { closed = noop } = searchHelper;
@@ -350,15 +353,17 @@ export default {
             show-word-limit={showLimit}
             clearable
             onChange={val => {
+              form[fieldName] = val.trim();
               // 搜索帮助
+              const extraKeys = this[`${fieldName}ExtraKeys`];
               if (!val && (isSearchHelper || noInput)) {
-                if (Array.isArray(this[`${fieldName}ExtraKeys`]) && this[`${fieldName}ExtraKeys`].length) {
-                  this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
+                if (Array.isArray(extraKeys)) {
+                  extraKeys.forEach(key => (form[key] = ''));
                 }
                 this.desc[fieldName] = '';
               }
-              form[fieldName] = val.trim();
-              onChange(form[fieldName]);
+              const id_key = extraKeys?.find(x => x !== fieldName && x !== 'extra');
+              onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
             }}
             onFocus={onFocus}
             onBlur={() => onBlur(form[fieldName])}
@@ -821,6 +826,9 @@ export default {
     MULTIPLE_SELECT(option) {
       return this.createSelectHandle(option, true);
     },
+    MULTIPLE_TAGS_SELECT(option) {
+      return this.createSelectHandle({ ...option, showTags: !0 }, true);
+    },
     DATE(option) {
       const { form, formType } = this;
       const conf = {
@@ -1190,17 +1198,13 @@ export default {
           <el-time-select
             value={form[fieldName][0]}
             onInput={val => {
-              form[fieldName] = [val ?? undefined, endVal];
+              form[fieldName] = [val ?? undefined, form[fieldName][1]];
             }}
             pickerOptions={{
               start: startTime,
               end: endTime,
               step: stepTime,
-              maxTime:
-                endVal &&
-                moment(endVal, valueFormat)
-                  .add(stepMinute, 'minutes')
-                  .format(valueFormat)
+              maxTime: endVal
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
@@ -1212,17 +1216,13 @@ export default {
           <el-time-select
             value={form[fieldName][1]}
             onInput={val => {
-              form[fieldName] = [val ?? undefined, val];
+              form[fieldName] = [form[fieldName][0], val ?? undefined];
             }}
             pickerOptions={{
               start: startTime,
               end: endTime,
               step: stepTime,
-              minTime:
-                startVal &&
-                moment(startVal, valueFormat)
-                  .subtract(stepMinute, 'minutes')
-                  .format(valueFormat)
+              minTime: startVal
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
@@ -1429,6 +1429,7 @@ export default {
         request = {},
         style = {},
         placeholder = this.t('form.selectPlaceholder'),
+        showTags,
         disabled,
         clearable = !0,
         onChange = noop
@@ -1450,6 +1451,7 @@ export default {
             .map(x => x.text)
             .join(',');
       this.setViewValue(fieldName, textVal);
+      const isGroup = itemList.every(x => Array.isArray(x.children));
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1465,7 +1467,7 @@ export default {
             }}
             multiple={multiple}
             multipleLimit={limit}
-            collapseTags={multiple}
+            collapseTags={!showTags && multiple}
             filterable={filterable}
             title={multiple ? textVal : null}
             placeholder={!disabled ? placeholder : ''}
@@ -1499,9 +1501,15 @@ export default {
               }
             }}
           >
-            {itemList.map(x => (
-              <el-option key={x.value} label={x.text} value={x.value} disabled={x.disabled} />
-            ))}
+            {!isGroup
+              ? itemList.map(x => <el-option key={x.value} label={x.text} value={x.value} disabled={x.disabled} />)
+              : itemList.map(x => (
+                  <el-option-group key={x.text} label={x.text}>
+                    {x.children.map(k => (
+                      <el-option key={k.value} label={k.text} value={k.value} disabled={k.disabled} />
+                    ))}
+                  </el-option-group>
+                ))}
           </el-select>
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>
@@ -1758,7 +1766,7 @@ export default {
     },
     createFormLayout() {
       const { flexCols: cols, isCollapse } = this;
-      const unfixTypes = ['MULTIPLE_CHECKBOX', 'TEXT_AREA', 'TINYMCE', 'UPLOAD_IMG', 'UPLOAD_FILE'];
+      const unfixTypes = ['MULTIPLE_CHECKBOX', 'MULTIPLE_TAGS_SELECT', 'TEXT_AREA', 'TINYMCE', 'UPLOAD_IMG', 'UPLOAD_FILE'];
       const colSpan = 24 / cols;
       const formItems = this.createFormItem().filter(item => item !== null);
       const colFormItems = formItems.map((vNode, i) => {

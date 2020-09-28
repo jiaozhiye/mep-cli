@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-15 16:31:22
+ * @Last Modified time: 2020-09-24 16:54:00
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -28,7 +28,8 @@ export default {
     ).def([]),
     remove: PropTypes.shape({
       api: PropTypes.func.isRequired,
-      params: PropTypes.object
+      params: PropTypes.object,
+      callback: PropTypes.func
     }),
     isCalcHeight: PropTypes.bool.def(false),
     fixedSize: PropTypes.array.def([5, 4]),
@@ -85,6 +86,7 @@ export default {
           if (res.code === 200) {
             this.fileList.splice(index, 1);
             this.clearFiles();
+            this.remove?.callback && this.remove.callback();
             this.$message.success(this.t('confirm.success'));
           }
         } catch (err) {}

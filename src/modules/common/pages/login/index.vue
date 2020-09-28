@@ -3,9 +3,6 @@
     <div class="login-wrapper" :style="loginWrapStyle">
       <div class="login-title">Welcome to MEP</div>
       <div class="login-content">
-        <div v-if="curPanel !== 'bindPhone'" class="qrcode-tab" @click="qrcodeHandle">
-          <i :class="['icon', { wechat: curPanel === 'sign', sign: curPanel === 'wechat' }]" />
-        </div>
         <!-- 账号/免密 登录 -->
         <div v-if="curPanel === 'sign'">
           <div class="flow-tabs">
@@ -14,7 +11,7 @@
           <div class="container">
             <div class="scroll" :style="scrollTranslate">
               <div class="box">
-                <Account ref="sign-account" @enter="loginHandle" />
+                <Account ref="sign-account" @enter="() => this.loginHandle()" />
                 <div class="forget-pwd">
                   <a href="javascript:;" @click="forgetPwdHandle">忘记密码</a>
                 </div>
@@ -26,11 +23,6 @@
           </div>
         </div>
         <!-- 账号/免密 登录 END -->
-        <!-- 微信授权后 -->
-        <div v-if="curPanel === 'wechat'">
-          <WeChat ref="wechat" />
-        </div>
-        <!-- 微信授权后 END -->
         <!-- 微信授权后，手机号绑定 -->
         <div v-if="curPanel === 'bindPhone'">
           <div class="bind-top tc">
@@ -40,9 +32,11 @@
           <Phone ref="bindPhone" type="wx" />
         </div>
         <!-- 微信授权后，手机号绑定 END -->
-        <div v-if="curPanel !== 'wechat'" style="padding-top: 30px;">
-          <el-button type="primary" size="medium" :loading="loading" class="login-btn" @click="loginHandle">登 录</el-button>
+        <div style="padding-top: 20px;">
+          <el-button v-if="curPanel === 'bindPhone'" type="primary" size="medium" :loading="loading" class="login-btn" @click="() => this.bindPhoneHandle()">进入系统</el-button>
+          <el-button v-else type="primary" size="medium" :loading="loading" class="login-btn" @click="() => this.loginHandle()">登 录</el-button>
         </div>
+        <WeChat />
         <AppDownload />
       </div>
     </div>
@@ -85,10 +79,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { sleep } from '@/utils';
-import { doLogin } from '@common/api/login';
+import { doLogin, bindPhone, getLoginBg } from '@common/api/login';
 
 import Account from './account';
 import Phone from './phone';
@@ -96,8 +90,8 @@ import WeChat from './weChat';
 import AppDownload from './appDownload';
 import BackPwd from './backPwd';
 
-// 默认背景图
 import defaultBg from './assets/login-default.jpg';
+const localLoginBg = localStorage.getItem('login_bg');
 
 export default {
   name: 'Login',
@@ -108,8 +102,8 @@ export default {
       { key: 'phone', text: '免密码登录' }
     ];
     return {
-      bgUrl: localStorage.getItem('login_bg') || defaultBg,
-      panels: ['sign', 'wechat', 'bindPhone'],
+      bgUrl: localLoginBg || defaultBg,
+      panels: ['sign', 'bindPhone'],
       curPanel: 'sign',
       curLabel: 'account',
       loading: false,
@@ -117,6 +111,7 @@ export default {
     };
   },
   computed: {
+    ...mapState('app', ['weChatOpenId']),
     isWebkit() {
       return this.isBrowseType('AppleWebKit') && !this.isBrowseType('Edge');
     },
@@ -137,47 +132,71 @@ export default {
   watch: {
     curPanel() {
       this.curLabel = this.labels[0].key;
+    },
+    weChatOpenId(val) {
+      if (!val) return;
+      this.loginHandle();
     }
   },
+  mounted() {
+    window.$$setOpenId = this.createOpenId;
+    if (localLoginBg) return;
+    this.getLoginImage();
+  },
   methods: {
-    ...mapActions('app', ['createLoginInfo']),
+    ...mapActions('app', ['createLoginInfo', 'createOpenId']),
     isBrowseType(type) {
       return navigator.userAgent.indexOf(type) > -1;
     },
     clickHandler(index) {
       this.curLabel = this.labels[index].key;
     },
-    qrcodeHandle() {
-      this.curPanel = this.curPanel === 'sign' ? 'wechat' : 'sign';
-    },
     forgetPwdHandle() {
-      this.visible = true;
+      this.visible = !0;
     },
     backClickHandle() {
       this.curPanel = 'sign';
     },
+    async getLoginImage() {
+      const res = await getLoginBg();
+      if (res.code === 200 && res.data.vUrl) {
+        this.bgUrl = res.data.vUrl;
+        // 设置本地缓存
+        localStorage.setItem('login_bg', this.bgUrl);
+      }
+    },
     async loginHandle() {
       const ref_str = this.curPanel === 'sign' ? `${this.curPanel}-${this.curLabel}` : this.curPanel;
-      const loginType = this.curPanel === 'sign' ? (this.curLabel === 'account' ? 1 : 0) : 2;
-      const [err, data] = await this.$refs[ref_str].GET_VALUE?.();
-      if (err) return;
+      const loginType = !this.weChatOpenId ? (this.curLabel === 'account' ? 1 : 0) : 2;
+      let err, data;
+      if (loginType !== 2) {
+        [err, data] = await this.$refs[ref_str].GET_VALUE?.();
+        if (err) return;
+      }
       this.loading = !0;
       try {
         const res = await doLogin({
           loginType,
-          vLogin: data.account,
-          vPwd: data.password,
-          imgCheck: data.vcode,
-          msgCode: data.captcha
+          vLogin: data?.account ?? this.weChatOpenId,
+          vPwd: data?.password,
+          imgCheck: data?.vcode,
+          msgCode: data?.captcha
         });
         if (res.code === 200) {
           const { jwt, rData = {} } = res.data;
           this.createLoginInfo({
             name: rData.vPersonName || '',
             token: jwt || 'jwt',
+            gray: rData.grayCode || 0,
             vDealerName: rData.vDealerName || ''
           });
-          this.$router.push({ path: '/' }).catch(() => {});
+          await sleep(0);
+          // grayCode -> 0 生产，1 灰度
+          if (rData.grayCode) {
+            window.location = '/gray';
+          } else {
+            this.$router.push({ path: '/' }).catch(() => {});
+          }
           await sleep(1000);
         }
         if (res.code === 991) {
@@ -187,8 +206,20 @@ export default {
         if (res.code === 992) {
           this.$refs[ref_str].handleChangeCheckCode();
         }
+        // 微信授权，绑定手机号
+        if (res.code === 994) {
+          this.curPanel = 'bindPhone';
+        }
       } catch (err) {}
       this.loading = !1;
+    },
+    async bindPhoneHandle() {
+      const [err, data] = await this.$refs[this.curPanel].GET_VALUE?.();
+      if (err) return;
+      const res = await bindPhone({ vWXOpenID: this.weChatOpenId, vMobile: data.account, msgCode: data.captcha });
+      if (res.code === 200) {
+        this.loginHandle();
+      }
     },
     backPwdColose() {
       this.visible = !1;
@@ -216,10 +247,11 @@ export default {
   .login-title {
     margin-bottom: 20px;
     margin-top: -10vh;
-    font-size: 40px;
-    line-height: 40px;
-    font-weight: 600;
+    font-size: 42px;
+    line-height: 1;
     color: #fff;
+    font-family: 'VW Text Light';
+    font-weight: 400;
     user-select: none;
   }
   .login-content {
@@ -230,27 +262,6 @@ export default {
     background-color: #fff;
     box-shadow: $boxShadow;
     box-sizing: border-box;
-    .qrcode-tab {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 50px;
-      height: 50px;
-      border-top-right-radius: $borderRadius;
-      cursor: pointer;
-      .icon {
-        display: block;
-        width: 100%;
-        height: 100%;
-        background-image: url(./assets/login_icon.jpg);
-        &.wechat {
-          background-position: 0 0;
-        }
-        &.sign {
-          background-position: 0 -50px;
-        }
-      }
-    }
     .flow-tabs {
       display: flex;
       .tab {

@@ -1,21 +1,58 @@
 <template>
-  <div class="wx-wrapper" style="height: 400px">
-    <iframe
-      src="https://open.weixin.qq.com/connect/qrconnect?appid=wxb2fd067b9cf1df62&redirect_uri=https%3A%2F%2Ftst-audiep.faw-vw.com%2FgetAccessToken&response_type=code&scope=snsapi_login&state=3033A841AA8F117A4AEBB62C60EC6135AC61D2D823030286B7BA8DB4337FFBA0#wechat_redirect"
-      width="100%"
-      height="100%"
-      frameborder="0"
-      border="0"
-    />
+  <div class="wechat-login">
+    <span>社交帐号登录</span>
+    <div>
+      <button class="el-button el-button--text el-button--medium v-button" @click="clickHandle"><SvgIcon class="icon-wechat" icon-class="wechat" /> <span>微信</span></button>
+    </div>
   </div>
 </template>
 
 <script>
-export default {};
+import { getWechatUrl } from '@common/api/login';
+import { messageAction } from '@/utils';
+
+export default {
+  data() {
+    return {
+      wechatUrl: ''
+    };
+  },
+  created() {
+    this.getWechatLocation();
+  },
+  methods: {
+    clickHandle() {
+      if (!this.wechatUrl) {
+        return messageAction('获取微信登录二维码失败！', 'error');
+      }
+      window.open(this.wechatUrl, '_blank', 'top=200,left=300,width=600,height=550,menubar=no,toolbar=no,status=no,scrollbars=yes');
+    },
+    async getWechatLocation() {
+      const res = await getWechatUrl();
+      if (res.code === 200) {
+        this.wechatUrl = res.data.url;
+      }
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-.wx-wrapper {
-  margin-top: 15px;
+.wechat-login {
+  display: flex;
+  height: 40px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  .v-button {
+    .icon-wechat {
+      width: 20px;
+      height: 20px;
+    }
+    & > svg,
+    & > span {
+      vertical-align: middle;
+    }
+  }
 }
 </style>

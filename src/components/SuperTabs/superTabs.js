@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-08 16:11:11
+ * @Last Modified time: 2020-09-23 15:47:37
  **/
 import PropTypes from '../_utils/vue-types';
 import { filterEmpty } from '../_utils/props-util';
@@ -21,6 +21,7 @@ export default {
     animated: PropTypes.bool.def(false),
     lazyLoad: PropTypes.bool.def(true),
     tabNavOffsetLeft: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    tabClassName: PropTypes.string,
     containerStyle: PropTypes.object.def({})
   },
   data() {
@@ -76,7 +77,7 @@ export default {
     }
   },
   render() {
-    const { activeKey, tabPosition, tabType, containerStyle, $slots } = this;
+    const { activeKey, tabPosition, tabType, tabClassName, containerStyle, $slots } = this;
     const prefixCls = this.getPrefixCls('super-tab--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -88,7 +89,7 @@ export default {
     return (
       <div class={cls} style={{ ...containerStyle, position: 'relative' }}>
         {$slots['extraContent'] && tabPosition === 'top' ? <div class="tap-top-exta">{$slots['extraContent']}</div> : null}
-        <el-tabs value={activeKey} tab-position={tabPosition} type={tabType} onInput={this.inputHandle} on-tab-click={this.clickHandle}>
+        <el-tabs class={tabClassName} value={activeKey} tab-position={tabPosition} type={tabType} onInput={this.inputHandle} on-tab-click={this.clickHandle}>
           {this.createTabsContent(tabProps)}
         </el-tabs>
       </div>

@@ -2,11 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-31 08:54:07
+ * @Last Modified time: 2020-09-28 12:52:57
  */
 // app
 export const LOGININFO = 'LOGININFO';
 export const LOGOUT = 'LOGOUT';
+export const OPENID = 'OPENID';
 export const NAVLIST = 'NAVLIST';
 export const MENULIST = 'MENULIST';
 export const TAB_NAVLIST = 'TAB_NAVLIST';

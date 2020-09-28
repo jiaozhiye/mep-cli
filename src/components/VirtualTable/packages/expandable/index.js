@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-30 15:59:26
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-16 09:38:43
+ * @Last Modified time: 2020-09-22 09:39:10
  */
 const noop = () => {};
 
@@ -17,8 +17,8 @@ export default {
   },
   watch: {
     expanded(val) {
-      const { onChange = noop } = this.$$table.expandable || {};
-      onChange({ [this.rowKey]: val });
+      const { onExpand = noop } = this.$$table.expandable || {};
+      onExpand(val, this.record);
     }
   },
   methods: {

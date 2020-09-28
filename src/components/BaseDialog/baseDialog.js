@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 21:08:53
+ * @Last Modified time: 2020-09-23 19:02:58
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
+import { isNumber } from 'lodash';
 import { isIE } from '../_utils/tool';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
@@ -26,7 +27,7 @@ export default {
     destroyOnClose: PropTypes.bool.def(false),
     stopEventBubble: PropTypes.bool.def(false),
     title: PropTypes.string.def(''),
-    width: PropTypes.string.def('65%'),
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('65%'),
     dragable: PropTypes.bool.def(true),
     top: PropTypes.string.def('10vh'),
     modal: PropTypes.bool.def(true),
@@ -111,7 +112,7 @@ export default {
     }
   },
   render() {
-    const { isShowDialog, showFullScreen, fullscreen, dragable, closable, fullCls, maskToClose, stopEventBubble, containerStyle, $props, $attrs, $listeners, $slots } = this;
+    const { isShowDialog, showFullScreen, fullscreen, width, dragable, closable, fullCls, maskToClose, stopEventBubble, containerStyle, $props, $attrs, $listeners, $slots } = this;
     const prefixCls = this.getPrefixCls('dialog--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -122,6 +123,7 @@ export default {
       ref: 'dialog',
       props: {
         ...$props,
+        width: isNumber(width) ? `${width}px` : width,
         appendToBody: true,
         showClose: closable,
         fullscreen,

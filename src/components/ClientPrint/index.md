@@ -12,6 +12,21 @@
 | disabled       | 打印按钮的禁用状态                                           | boolean         | false  |
 | click          | 点击事件(异步方法)，用于获取接口打印数据，给 dataSource 赋值 | func            | -      |
 
+### ClientPrintGroup
+
+| 参数      | 说明                                     | 类型   | 默认值 |
+| --------- | ---------------------------------------- | ------ | ------ |
+| uniqueKey | 设置打印各种配置信息的本地缓存，不能重复 | string | -      |
+
+### ClientPrintItem
+
+| 参数           | 说明                                        | 类型            | 默认值 |
+| -------------- | ------------------------------------------- | --------------- | ------ |
+| label          | 打印选项卡名称                              | string          | -      |
+| dataSource     | 打印数据，必要参数                          | array \| object | -      |
+| templateRender | 打印模板组件，必要参数，[配置项](#template) | object          | -      |
+| disabled       | 是否禁用当前选项卡                          | boolean         | false  |
+
 ### 方法
 
 | 方法名称 | 说明                                   | 参数 | 返回值 |

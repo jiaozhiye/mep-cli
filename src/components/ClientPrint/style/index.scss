@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-01 13:58:17
+ * @Last Modified time: 2020-09-23 16:05:33
  */
 @import '../../style/index.scss';
 
@@ -171,6 +171,15 @@ $prefix-vpcls: '#{$v-prefix}-cviewport--wrapper';
       border: none !important;
     }
     /* 打印模板公共样式 END */
+  }
+}
+
+.v-cpreview--tab {
+  .el-tabs__header.is-top {
+    margin-bottom: 0 !important;
+  }
+  .#{$prefix-precls} {
+    min-height: calc(80vh - 48px - 32px);
   }
 }
 
