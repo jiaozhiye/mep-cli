@@ -45,6 +45,7 @@ export default {
   align-items: center;
   margin-top: 20px;
   .v-button {
+    color: $textColor;
     .icon-wechat {
       width: 20px;
       height: 20px;
@@ -52,6 +53,9 @@ export default {
     & > svg,
     & > span {
       vertical-align: middle;
+    }
+    &:hover {
+      color: #4cb63a;
     }
   }
 }

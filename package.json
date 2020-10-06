@@ -51,7 +51,6 @@
     "vue": "2.6.11",
     "vue-i18n": "^8.17.4",
     "vue-router": "^3.3.2",
-    "vue-video-player": "^5.0.2",
     "vuex": "^3.4.0",
     "xlsx": "^0.15.5"
   },
@@ -71,6 +70,7 @@
     "babel-plugin-component": "^1.1.1",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
     "chalk": "^2.4.1",
+    "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.0.3",
     "core-js": "^3.6.5",

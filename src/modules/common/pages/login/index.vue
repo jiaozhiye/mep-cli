@@ -156,10 +156,11 @@ export default {
     },
     backClickHandle() {
       this.curPanel = 'sign';
+      this.createOpenId('');
     },
     async getLoginImage() {
       const res = await getLoginBg();
-      if (res.code === 200 && res.data.vUrl) {
+      if (res.code === 200 && res.data?.vUrl) {
         this.bgUrl = res.data.vUrl;
         // 设置本地缓存
         localStorage.setItem('login_bg', this.bgUrl);
