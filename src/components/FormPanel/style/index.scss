@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-29 10:07:10
+ * @Last Modified time: 2020-10-09 08:41:53
  */
 @import '../../style/index.scss';
 
@@ -54,6 +54,9 @@ $prefix-cls: '#{$v-prefix}-form-panel';
       }
       .el-date-editor {
         width: 100%;
+        .el-range-input {
+          text-align: left;
+        }
       }
       .range-date {
         display: flex;

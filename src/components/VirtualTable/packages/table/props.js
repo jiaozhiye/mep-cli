@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-22 09:39:41
+ * @Last Modified time: 2020-10-12 09:07:20
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -53,7 +53,7 @@ const columnItem = {
 /**
  * editRender: 返回值
  * {
- *   type: PropTypes.oneOf(['text', 'number', 'select', 'select-multiple', 'checkbox', 'search-helper', 'date', 'datetime']).isRequired,
+ *   type: PropTypes.oneOf(['text', 'number', 'select', 'select-multiple', 'checkbox', 'search-helper', 'date', 'datetime', 'time']).isRequired,
  *   items: PropTypes.arrayOf(PropTypes.shape({
  *     text: PropTypes.string,
  *     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
@@ -66,6 +66,8 @@ const columnItem = {
  *     min: PropTypes.number.def(0),
  *     trueValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
  *     falseValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+ *     minDateTime: PropTypes.string,
+ *     maxDateTime: PropTypes.string,
  *     text: PropTypes.string,
  *     disabled: PropTypes.bool // 表单禁用状态
  *     clearable: PropTypes.bool
@@ -174,7 +176,8 @@ export default {
   }),
   // 表格打印
   tablePrint: PropTypes.shape({
-    showLogo: PropTypes.bool.def(true) // 是否显示打印单 logo
+    showLogo: PropTypes.bool, // 是否显示 Logo
+    showSign: PropTypes.bool // 是否显示签名
   }),
   // 是否显示高级检索
   showSuperSearch: PropTypes.bool.def(true),

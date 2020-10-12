@@ -164,6 +164,7 @@
 | 参数   | 说明                                                            | 类型                     | 默认值 |
 | ------ | --------------------------------------------------------------- | ------------------------ | ------ |
 | width  | dialog 弹出框的宽度                                             | number \| string         | 60%    |
+| height | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
 | open   | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
 | closed | 关闭搜索帮助的后置钩子，参数是带回的行数据                      | Function(tableData)      | -      |
 

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-22 10:05:28
+ * @Last Modified time: 2020-10-07 12:32:29
  */
 import baseProps from './props';
 import Store from '../store';
@@ -475,7 +475,8 @@ export default {
             flattenColumns,
             showHeader,
             showFooter,
-            showLogo: tablePrint.showLogo ?? !0
+            showLogo: tablePrint.showLogo ?? !0,
+            showSign: tablePrint.showSign ?? !1
           }
         }
       : null;

@@ -51,6 +51,8 @@
 | RADIO              | 单选按钮             |
 | DATE               | 日期类型             |
 | RANGE_DATE         | 日期区间类型         |
+| TIME               | 时间类型             |
+| RANGE_TIME         | 时间区间类型         |
 | SEARCH_HELPER      | 搜索帮助(ajax)       |
 | SEARCH_HELPER_WEB  | 搜索帮助(拼音头)     |
 | TEXT_AREA          | 文本域               |
@@ -100,6 +102,7 @@
 | trueValue     | 选中的值 - CHECKBOX                                              | number \| string | 1        |
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string | 0        |
 | dateType      | 日期控件的类型，[配置项](#dateType) - DATE/RANGE_DATE            | string           | -        |
+| timeFormat    | 时间控件得格式，[配置项](#timeFormat) - TIME/RANGE_TIME          | string           | -        |
 | minDateTime   | 最小日期，小于该时间的日期段将被禁用                             | string           | -        |
 | maxDateTime   | 最大日期，大于该时间的日期段将被禁用                             | string           | -        |
 | defaultTime   | 默认的时间，格式 HH:mm:ss                                        | string           | -        |
@@ -133,6 +136,7 @@
 | 参数   | 说明                                                            | 类型                     | 默认值 |
 | ------ | --------------------------------------------------------------- | ------------------------ | ------ |
 | width  | dialog 弹出框的宽度                                             | number \| string         | 60%    |
+| height | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
 | open   | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
 | closed | 关闭搜索帮助的后置钩子                                          | Function(tableData)      | -      |
 

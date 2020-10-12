@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-08 09:13:49
+ * @Last Modified time: 2020-10-12 09:15:17
  */
 import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -188,6 +188,11 @@ export default {
           }}
           format={dateFormat}
           value-format={dateFormat}
+          picker-options={{
+            disabledDate: oDate => {
+              return this.setDisabledDate(oDate, [extra.minDateTime, extra.maxDateTime]);
+            }
+          }}
           clearable={extra.clearable ?? !0}
           placeholder={!isDateTime ? this.t('table.editable.datePlaceholder') : this.t('table.editable.datetimePlaceholder')}
           onChange={val => {
@@ -201,7 +206,7 @@ export default {
       );
     },
     datetimeHandle(row, column) {
-      return this.dateHandle(row, column, true);
+      return this.dateHandle(row, column, !0);
     },
     timeHandle(row, column) {
       const { dataIndex } = column;
@@ -362,6 +367,29 @@ export default {
           )}
         </div>
       );
+    },
+    // 设置日期控件的禁用状态
+    setDisabledDate(oDate, [minDateTime, maxDateTime]) {
+      const min = minDateTime
+        ? moment(minDateTime)
+            .toDate()
+            .getTime()
+        : 0;
+      const max = maxDateTime
+        ? moment(maxDateTime)
+            .toDate()
+            .getTime()
+        : 0;
+      if (min && max) {
+        return !(oDate.getTime() >= min && oDate.getTime() <= max);
+      }
+      if (!!min) {
+        return oDate.getTime() < min;
+      }
+      if (!!max) {
+        return oDate.getTime() > max;
+      }
+      return false;
     },
     renderEditCell() {
       const { type } = this.options;

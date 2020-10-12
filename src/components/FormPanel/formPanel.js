@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-23 19:12:38
+ * @Last Modified time: 2020-10-07 18:56:16
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -286,6 +286,7 @@ export default {
               visible: this.visible[fieldName],
               title: this.t('form.searchHelper'),
               width: searchHelper.width ?? '60%',
+              height: searchHelper.height,
               showFullScreen: false,
               destroyOnClose: true,
               containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }

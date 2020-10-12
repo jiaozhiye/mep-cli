@@ -2,10 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-07 14:23:13
+ * @Last Modified time: 2020-10-07 20:21:02
  */
 import PropTypes from '../../../_utils/vue-types';
-import { template } from 'lodash';
 
 export default {
   name: 'InputText',
@@ -41,7 +40,6 @@ export default {
       this.currentValue = val;
     },
     emitEventHandle(val) {
-      // 触发 input & change 事件
       this.$emit('input', val);
       this.$emit('change', val);
     },

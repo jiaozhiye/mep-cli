@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 10:58:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-15 16:02:02
+ * @Last Modified time: 2020-10-07 10:26:16
  */
 /**
  * @description 判断浏览器是否 IE11
@@ -139,4 +139,21 @@ export const off = (el, evType, handler) => {
   if (el && evType) {
     document.removeEventListener ? el.removeEventListener(evType, handler, false) : el.detachEvent('on' + evType, handler);
   }
+};
+
+/**
+ * @description 获取满足条件的祖先元素
+ * @param {HTMLNode} el 参考节点
+ * @param {string} parElCls 目标节点 classname
+ * @returns 满足条件的祖先元素
+ */
+export const getParentNode = (el, parElCls) => {
+  let node = el;
+  while (node) {
+    if (node.classList.contains(parElCls)) {
+      return node;
+    }
+    node = node.parentNode;
+  }
+  return null;
 };

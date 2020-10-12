@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-23 19:13:07
+ * @Last Modified time: 2020-10-09 08:33:30
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -43,7 +43,7 @@ export default {
     defultValueOnClear: PropTypes.bool.def(false)
   },
   data() {
-    this.arrayTypes = ['RANGE_DATE', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX'];
+    this.arrayTypes = ['RANGE_DATE', 'RANGE_TIME', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX'];
     return {
       form: {}, // 表单的值
       desc: {}, // 描述信息
@@ -244,6 +244,7 @@ export default {
               visible: this.visible[fieldName],
               title: this.t('form.searchHelper'),
               width: searchHelper.width ?? '60%',
+              height: searchHelper.height,
               showFullScreen: false,
               destroyOnClose: true,
               containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
@@ -1000,6 +1001,57 @@ export default {
               onChange={() => onChange(form[fieldName])}
             />
           </div>
+        </el-form-item>
+      );
+    },
+    TIME(option) {
+      const { form } = this;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
+      const { timeFormat = 'HH:mm:ss', defaultTime } = options;
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <el-time-picker
+            v-model={form[fieldName]}
+            pickerOptions={{
+              format: timeFormat
+            }}
+            default-value={defaultTime ? `1970-01-01 ${defaultTime}` : defaultTime}
+            value-format={timeFormat}
+            format={timeFormat}
+            placeholder={!disabled ? placeholder : ''}
+            disabled={disabled}
+            style={{ ...style }}
+            onChange={onChange}
+          />
+        </el-form-item>
+      );
+    },
+    RANGE_TIME(option) {
+      const { form } = this;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
+      const { timeFormat = 'HH:mm:ss' } = options;
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <el-time-picker
+            isRange={true}
+            value={form[fieldName].length ? form[fieldName] : undefined}
+            onInput={val => {
+              form[fieldName] = val ?? [];
+            }}
+            pickerOptions={{
+              format: timeFormat
+            }}
+            value-format={timeFormat}
+            format={timeFormat}
+            range-separator="-"
+            start-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
+            end-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
+            disabled={disabled}
+            style={{ ...style }}
+            onChange={() => onChange(form[fieldName])}
+          />
         </el-form-item>
       );
     },

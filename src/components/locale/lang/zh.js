@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-14 13:02:13
+ * @Last Modified time: 2020-10-09 11:55:04
  */
 import tableZhLocale from '../../VirtualTable/packages/locale/lang/zh';
 
@@ -43,7 +43,8 @@ export default {
   },
   searchHelper: {
     close: '关 闭',
-    confirm: '确 定'
+    confirm: '确 定',
+    orderIndex: '序号'
   },
   tinymce: {
     wordsLimit: '文字数量已达上限！',

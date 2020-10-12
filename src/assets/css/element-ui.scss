@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 15:16:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-28 13:29:50
+ * @Last Modified time: 2020-10-07 19:48:33
  */
 .el-notification {
   a {
@@ -25,6 +25,10 @@
     .iconfont {
       font-size: inherit;
     }
+  }
+  &.el-button--text {
+    border: 0;
+    line-height: 0.75;
   }
 }
 .el-input:not(.el-input--prefix) {
@@ -62,6 +66,15 @@
   }
 }
 .el-select-dropdown {
+  .el-select-group__wrap {
+    .el-select-group__title {
+      padding: 0 $modulePadding;
+    }
+    &::after {
+      left: 10px;
+      right: 10px;
+    }
+  }
   .el-select-dropdown__item {
     padding: 0 $modulePadding;
   }

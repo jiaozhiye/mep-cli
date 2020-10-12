@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-08 09:20:53
+ * @Last Modified time: 2020-10-09 11:55:18
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -10,16 +10,17 @@ import TopFilter from '../TopFilter';
 import VirtualTable from '../VirtualTable';
 
 import { merge, cloneDeep, isFunction } from 'lodash';
-import { debounce, sleep } from '../_utils/tool';
+import { getParentNode, debounce, sleep } from '../_utils/tool';
 import PropTypes from '../_utils/vue-types';
 
 import Locale from '../_utils/mixins/locale';
+import Size from '../_utils/mixins/size';
 
 const noop = () => {};
 
 export default {
   name: 'SearchHelper',
-  mixins: [Locale],
+  mixins: [Locale, Size],
   props: {
     name: PropTypes.string, // tds
     filters: PropTypes.arrayOf(PropTypes.shape({ fieldName: PropTypes.string }).loose).def([]),
@@ -70,7 +71,7 @@ export default {
   },
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', this.resizeEventHandle);
-    this.calcTableHeight();
+    setTimeout(() => this.calcTableHeight());
   },
   destroyed() {
     this.resizeEvent && this.resizeEvent.remove();
@@ -141,7 +142,7 @@ export default {
     createTableColumns(vals = []) {
       return [
         {
-          title: '序号',
+          title: this.t('searchHelper.orderIndex'),
           dataIndex: 'index',
           width: 80,
           render: text => {
@@ -229,12 +230,16 @@ export default {
       return [current, others];
     },
     calcTableHeight() {
-      // 窗口高度 - 上下外边距 - header - footer
-      const containerHeight = window.innerHeight - window.innerHeight * 0.1 * 2 - 50 * 2;
-      this.height = containerHeight - this.$topFilter.$el.offsetHeight - 100;
+      const ftHeight = {
+        large: 56,
+        default: 52,
+        small: 48
+      };
+      const containerHeight = window.innerHeight - getParentNode(this.$el, 'el-dialog')?.offsetTop * 2 - 50 - ftHeight[this.currentSize];
+      this.height = containerHeight - this.$topFilter.$el.offsetHeight - 94;
     },
     resizeEventHandle() {
-      debounce(this.calcTableHeight, 20)();
+      debounce(this.calcTableHeight, 0)();
     }
   },
   render() {

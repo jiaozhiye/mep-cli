@@ -2,17 +2,18 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-21 20:04:52
+ * @Last Modified time: 2020-10-07 12:37:28
  */
 import { convertToRows, deepFindColumn, filterTableColumns, downloadFile, getCellValue } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
+import Cookies from 'js-cookie';
 import _ from 'lodash';
 
 export default {
   name: 'PrintTable',
   mixins: [Locale],
-  props: ['tableColumns', 'flattenColumns', 'showHeader', 'showFooter', 'showLogo'],
+  props: ['tableColumns', 'flattenColumns', 'showHeader', 'showFooter', 'showLogo', 'showSign'],
   inject: ['$$table'],
   data() {
     this.defaultHtmlStyle = `
@@ -185,7 +186,7 @@ export default {
     },
     _toTable(columnRows, flatColumns) {
       const { tableFullData, $refs } = this.$$table;
-      const summationRows = this.showFooter ? $refs[`tableFooter`].summationRows : [];
+      const summationRows = flatColumns.some(x => !!x.summation) ? $refs[`tableFooter`].summationRows : [];
       let html = `<table class="v-table--print" width="100%" border="0" cellspacing="0" cellpadding="0">`;
       html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (this.showHeader) {
@@ -199,18 +200,23 @@ export default {
       if (tableFullData.length) {
         html += `<tbody>${tableFullData.map(row => `<tr>${flatColumns.map((column, index) => `<td>${this.renderCell(row, row.index, column, index)}</td>`).join('')}</tr>`).join('')}</tbody>`;
       }
-      if (this.showFooter && flatColumns.some(x => !!x.summation)) {
-        html += `<tfoot>${summationRows
-          .map(
-            row =>
-              `<tr>${flatColumns
-                .map((column, index) => {
-                  let text = getCellValue(row, column.dataIndex);
-                  return `<td>${index === 0 && text === '' ? config.summaryText() : text}</td>`;
-                })
-                .join('')}</tr>`
-          )
-          .join('')}</tfoot>`;
+      if (this.showFooter || this.showSign) {
+        html += [
+          `<tfoot>`,
+          summationRows
+            .map(
+              row =>
+                `<tr>${flatColumns
+                  .map((column, index) => {
+                    let text = getCellValue(row, column.dataIndex);
+                    return `<td>${index === 0 && text === '' ? config.summaryText() : text}</td>`;
+                  })
+                  .join('')}</tr>`
+            )
+            .join(''),
+          this.showSign ? `<tr><td colspan="${flatColumns.length}" style="border: 0; text-align: right;">操作员: ${Cookies.get('username') ?? ''}</td></tr>` : '',
+          `</tfoot>`
+        ].join('');
       }
       html += '</table>';
       return html;

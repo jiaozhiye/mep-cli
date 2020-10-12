@@ -98,6 +98,7 @@ export default {
         visible: this.visible,
         title: this.$t('form.searchHelper'),
         width: searchHelper?.width ?? '60%',
+        height: searchHelper.height,
         showFullScreen: false,
         destroyOnClose: true,
         containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }

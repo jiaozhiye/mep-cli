@@ -173,17 +173,19 @@
 
 ### extra
 
-| 参数       | 说明                         | 类型             | 默认值 |
-| ---------- | ---------------------------- | ---------------- | ------ |
-| maxlength  | 最大长度                     | number           | -      |
-| max        | 最大值                       | number           | -      |
-| min        | 最小值                       | number           | 0      |
-| readonly   | 是否只读，search-helper 生效 | boolean          | true   |
-| trueValue  | 选中的值，checkbox 生效      | string \| number | -      |
-| falseValue | 非选中值，checkbox 生效      | string \| number | -      |
-| text       | 显示的文本，checkbox 生效    | string           | -      |
-| disabled   | 表单禁用状态                 | boolean          | -      |
-| clearable  | 是否显示清除按钮             | boolean          | true   |
+| 参数        | 说明                                 | 类型             | 默认值 |
+| ----------- | ------------------------------------ | ---------------- | ------ |
+| maxlength   | 最大长度                             | number           | -      |
+| max         | 最大值                               | number           | -      |
+| min         | 最小值                               | number           | 0      |
+| readonly    | 是否只读，search-helper 生效         | boolean          | true   |
+| trueValue   | 选中的值，checkbox 生效              | string \| number | -      |
+| falseValue  | 非选中值，checkbox 生效              | string \| number | -      |
+| minDateTime | 最小日期，小于该时间的日期段将被禁用 | string           | -      |
+| maxDateTime | 最大日期，大于该时间的日期段将被禁用 | string           | -      |
+| text        | 显示的文本，checkbox 生效            | string           | -      |
+| disabled    | 表单禁用状态                         | boolean          | -      |
+| clearable   | 是否显示清除按钮                     | boolean          | true   |
 
 ### helper
 
@@ -249,7 +251,8 @@
 
 | 参数     | 说明                | 类型    | 默认值 |
 | -------- | ------------------- | ------- | ------ |
-| showLogo | 是否显示打印单 logo | boolean | true   |
+| showLogo | 是否显示打印单 Logo | boolean | true   |
+| showSign | 是否显示签名        | boolean | false  |
 
 ## 注意
 

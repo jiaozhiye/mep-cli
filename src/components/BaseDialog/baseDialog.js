@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-23 19:02:58
+ * @Last Modified time: 2020-10-07 13:10:53
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -28,6 +28,7 @@ export default {
     stopEventBubble: PropTypes.bool.def(false),
     title: PropTypes.string.def(''),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('65%'),
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     dragable: PropTypes.bool.def(true),
     top: PropTypes.string.def('10vh'),
     modal: PropTypes.bool.def(true),
@@ -37,8 +38,6 @@ export default {
     containerStyle: PropTypes.object.def({})
   },
   data() {
-    this.hdHeight = 48;
-    this.ftHeight = 52;
     return {
       isVisible: this.visible,
       fullscreen: false
@@ -48,9 +47,6 @@ export default {
     $$dialog() {
       return this.$refs['dialog'].$el.querySelector('.el-dialog');
     },
-    delayTime() {
-      return !isIE() ? 300 : 400;
-    },
     isShowDialog() {
       return this.destroyOnClose ? this.isVisible : true;
     },
@@ -59,11 +55,21 @@ export default {
     },
     fullCls() {
       return ['iconfont', this.fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];
+    },
+    disTop() {
+      if (this.fullscreen || !this.height) {
+        return this.top;
+      }
+      return `calc((100vh - ${this.parseHeight(this.height)}) / 2)`;
+    },
+    delayTime() {
+      return !isIE() ? 300 : 400;
     }
   },
   watch: {
     visible(val) {
       if (val) {
+        this.resetDialogHeight();
         this.resetDialogPosition();
         this.isVisible = val;
       } else {
@@ -72,6 +78,15 @@ export default {
           this.fullscreen = false;
         }, this.delayTime);
       }
+    },
+    fullscreen(val) {
+      // 重置高度
+      this.resetDialogHeight();
+      // 可拖拽 & 全屏状态 重置 left/top
+      if (this.dragable && val) {
+        this.resetDialogPosition();
+      }
+      this.$emit('viewportChange', val ? 'fullscreen' : 'default');
     }
   },
   deactivated() {
@@ -81,38 +96,28 @@ export default {
     close() {
       this.$emit('update:visible', false);
     },
-    handleClick(e) {
-      e.stopPropagation();
+    handleClick() {
       this.fullscreen = !this.fullscreen;
-      // 可拖拽 & 全屏状态 重置 left/top
-      if (this.dragable && this.fullscreen) {
-        this.resetDialogPosition();
-      }
-      this.$emit('viewportChange', this.fullscreen ? 'fullscreen' : 'default');
     },
-    createStyles(isFooter) {
-      const ftHeight = isFooter ? this.ftHeight : 0;
-      const dialogBodyHeight = this.fullscreen
-        ? {
-            height: `calc(100vh - ${this.hdHeight}px - ${ftHeight}px)`
-          }
-        : {
-            maxHeight: `calc(100vh - ${this.top} - ${this.top} - ${this.hdHeight}px - ${ftHeight}px)`
-          };
-      return {
-        minHeight: `150px`,
-        ...dialogBodyHeight,
-        overflowY: `auto`
-      };
+    resetDialogHeight() {
+      if (!this.$$dialog) return;
+      if (this.fullscreen || !this.height) {
+        this.$$dialog.style.height = null;
+      } else {
+        this.$$dialog.style.height = this.parseHeight(this.height);
+      }
     },
     resetDialogPosition() {
       if (!this.$$dialog) return;
       this.$$dialog.style.left = 0;
       this.$$dialog.style.top = 0;
+    },
+    parseHeight(val) {
+      return isNumber(val) ? `${val}px` : val;
     }
   },
   render() {
-    const { isShowDialog, showFullScreen, fullscreen, width, dragable, closable, fullCls, maskToClose, stopEventBubble, containerStyle, $props, $attrs, $listeners, $slots } = this;
+    const { isShowDialog, showFullScreen, fullscreen, width, height, disTop, dragable, closable, fullCls, maskToClose, stopEventBubble, containerStyle, $props, $attrs, $listeners, $slots } = this;
     const prefixCls = this.getPrefixCls('dialog--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -123,7 +128,8 @@ export default {
       ref: 'dialog',
       props: {
         ...$props,
-        width: isNumber(width) ? `${width}px` : width,
+        top: disTop,
+        width: this.parseHeight(width),
         appendToBody: true,
         showClose: closable,
         fullscreen,
@@ -143,16 +149,22 @@ export default {
       // drag -> 拖拽指令
       directives: dragable ? [{ name: 'drag' }] : null
     };
-    const extraStyle = fullscreen ? { paddingBottom: `10px` } : null;
     const isFooterSlot = Object.keys($slots).includes('footer');
     return (
       <el-dialog class={cls} {...wrapProps}>
         {showFullScreen && (
-          <span key="fullscreen" title={fullscreen ? this.t('baseDialog.cancelFullScreen') : this.t('baseDialog.fullScreen')} class="fullscreen-btn" onClick={this.handleClick}>
+          <span title={fullscreen ? this.t('baseDialog.cancelFullScreen') : this.t('baseDialog.fullScreen')} class="fullscreen-btn" onClick={this.handleClick}>
             <i class={fullCls} />
           </span>
         )}
-        <div class="container" style={{ ...this.createStyles(isFooterSlot), ...containerStyle, ...extraStyle }}>
+        <div
+          class="container"
+          style={{
+            maxHeight: !(fullscreen || height) ? `calc(100vh - ${disTop} - ${disTop} - 48px - ${isFooterSlot ? '52px' : '0px'})` : null,
+            ...containerStyle,
+            height: null
+          }}
+        >
           {isShowDialog ? $slots[`default`] : null}
         </div>
         {isShowDialog && isFooterSlot ? $slots[`footer`] : null}
