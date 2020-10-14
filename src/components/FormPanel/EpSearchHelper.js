@@ -1,8 +1,8 @@
 /*
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
- * @LastEditors: 申庆柱
- * @LastEditTime: 2020-08-29 08:47:02
+ * @LastEditors: shen
+ * @LastEditTime: 2020-10-14 08:25:55
  */
 
 import { get, isObject, template } from 'lodash';
@@ -182,7 +182,7 @@ export default {
 //   const { form, formType } = this;
 //   const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, searchHelper, onChange = noop } = option;
 //   const { onlySelect = true } = options;
-//   const searchRef = this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
+//   const epSearchRef = () => this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
 //   if (onlySelect) {
 //     this[`${fieldName}PrevValue`] = form[fieldName];
 //   }
@@ -190,7 +190,7 @@ export default {
 //   if (!this[`${fieldName}ExtraKeys`]) {
 //     this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
 //   }
-
+//   this.setViewValue(fieldName, form[fieldName]);
 //   return (
 //     <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
 //       {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -221,15 +221,15 @@ export default {
 //           if (onlySelect) {
 //             this[`${fieldName}PrevValue`] = form[fieldName];
 //           }
-//           searchRef.currentValue = form[fieldName];
+//           epSearchRef().currentValue = form[fieldName];
 //           const { closed = noop } = searchHelper;
 //           closed(data);
-//           searchRef.visible = false;
+//           epSearchRef().visible = false;
 //         }}
 //         onOpen={() => {
 //           const { open = () => true } = searchHelper;
 //           if (!open(this.form)) return;
-//           searchRef.visible = true;
+//           epSearchRef().visible = true;
 //         }}
 //         onChange={val => {
 //           if (!val.trim() || !onlySelect) {
@@ -241,7 +241,7 @@ export default {
 //             form[fieldName] = val.trim();
 //             onChange(form[fieldName], !onlySelect);
 //           } else if (val && onlySelect && val !== this[`${fieldName}PrevValue`]) {
-//             searchRef.currentValue = form[fieldName] = this[`${fieldName}PrevValue`];
+//             epSearchRef().currentValue = form[fieldName] = this[`${fieldName}PrevValue`];
 //           }
 //         }}
 //       />

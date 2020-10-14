@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-09 08:33:30
+ * @Last Modified time: 2020-10-13 20:45:03
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -322,6 +322,12 @@ export default {
               onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
             }}
             onFocus={onFocus}
+            nativeOnDblclick={ev => {
+              if (!isSearchHelper || disabled) return;
+              const { open = () => true } = searchHelper;
+              if (!open(this.form)) return;
+              this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+            }}
             nativeOnKeydown={this.enterEventHandle}
           >
             {isSearchHelper && (

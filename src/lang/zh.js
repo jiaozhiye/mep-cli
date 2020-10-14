@@ -68,7 +68,7 @@ export default {
   insideLetter: {
     notice: '通知',
     message: '消息',
-    waiting: '代办'
+    waiting: '待办'
   },
   information: {
     title: '提示信息',

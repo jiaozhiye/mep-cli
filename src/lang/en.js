@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-02 09:16:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-27 19:07:07
+ * @Last Modified time: 2020-10-13 15:04:11
  */
 export default {
   app: {
@@ -68,7 +68,7 @@ export default {
   insideLetter: {
     notice: '通知',
     message: '消息',
-    waiting: '代办'
+    waiting: '待办'
   },
   information: {
     title: '提示信息',

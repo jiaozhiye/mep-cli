@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-02 19:30:05
+ * @Last Modified time: 2020-10-13 15:04:42
  */
 import axios from '@/api/fetch';
 
@@ -29,3 +29,10 @@ export const createMenuPoint = params => axios.post(`/api/sys/sysLogin/user/clic
 
 // 获取个人信息
 export const getUserInfo = params => axios.get(`/api/sys/sysLogin/user/getUserInfo`, { params });
+
+// 获取消息公告
+export const getMessageList = params => axios.get(`/api/dlmsys/notice/getNoticeInfo`, { params });
+
+// 获取待办列表
+export const getTodoList = params => axios.get(`/api/sys/xxxx/xxxx`, { params });
+
