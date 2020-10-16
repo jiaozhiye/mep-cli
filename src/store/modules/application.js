@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-28 13:04:20
+ * @Last Modified time: 2020-10-16 13:26:44
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -46,9 +46,12 @@ const flattenNavList = list => {
 
 const formateNavList = (list, routes) => {
   list.forEach(x => {
-    if (Array.isArray(x.children)) {
+    if (Array.isArray(x.children) && x.children.length) {
       x.children.forEach(sub => (sub.parentKey = x.key));
       formateNavList(x.children, routes);
+    }
+    if (!x.children && !x.key) {
+      x.children = [];
     }
     let target = deepMapRoutes(routes, x.key);
     if (target) {

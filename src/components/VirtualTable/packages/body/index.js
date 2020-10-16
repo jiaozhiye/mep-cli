@@ -159,7 +159,7 @@ export default {
             rows.push(
               <tr key={`expand_${rowKey}`} class="v-body--expanded-row">
                 <td colspan={this.flattenColumns.length} class={expandColumnCls} style={{ paddingLeft: !rowSelection ? `50px` : `100px` }}>
-                  <div class="v-cell">{expandable.expandedRowRender(row)}</div>
+                  <div class="v-cell">{expandable.expandedRowRender(row, rowIndex)}</div>
                 </td>
               </tr>
             );

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-09-23 13:57:30
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-23 16:23:32
+ * @Last Modified time: 2020-10-15 13:59:50
  */
 import PropTypes from '../_utils/vue-types';
 import { filterEmpty } from '../_utils/props-util';
@@ -57,7 +57,7 @@ export default {
           <SuperTabs initialValue={'0'} size="small" tabNavOffsetLeft={15} tabClassName="v-cpreview--tab" lazyLoad={false} onChange={this.tabChangeHandle}>
             {children.map((x, i) => (
               <tab-panel key={i.toString()} label={x.data.attrs.label} disabled={x.data.attrs.disabled}>
-                <ClientPrintItem ref={`print-item-${i}`} uniqueKey={`${uniqueKey}-${i}`} dataSource={x.data.attrs.dataSource} templateRender={x.data.attrs.templateRender} style={{ margin: 0 }} />
+                <ClientPrintItem ref={`print-item-${i}`} uniqueKey={`${uniqueKey}_tab_${i}`} dataSource={x.data.attrs.dataSource} templateRender={x.data.attrs.templateRender} style={{ margin: 0 }} />
               </tab-panel>
             ))}
           </SuperTabs>

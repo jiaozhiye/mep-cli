@@ -10,6 +10,14 @@
         </div>
         <div class="user-box">
           <div class="title">
+            <span class="text">公司名称</span>
+          </div>
+          <div class="content">
+            <span class="text_overflow_cut" :title="info.vDealerName"><i class="iconfont icon-home" /> {{ info.vDealerName }}</span>
+          </div>
+        </div>
+        <div class="user-box">
+          <div class="title">
             <span class="text">个人信息</span>
             <router-link to="/user-center" class="more" @click.native="closePopperHandle">详细</router-link>
           </div>
@@ -46,7 +54,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-28 11:21:07
+ * @Last Modified time: 2020-10-14 10:34:13
  **/
 import { mapActions } from 'vuex';
 import { getUser, getWechatAvatar } from '@/utils/cookies';
@@ -67,6 +75,7 @@ export default {
         vEmail: '', // Email
         vLogin: '', // P 码
         vOrgName: '', // 部门
+        vDealerName: '', // 经销商名称
         vPersonName: '', // 姓名
         vRoles: [] // 角色列表
       },

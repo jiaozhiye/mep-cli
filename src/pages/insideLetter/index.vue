@@ -87,6 +87,7 @@ export default {
       if (process.env.MOCK_DATA === 'true') return;
     },
     async createWebsocket() {
+      if (process.env.MOCK_DATA === 'true') return;
       let proto = document.location.protocol == 'http:' ? 'ws:' : 'wss:';
       let address = document.location.port ? document.location.hostname + ':' + document.location.port : document.location.hostname;
       const { code, data } = await getUserInfo();
@@ -129,7 +130,18 @@ export default {
     },
     doRouteHandle(uid) {
       this.$emit('close');
-      setTimeout(() => this.redirect({ query: { id: uid } }), 200);
+      setTimeout(
+        () =>
+          this.redirect({
+            query: {
+              id: uid,
+              _: Math.random()
+                .toString()
+                .slice(8)
+            }
+          }),
+        200
+      );
     },
     closePopperHandle() {
       this.$emit('close');

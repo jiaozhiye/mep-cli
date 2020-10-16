@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-01 11:24:44
+ * @Last Modified time: 2020-10-16 17:06:44
  */
 import variables from '@/assets/css/variables.scss';
 
@@ -42,7 +42,7 @@ export default {
       return arr
         .filter(x => !x.hideInMenu)
         .map((item, index) => {
-          let { title, icon } = item;
+          let { id, title, icon } = item;
           let key = item.key ?? '';
           // 判断是否为 http 链接
           const httpLink = /^https?:\/\//.test(key);
@@ -57,7 +57,7 @@ export default {
               <span>{item.title}</span>
             </a>
           );
-          const uniqueKey = depth + (index + 1);
+          const uniqueKey = id ?? depth + (index + 1);
           if (Array.isArray(item.children)) {
             return (
               <el-submenu key={uniqueKey} index={uniqueKey}>

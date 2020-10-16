@@ -32,12 +32,14 @@ export default {
     navList() {
       return [
         {
+          id: 'app-used',
           title: this.$t('sidebar.usedNav'),
           key: null,
           icon: 'icon-flag-fill',
           children: this.commonMenuList
         },
         {
+          id: 'app-star',
           title: this.$t('sidebar.starNav'),
           key: null,
           icon: 'icon-star-fill',
