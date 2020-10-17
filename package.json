@@ -37,6 +37,7 @@
     "axios": "^0.18.0",
     "classnames": "^2.2.5",
     "countup.js": "^2.0.4",
+    "crypto-js": "^4.0.0",
     "echarts": "^4.8.0",
     "element-ui": "2.13.2",
     "js-cookie": "^2.2.0",

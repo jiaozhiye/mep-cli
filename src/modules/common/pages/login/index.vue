@@ -81,7 +81,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import { sleep } from '@/utils';
+import { sleep, AESEncrypt } from '@/utils';
 import { doLogin, bindPhone, getLoginBg } from '@common/api/login';
 
 import Account from './account';
@@ -178,8 +178,8 @@ export default {
       try {
         const res = await doLogin({
           loginType,
-          vLogin: data?.account ?? this.weChatOpenId,
-          vPwd: data?.password,
+          vLogin: data?.account ?? this.weChatOpenId ?? '',
+          vPwd: data?.password ? AESEncrypt(data.password, '20201010081240ff', '0102030405060708') : '',
           imgCheck: data?.vcode,
           msgCode: data?.captcha
         });

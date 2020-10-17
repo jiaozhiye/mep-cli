@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-15 16:02:47
+ * @Last Modified time: 2020-10-17 13:18:00
  */
 import { MessageBox, Notification, Message } from 'element-ui';
+import CryptoJS from 'crypto-js';
 import moment from 'moment';
 import { cloneDeep } from 'lodash';
 import config from '@/config';
@@ -205,4 +206,20 @@ export const loadScript = (url, callback) => {
     }
   };
   head.appendChild(script);
+};
+
+/**
+ * @description AES 字符串加密
+ * @param {string} str 目标字符串
+ * @param {string} key 密钥
+ * @param {string} iv 密钥偏移量
+ * @returns AES 加密后的字符串
+ */
+export const AESEncrypt = (str, key, iv) => {
+  const encrypted = CryptoJS.AES.encrypt(str, CryptoJS.enc.Utf8.parse(key), {
+    iv: CryptoJS.enc.Utf8.parse(iv),
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+  return encrypted.toString();
 };

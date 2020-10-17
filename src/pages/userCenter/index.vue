@@ -22,11 +22,10 @@
             <router-link to="/user-center" class="more" @click.native="closePopperHandle">详细</router-link>
           </div>
           <div class="content">
-            <div>
-              <span class="text_overflow_cut" :title="info.vLogin"><i class="iconfont icon-user" /> {{ info.vLogin }}</span>
-              <span class="text_overflow_cut" :title="info.vOrgName"><i class="iconfont icon-apartment" /> {{ info.vOrgName }}</span>
-            </div>
-            <span class="text_overflow_cut" :title="info.vEmail"><i class="iconfont icon-mail" /> {{ info.vEmail }}</span>
+            <li class="text_overflow_cut" :title="info.vLogin"><i class="iconfont icon-user" /> {{ info.vLogin }}</li>
+            <li class="text_overflow_cut" :title="info.vOrgName"><i class="iconfont icon-apartment" /> {{ info.vOrgName }}</li>
+            <li class="text_overflow_cut" :title="info.vPhone"><i class="iconfont icon-phone" /> {{ info.vPhone }}</li>
+            <li class="text_overflow_cut" :title="info.vEmail"><i class="iconfont icon-mail" /> {{ info.vEmail }}</li>
           </div>
         </div>
         <div class="user-box">
@@ -54,7 +53,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-14 10:34:13
+ * @Last Modified time: 2020-10-17 09:06:05
  **/
 import { mapActions } from 'vuex';
 import { getUser, getWechatAvatar } from '@/utils/cookies';
@@ -73,6 +72,7 @@ export default {
       info: {
         profileUrl: '', // 头像
         vEmail: '', // Email
+        vPhone: '', // 手机号
         vLogin: '', // P 码
         vOrgName: '', // 部门
         vDealerName: '', // 经销商名称
@@ -189,13 +189,6 @@ export default {
       line-height: 1.75;
       max-height: 260px;
       overflow-y: auto;
-      & > div {
-        width: 100%;
-        display: flex;
-        span {
-          width: 50%;
-        }
-      }
       .iconfont {
         font-size: inherit;
       }
