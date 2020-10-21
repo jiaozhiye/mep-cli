@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-13 20:45:25
+ * @Last Modified time: 2020-10-20 19:41:59
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -674,7 +674,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, searchHelper, onChange = noop } = option;
       const { onlySelect = true } = options;
-      const searchRef = this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
+      const epSearchRef = () => this.$refs[`EP_SEARCH_HELPER-${fieldName}`];
       if (onlySelect) {
         this[`${fieldName}PrevValue`] = form[fieldName];
       }
@@ -713,15 +713,15 @@ export default {
               if (onlySelect) {
                 this[`${fieldName}PrevValue`] = form[fieldName];
               }
-              searchRef.currentValue = form[fieldName];
+              epSearchRef().currentValue = form[fieldName];
               const { closed = noop } = searchHelper;
               closed(data);
-              searchRef.visible = false;
+              epSearchRef().visible = false;
             }}
             onOpen={() => {
               const { open = () => true } = searchHelper;
               if (!open(this.form)) return;
-              searchRef.visible = true;
+              epSearchRef().visible = true;
             }}
             onChange={val => {
               if (!val.trim() || !onlySelect) {
@@ -733,7 +733,7 @@ export default {
                 form[fieldName] = val.trim();
                 onChange(form[fieldName], !onlySelect);
               } else if (val && onlySelect && val !== this[`${fieldName}PrevValue`]) {
-                searchRef.currentValue = form[fieldName] = this[`${fieldName}PrevValue`];
+                epSearchRef().currentValue = form[fieldName] = this[`${fieldName}PrevValue`];
               }
             }}
           />
@@ -1505,6 +1505,7 @@ export default {
               if (!multiple && res.length === 1) {
                 this.form[fieldName] = res[0].value;
                 this.$refs[`SELECT-${fieldName}`].blur();
+                onChange(res[0].value, res[0].text);
               }
             }}
           >

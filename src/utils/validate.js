@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-14 15:15:36
+ * @Last Modified time: 2020-10-20 17:23:23
  */
 import { isFormEmpty } from './index';
 
@@ -66,13 +66,13 @@ export const faxValidate = (rule, value, callback) => {
 // 邮箱校验校验
 export const emailValidate = (rule, value, callback) => {
   if (rule.required && isFormEmpty(value)) {
-    return callback(new Error('邮编不能为空'));
+    return callback(new Error('邮箱不能为空'));
   }
-  let regExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+  let regExp = /^[a-zA-Z0-9\._-]\w+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
   if (isFormEmpty(value) || regExp.test(value)) {
     return callback();
   }
-  callback(new Error('邮编格式不正确'));
+  callback(new Error('邮箱格式不正确'));
 };
 
 // 车牌号校验

@@ -34,10 +34,10 @@
               <div class="box">
                 <el-form ref="form-user" size="medium" :model="form" :rules="rules">
                   <el-form-item prop="username">
-                    <el-input v-model="form.username" prefix-icon="el-icon-user" :placeholder="$t('login.username')" auto-complete="on" />
+                    <el-input v-model="form.username" prefix-icon="el-icon-user" :placeholder="$t('login.username')" autocomplete="on" />
                   </el-form-item>
                   <el-form-item prop="password">
-                    <el-input v-model="form.password" :type="passwordType" :placeholder="$t('login.password')" prefix-icon="el-icon-lock" auto-complete="on" @keyup.enter.native="loginHandle" />
+                    <el-input v-model="form.password" :type="passwordType" :placeholder="$t('login.password')" prefix-icon="el-icon-lock" autocomplete="on" @keyup.enter.native="loginHandle" />
                     <span class="show-pwd" @click="showPwdHandle">
                       <i :class="['iconfont', passwordType === 'password' ? 'icon-eye-close' : 'icon-eye']" />
                     </span>

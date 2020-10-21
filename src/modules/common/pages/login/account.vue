@@ -1,10 +1,10 @@
 <template>
   <el-form ref="form" size="medium" class="v-form" :model="form" :rules="rules">
     <el-form-item prop="account">
-      <el-input v-model="form.account" placeholder="账号/手机号/邮箱" auto-complete="on" />
+      <el-input v-model="form.account" placeholder="账号/手机号/邮箱" autocomplete="on" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model="form.password" :type="passwordType" placeholder="密码" auto-complete="on" @keyup.enter.native="enterHandle" />
+      <el-input v-model="form.password" :type="passwordType" placeholder="密码" autocomplete="on" @keyup.enter.native="enterHandle" />
       <span class="show-pwd" @click="showPwdHandle">
         <i :class="['iconfont', passwordType === 'password' ? 'icon-eye-close' : 'icon-eye']" />
       </span>
