@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-09 11:55:18
+ * @Last Modified time: 2020-10-22 14:57:53
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -70,7 +70,7 @@ export default {
     this.getHelperConfig();
   },
   mounted() {
-    this.resizeEvent = addEventListener(window, 'resize', this.resizeEventHandle);
+    this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
     setTimeout(() => this.calcTableHeight());
   },
   destroyed() {
@@ -239,7 +239,7 @@ export default {
       this.height = containerHeight - this.$topFilter.$el.offsetHeight - 94;
     },
     resizeEventHandle() {
-      debounce(this.calcTableHeight, 0)();
+      this.calcTableHeight();
     }
   },
   render() {

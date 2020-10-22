@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-20 19:41:59
+ * @Last Modified time: 2020-10-22 08:48:09
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -159,7 +159,7 @@ export default {
       this.desc = this.createDescription();
       // Object.assign(this.form, this.createFormValue());
       this.initialValues = cloneDeep(this.form);
-      this.initialExtras = cloneDeep(this.desc);
+      this.initialExtras = Object.assign({}, this.desc);
       // 设置 收起 状态
       const target = {};
       this.dividers.forEach(x => (target[x.label] = !!x.collapse?.defaultExpand));

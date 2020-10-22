@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-27 18:47:49
+ * @Last Modified time: 2020-10-22 14:48:09
  **/
+import addEventListener from 'add-dom-event-listener';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import PropTypes from '../_utils/vue-types';
 import { isIE, debounce } from '../_utils/tool';
@@ -41,7 +42,7 @@ export default {
     this.bindScrollEvent();
   },
   destroyed() {
-    this.$scroll.removeEventListener('scroll', this.scrollEventHandle);
+    this.scrollEvent.remove();
   },
   methods: {
     createActiveKey() {
@@ -85,10 +86,7 @@ export default {
       this.posArr = this.labelList.map(x => document.getElementById(x.id).offsetTop);
     },
     bindScrollEvent() {
-      this.$scroll.addEventListener('scroll', this.scrollEventHandle, false);
-    },
-    scrollEventHandle(e) {
-      debounce(this.moveHandle, 20)(e);
+      this.scrollEvent = addEventListener(this.$scroll, 'scroll', debounce(this.moveHandle, 20));
     },
     moveHandle(e) {
       if (this.state !== 'ready') return;
