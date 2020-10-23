@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-09 08:41:39
+ * @Last Modified time: 2020-10-22 20:29:13
  */
 @import '../../style/index.scss';
 
@@ -30,9 +30,9 @@ $prefix-cls: '#{$v-prefix}-top-filter';
           display: inline-block;
           .el-input__inner {
             border-color: $border-color-base;
-            & + span.el-input__suffix {
-              right: 0;
-            }
+          }
+          .el-input__suffix {
+            background-color: transparent;
           }
         }
       }
