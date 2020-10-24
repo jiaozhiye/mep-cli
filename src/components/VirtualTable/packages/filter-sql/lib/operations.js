@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 13:39:54
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 09:01:22
+ * @Last Modified time: 2020-10-23 08:43:40
  */
 // 模糊搜索中需要转义的特殊字符
 const SPAN_CHAR_REG = /(\^|\.|\[|\$|\(|\)|\||\*|\+|\?|\{|\\)/g;
@@ -21,20 +21,19 @@ const isDate = value => /^\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2}:\d{2})?$/.test(value);
  * @returns {Boolean}
  */
 export const matchWhere = (value, expression, condition) => {
-  if (isDate(value)) {
-    value = value.slice(0, 10);
-  }
+  value = isDate(value) ? value.slice(0, 10) : value;
   let res = true;
   switch (expression) {
     case 'like':
       const keyword = new RegExp(escapeKeyword(condition), 'i');
-      res = !!(value || '').toString().match(keyword);
+      res = !!(value ?? '').toString().match(keyword);
       break;
     case 'in':
       if (isPrimitive(condition)) {
         condition = [condition];
       }
       if (Array.isArray(condition)) {
+        value = Array.isArray(value) ? value : [value];
         res = condition.every(x => value.includes(x));
       } else {
         res = false;
@@ -45,6 +44,7 @@ export const matchWhere = (value, expression, condition) => {
         condition = [condition];
       }
       if (Array.isArray(condition)) {
+        value = Array.isArray(value) ? value : [value];
         res = condition.every(x => value.includes(x)) === false;
       }
       break;

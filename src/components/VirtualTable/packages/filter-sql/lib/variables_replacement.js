@@ -2,37 +2,36 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 10:52:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 15:52:14
+ * @Last Modified time: 2020-10-23 08:50:37
  */
 // SQL example
-// 1 == 1 AND (2 == 3 OR 23 != 5) AND as == a
+// a == 1 AND (b == 3 OR c != 5) AND d == 7
 const operations = ['==', '<', '>', '<=', '>=', '!=', 'like', 'in', 'nin'];
 
 export default {
   // 判断字符串中括号是否平衡匹配的函数
   isBracketBalance: function(str) {
-    var leftBracketNum = 0, // 用于保存左括号个数的变量
-      strLength = str.length; // 把字符串的长度付给一个变量增加程序的性能
+    let leftBracketNum = 0; // 用于保存左括号个数的变量
+    let strLength = str.length; // 把字符串的长度付给一个变量增加程序的性能
 
-    // 通过for循环来读取字符串中的一个一个的字符
-    for (var i = 0; i < strLength; i++) {
-      var temp = str.charAt(i); // 付给临时变量增加程序的性能
+    // 通过 for 循环来读取字符串中的一个一个的字符
+    for (let i = 0; i < strLength; i++) {
+      let temp = str.charAt(i); // 付给临时变量增加程序的性能
       if (temp === '(') {
-        // 如果是左括号，则leftBracketNum++
+        // 如果是左括号，则 leftBracketNum++
         leftBracketNum++;
       }
       if (temp === ')') {
-        // 如果是右括号，则leftBracketNum--
+        // 如果是右括号，则 leftBracketNum--
         leftBracketNum--;
       }
     }
 
-    // 最后判断leftBracketNum，如果为0表示平衡否则不平衡
+    // 最后判断 leftBracketNum，如果为 0 表示平衡否则不平衡
     if (leftBracketNum === 0) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   },
 
   // Replace all variables with what the variable is supposed to look like

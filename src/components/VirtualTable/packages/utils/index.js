@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-15 17:02:27
+ * @Last Modified time: 2020-10-20 11:55:10
  */
-import { get, set, transform, isEqual, isObject } from 'lodash';
+import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
 
 export const hasOwn = (obj, key) => {
@@ -110,6 +110,23 @@ export const findLastColumn = column => {
 // 根据条件过滤 columns
 export const filterTableColumns = (columns, marks) => {
   return columns.filter(x => !marks.includes(x.dataIndex));
+};
+
+// 深度查找 rowKey
+export const deepFindRowKey = (rowKeys, mark) => {
+  let result = null;
+  for (let i = 0; i < rowKeys.length; i++) {
+    if (rowKeys[i].children) {
+      result = deepFindRowKey(rowKeys[i].children, mark);
+    }
+    if (result) {
+      return result;
+    }
+    if (rowKeys[i].rowKey === mark) {
+      return rowKeys[i];
+    }
+  }
+  return result;
 };
 
 // 所有 rowKey
@@ -355,6 +372,11 @@ export const difference = (object, base) => {
       result[key] = isObject(value) && isObject(base[key]) ? difference(value, base[key]) : value;
     }
   });
+};
+
+// 判断数组的包含
+export const isArrayContain = (targetArr, arr) => {
+  return intersection(targetArr, arr).length === arr.length;
 };
 
 // 获取格式化后的数据

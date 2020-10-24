@@ -25,6 +25,7 @@
 | rowSelection     | 列表项是否可选择，[配置项](#rowSelection)                     | object                                                 | -      |
 | rowHighlight     | 列表行高亮选中，[配置项](#rowHighlight)                       | object                                                 | -      |
 | expandable       | 展开行配置项，[配置项](#expandable)                           | object                                                 | -      |
+| treeStructure    | 树结构选项，[配置项](#treeStructure)                          | object                                                 | -      |
 | multipleSort     | 是否为多列排序模式                                            | boolean                                                | true   |
 | webPagination    | 是否为前端内存分页                                            | boolean                                                | false  |
 | showAlert        | 是否显示表格信息                                              | boolean                                                | true   |
@@ -215,12 +216,13 @@
 
 ### rowSelection
 
-| 参数            | 说明                 | 类型                                   | 默认值 |
-| --------------- | -------------------- | -------------------------------------- | ------ |
-| type            | 选择类型，必要参数   | checkbox \| radio                      | -      |
-| selectedRowKeys | 选中项的 rowKey 数组 | array                                  | -      |
-| disabled        | 是否允许行选择       | Function(row) => boolean               | -      |
-| onChange        | 选中项发生变化时触发 | Function(selectionKeys, selectionRows) | -      |
+| 参数            | 说明                                       | 类型                                   | 默认值 |
+| --------------- | ------------------------------------------ | -------------------------------------- | ------ |
+| type            | 选择类型，必要参数                         | checkbox \| radio                      | -      |
+| selectedRowKeys | 选中项的 rowKey 数组                       | array                                  | -      |
+| checkStrictly   | 选择列完全受控（父子数据选中状态不再关联） | boolean                                | true   |
+| disabled        | 是否允许行选择                             | Function(row) => boolean               | -      |
+| onChange        | 选中项发生变化时触发                       | Function(selectionKeys, selectionRows) | -      |
 
 ### rowHighlight
 
@@ -240,6 +242,13 @@
 | expandedRowRender    | 额外的展开行渲染方法，必要参数 | Function(row, index) => JSX Node     | -      |
 | onExpand             | 点击展开图标时触发             | Function(expanded, row)              | -      |
 | onChange             | 展开的行变化时触发             | Function(expandedKeys, expandedRows) | -      |
+
+### treeStructure
+
+| 参数                 | 说明                   | 类型    | 默认值 |
+| -------------------- | ---------------------- | ------- | ------ |
+| defaultExpandAllRows | 默认展开树表格的所有行 | boolean | -      |
+| expandedRowKeys      | 展开行的 rowKey 数组   | array   | -      |
 
 ### exportExcel
 

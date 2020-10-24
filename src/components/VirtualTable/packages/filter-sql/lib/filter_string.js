@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 10:24:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-17 09:40:30
+ * @Last Modified time: 2020-10-22 20:17:19
  */
 const conjuctions = ['&&', '||', 'AND', 'OR', 'and', 'or', 'like', 'in', 'nin', 'LIKE', 'IN', 'NIN'];
 
@@ -56,6 +56,7 @@ export default {
   // return string with array
   array_format: function(array) {
     array = Array.isArray(array) ? array : [array];
+
     let string = `[`;
     for (let i = 0, len = array.length; i < len; i++) {
       string += typeof array[i] == 'number' ? array[i] : "'" + array[i] + "'";
@@ -64,6 +65,7 @@ export default {
       }
     }
     string += `]`;
+
     return string;
   },
 
@@ -107,15 +109,14 @@ export default {
 
   // function to replace the the AND and OR symbols to && and ||
   replace_symbols: function(string) {
-    string = this.find_replace(string, 'AND', '&&');
-    string = this.find_replace(string, 'and', '&&');
-    string = this.find_replace(string, 'OR', '||');
-    string = this.find_replace(string, 'or', '||');
-    string = this.find_replace(string, '<>', '!=');
-    string = this.find_replace(string, 'LIKE', 'like');
-    string = this.find_replace(string, 'IN', 'in');
-    string = this.find_replace(string, 'NIN', 'nin');
-
+    string = this.find_replace(string, ' AND ', ' && ');
+    string = this.find_replace(string, ' and ', ' && ');
+    string = this.find_replace(string, ' OR ', ' || ');
+    string = this.find_replace(string, ' or ', ' || ');
+    string = this.find_replace(string, ' <> ', ' != ');
+    string = this.find_replace(string, ' LIKE ', ' like ');
+    string = this.find_replace(string, ' IN ', ' in ');
+    string = this.find_replace(string, ' NIN ', ' nin ');
     return string;
   }
 };

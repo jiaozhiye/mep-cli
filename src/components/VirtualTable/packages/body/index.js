@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-22 09:56:25
+ * @Last Modified time: 2020-10-21 08:50:44
  */
 import addEventListener from 'add-dom-event-listener';
-import { parseHeight, getCellValue, contains } from '../utils';
+import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
 import config from '../config';
 import { isEqual, isFunction, isObject } from 'lodash';
 
@@ -72,9 +72,6 @@ export default {
     },
     isDraggable() {
       return this.$$table.rowDraggable;
-    },
-    isTreeTable() {
-      return this.tableData.some(x => Array.isArray(x.children) && x.children.length);
     }
   },
   mounted() {
@@ -221,7 +218,7 @@ export default {
       );
     },
     renderCell(column, row, rowIndex, columnIndex, rowKey, depth) {
-      const { expandable, selectionKeys } = this.$$table;
+      const { expandable, selectionKeys, isTreeTable } = this.$$table;
       const { dataIndex, editRender, render } = column;
       const text = getCellValue(row, dataIndex);
       if (dataIndex === '__expandable__') {
@@ -240,7 +237,7 @@ export default {
       // Content Node
       const vNodeText = isFunction(render) ? render(text, row, column, rowIndex, columnIndex) : this.renderText(text, column, row);
       // Tree Expandable + vNodeText
-      if (this.isTreeTable && dataIndex === this.firstDataIndex) {
+      if (isTreeTable && dataIndex === this.firstDataIndex) {
         return [this.renderIndent(depth), <Expandable record={row} rowKey={rowKey} style={this.isTreeNode(row) ? null : { visibility: 'hidden' }} />, vNodeText];
       }
       return vNodeText;
@@ -294,7 +291,7 @@ export default {
       return { rowspan, colspan };
     },
     cellClickHandle(ev, row, column) {
-      const { getRowKey, rowSelection = {}, selectionKeys, rowHighlight } = this.$$table;
+      const { getRowKey, rowSelection = {}, selectionKeys, rowHighlight, isTreeTable } = this.$$table;
       const { dataIndex } = column;
       if (['__expandable__', config.operationColumn].includes(dataIndex)) return;
       const rowKey = getRowKey(row, row.index);
@@ -306,13 +303,17 @@ export default {
       // 正处于编辑状态的单元格
       // const isEditing = this.$refs[`${rowKey}-${dataIndex}`]?.isEditing;
       // 行选中
-      const { type, disabled = noop } = rowSelection;
+      const { type, checkStrictly = !0, disabled = noop } = rowSelection;
       if (type && !disabled(row) && !isEditable) {
         if (type === 'radio') {
           this.setSelectionKeys([rowKey]);
         }
         if (type === 'checkbox') {
-          this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...new Set([...selectionKeys, rowKey])] : selectionKeys.filter(x => x !== rowKey));
+          if (isTreeTable && !checkStrictly) {
+            this.setTreeSelectionKeys(rowKey, selectionKeys);
+          } else {
+            this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...new Set([...selectionKeys, rowKey])] : selectionKeys.filter(x => x !== rowKey));
+          }
         }
       }
       // 单击 展开列、可选择列、操作列 不触发行单击事件
@@ -335,6 +336,39 @@ export default {
     },
     setSelectionKeys(arr) {
       this.$$table.selectionKeys = arr;
+    },
+    setTreeSelectionKeys(key, arr) {
+      // on(选中)  off(取消)
+      const state = !arr.includes(key) ? 'on' : 'off';
+      this.$$table.selectionKeys = this.createTreeSelectionKeys(key, arr, state);
+    },
+    createTreeSelectionKeys(key, arr, state) {
+      const { deriveRowKeys, getAllChildRowKeys, findParentRowKeys } = this.$$table;
+      const target = deepFindRowKey(deriveRowKeys, key);
+      // 后代节点 rowKeys
+      const childRowKeys = getAllChildRowKeys(target.children ?? []);
+      // 祖先节点 rowKeys
+      const parentRowKeys = findParentRowKeys(deriveRowKeys, key);
+      // 处理后代节点
+      if (state === 'on') {
+        arr = [...new Set([...arr, key, ...childRowKeys])];
+      } else {
+        arr = arr.filter(x => ![key, ...childRowKeys].includes(x));
+      }
+      // 处理祖先节点
+      parentRowKeys.forEach(x => {
+        const target = deepFindRowKey(deriveRowKeys, x);
+        const isContain = isArrayContain(
+          arr,
+          target.children.map(k => k.rowKey)
+        );
+        if (isContain) {
+          arr = [...arr, x];
+        } else {
+          arr = arr.filter(k => k !== x);
+        }
+      });
+      return arr;
     },
     setHighlightKey(key) {
       this.$$table.highlightKey = key;

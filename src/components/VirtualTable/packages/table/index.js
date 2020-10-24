@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-07 12:32:29
+ * @Last Modified time: 2020-10-20 16:56:17
  */
 import baseProps from './props';
 import Store from '../store';
@@ -118,7 +118,7 @@ export default {
         footerHeight: 0
       },
       // 选择列，已选中行的 keys
-      selectionKeys: this.createSelectionKeys(),
+      selectionKeys: [],
       // 行高亮，已选中的 key
       highlightKey: this.rowHighlight?.currentRowKey ?? '',
       // 已展开行的 keys
@@ -158,6 +158,9 @@ export default {
     },
     allRowKeys() {
       return getAllRowKeys(this.tableFullData, this.getRowKey);
+    },
+    deriveRowKeys() {
+      return this.createDeriveRowKeys(this.tableFullData, null);
     },
     tableChange() {
       return [this.pagination, this.filters, this.sorter, { currentDataSource: [...this.tableFullData], allDataSource: [...this.tableOriginData] }];
@@ -306,15 +309,19 @@ export default {
         this.rowExpandedKeys = this.createRowExpandedKeys();
       }
     },
+    [`expandable.expandedRowKeys`](next) {
+      this.$$tableBody.setClickedValues([next[0], 'index']);
+      this.rowExpandedKeys = this.createRowExpandedKeys();
+    },
+    [`treeStructure.expandedRowKeys`](next) {
+      this.$$tableBody.setClickedValues([next[0], 'index']);
+      this.rowExpandedKeys = this.createRowExpandedKeys();
+    },
     rowExpandedKeys(next, prev) {
       if (!this.expandable || isEqual(next, prev)) return;
       const { onChange = noop } = this.expandable;
       const expandedRows = tableDataFlatMap(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
       onChange(next, expandedRows);
-    },
-    [`expandable.expandedRowKeys`](next) {
-      this.$$tableBody.setClickedValues([next[0], 'index']);
-      this.rowExpandedKeys = this.createRowExpandedKeys();
     },
     highlightKey(next) {
       if (!this.rowHighlight) return;

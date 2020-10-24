@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-19 13:45:50
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 19:46:05
+ * @Last Modified time: 2020-10-22 10:26:57
  */
 import PropTypes from '../../../_utils/vue-types';
 import config from '../config';
@@ -220,6 +220,7 @@ export default {
           size="mini"
           class="v-pager--sizes"
           value={this.pageSize}
+          clearable={!1}
           onInput={val => {
             this.pageSizeEvent(val);
           }}

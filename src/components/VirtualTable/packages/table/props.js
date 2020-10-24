@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-12 09:07:20
+ * @Last Modified time: 2020-10-20 16:21:17
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -138,6 +138,7 @@ export default {
   rowSelection: PropTypes.shape({
     type: PropTypes.oneOf(['checkbox', 'radio']).isRequired, // 选择类型
     selectedRowKeys: PropTypes.array, // 选中项的 key 数组，支持动态赋值
+    checkStrictly: PropTypes.bool.def(true), // true -> 节点选择完全受控（父子数据选中状态不再关联）
     disabled: PropTypes.func, // 是否允许行选择，参数：row，返回值 bool
     onChange: PropTypes.func // 选中项发生变化时触发
   }),
@@ -155,6 +156,11 @@ export default {
     expandedRowRender: PropTypes.func.isRequired, // 额外的展开行渲染方法
     onExpand: PropTypes.func, // 点击展开图标时触发
     onChange: PropTypes.func // 展开的行变化时触发
+  },
+  // 树结构配置项
+  treeStructure: {
+    defaultExpandAllRows: PropTypes.bool, // 默认展开所有行
+    expandedRowKeys: PropTypes.array // 展开行的 key 数组，支持动态赋值
   },
   // 多列排序
   multipleSort: PropTypes.bool.def(true),

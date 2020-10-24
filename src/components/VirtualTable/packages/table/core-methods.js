@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-15 17:02:44
+ * @Last Modified time: 2020-10-21 08:50:42
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -33,6 +33,8 @@ export default {
     // 设置表格数据
     this.tableFullData = [...results];
     this.tableOriginData = [...results];
+    // 设置选择列
+    this.selectionKeys = this.createSelectionKeys();
     // 设置展开行
     this.rowExpandedKeys = this.createRowExpandedKeys();
   },
@@ -203,6 +205,44 @@ export default {
         });
       }
     });
+  },
+  // 创建派生的 rowKeys for treeTable
+  createDeriveRowKeys(tableData, key) {
+    return tableData.map((x, i) => {
+      let rowKey = this.getRowKey(x, i);
+      let item = { rowKey };
+      if (x.children) {
+        item.children = this.createDeriveRowKeys(x.children, rowKey);
+      }
+      return key ? Object.assign({}, item, { parentRowKey: key }) : item;
+    });
+  },
+  // 获取所有后代节点 rowKeys
+  getAllChildRowKeys(deriveRowKeys) {
+    let results = [];
+    for (let i = 0; i < deriveRowKeys.length; i++) {
+      if (Array.isArray(deriveRowKeys[i].children)) {
+        results.push.apply(results, this.getAllChildRowKeys(deriveRowKeys[i].children));
+      }
+      results.push(deriveRowKeys[i].rowKey);
+    }
+    return results;
+  },
+  // 获取祖先节点 rowKeys
+  findParentRowKeys(deriveRowKeys, key) {
+    let results = [];
+    deriveRowKeys.forEach(x => {
+      if (x.children) {
+        results.push.apply(results, this.findParentRowKeys(x.children, key));
+      }
+      if (x.rowKey === key && x.parentRowKey) {
+        results.push(x.parentRowKey);
+      }
+    });
+    if (results.length) {
+      results.push.apply(results, this.findParentRowKeys(deriveRowKeys, results[results.length - 1]));
+    }
+    return results;
   },
   // 数据变化事件
   dataChangeHandle() {
