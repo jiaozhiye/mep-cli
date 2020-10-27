@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-07 17:04:04
+ * @Last Modified time: 2020-10-27 08:38:04
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -62,6 +62,10 @@ export default {
   // 清空表格操作记录
   CLEAR_LOG() {
     this.clearTableLog();
+  },
+  // 滚动到指定数据行
+  SCROLL_TO_RECORD(rowKey) {
+    this.$$tableBody.scrollYToRecord(rowKey);
   },
   // 表格数据插入
   INSERT_RECORDS(records, dir = 'bottom') {

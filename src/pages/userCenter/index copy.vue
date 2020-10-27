@@ -25,13 +25,13 @@
  * @Last Modified time: 2020-08-24 10:14:16
  **/
 import { mapActions } from 'vuex';
-import { getUser } from '@/utils/cookies';
+import { getUserName } from '@/utils/cookies';
 
 export default {
   name: 'UserCenter',
   data() {
     return {
-      username: getUser() || '管理员'
+      username: getUserName() || '管理员'
     };
   },
   methods: {

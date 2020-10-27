@@ -53,10 +53,10 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-17 09:06:05
+ * @Last Modified time: 2020-10-26 08:43:59
  **/
 import { mapActions } from 'vuex';
-import { getUser, getWechatAvatar } from '@/utils/cookies';
+import { getUserName, getWechatAvatar } from '@/utils/cookies';
 import { getUserInfo } from '@/api/login';
 
 import { size } from '@/mixins/sizeMixin';
@@ -67,7 +67,7 @@ export default {
   data() {
     this.avatarImg = require('@/assets/img/avatar.jpg');
     return {
-      username: getUser() ?? '管理员',
+      username: getUserName() ?? '管理员',
       weChatAvatar: getWechatAvatar() ?? '',
       info: {
         profileUrl: '', // 头像

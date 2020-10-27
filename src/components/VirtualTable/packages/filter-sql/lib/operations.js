@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 13:39:54
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-23 08:43:40
+ * @Last Modified time: 2020-10-27 16:20:14
  */
 // 模糊搜索中需要转义的特殊字符
 const SPAN_CHAR_REG = /(\^|\.|\[|\$|\(|\)|\||\*|\+|\?|\{|\\)/g;
@@ -33,10 +33,7 @@ export const matchWhere = (value, expression, condition) => {
         condition = [condition];
       }
       if (Array.isArray(condition)) {
-        value = Array.isArray(value) ? value : [value];
-        res = condition.every(x => value.includes(x));
-      } else {
-        res = false;
+        res = Array.isArray(value) ? condition.every(x => value.includes(x)) : condition.includes(value);
       }
       break;
     case 'nin':
@@ -44,8 +41,7 @@ export const matchWhere = (value, expression, condition) => {
         condition = [condition];
       }
       if (Array.isArray(condition)) {
-        value = Array.isArray(value) ? value : [value];
-        res = condition.every(x => value.includes(x)) === false;
+        res = !(Array.isArray(value) ? condition.some(x => value.includes(x)) : condition.includes(value));
       }
       break;
     case '!=':

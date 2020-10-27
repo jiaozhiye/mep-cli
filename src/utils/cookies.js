@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-28 11:20:10
+ * @Last Modified time: 2020-10-26 08:44:22
  */
 import Cookies from 'js-cookie';
 
@@ -15,9 +15,9 @@ export const getGray = () => localStorage.getItem('gray');
 export const setGray = val => localStorage.setItem('gray', val);
 export const removeGray = () => localStorage.removeItem('gray');
 
-export const getUser = () => Cookies.get('username');
-export const setUser = val => Cookies.set('username', val);
-export const removeUser = () => Cookies.remove('username');
+export const getUserName = () => Cookies.get('username');
+export const setUserName = val => Cookies.set('username', val);
+export const removeUserName = () => Cookies.remove('username');
 
 export const getWechatAvatar = () => localStorage.getItem('avatar');
 export const setWechatAvatar = val => localStorage.setItem('avatar', val);

@@ -2,13 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-16 13:26:44
+ * @Last Modified time: 2020-10-26 08:44:21
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
 import config from '@/config';
 import router from '@/routes';
-import { setToken, setGray, setUser, removeToken, removeGray, removeWechatAvatar, set_vDealerName } from '@/utils/cookies';
+import { setToken, setGray, setUserName, removeToken, removeGray, removeWechatAvatar, set_vDealerName } from '@/utils/cookies';
 import variables from '@/assets/css/variables.scss';
 import localDict from '@/utils/localDict';
 import { getNavList, getAllDict, getStarMenuList, getCommonMenuList, createMenuPoint } from '@/api/login';
@@ -84,7 +84,7 @@ const actions = {
   createLoginInfo({ commit, state }, params) {
     setToken(params.token);
     params.gray && setGray(params.gray);
-    setUser(params.name);
+    setUserName(params.name);
     set_vDealerName(params.vDealerName);
     commit({
       type: types.LOGININFO,

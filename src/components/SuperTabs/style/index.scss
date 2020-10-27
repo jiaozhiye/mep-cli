@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-27 19:07:17
+ * @Last Modified time: 2020-10-27 20:03:10
  */
 @import '../../style/index.scss';
 
@@ -13,6 +13,10 @@ $prefix-cls: '#{$v-prefix}-super-tab--wrapper';
   .el-tabs__item {
     height: 36px;
     line-height: 36px;
+    &.is-disabled {
+      color: $textColorSecondary;
+      cursor: not-allowed;
+    }
   }
   .tap-top-exta {
     display: flex;
