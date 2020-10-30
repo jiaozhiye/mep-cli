@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-26 08:44:21
+ * @Last Modified time: 2020-10-30 08:32:19
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
+import i18n from '@/lang';
 import config from '@/config';
 import router from '@/routes';
 import { setToken, setGray, setUserName, removeToken, removeGray, removeWechatAvatar, set_vDealerName } from '@/utils/cookies';
@@ -122,19 +123,19 @@ const actions = {
     } else {
       try {
         const res = await getNavList();
-        if (res.code === 200 && res.data.length) {
-          data = res.data;
+        if (res.code === 200) {
+          data = res.data.length ? res.data : [{ title: i18n.t('app.dashboard'), key: '/home', icon: 'icon-linechart' }];
         } else {
-          dispatch('createLogout');
+          return dispatch('createLogout');
         }
       } catch (err) {
-        dispatch('createLogout');
+        return dispatch('createLogout');
       }
     }
     formateNavList(data, router.options.routes);
     commit({ type: types.NAVLIST, data });
     commit({ type: types.MENULIST, data: flattenNavList(data) });
-    return !!data.length;
+    return !0;
   },
   clearNavList({ dispatch, commit, state }, params) {
     commit({

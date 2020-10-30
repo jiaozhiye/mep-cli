@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-20 17:23:23
+ * @Last Modified time: 2020-10-29 09:02:19
  */
 import { isFormEmpty } from './index';
 
@@ -68,7 +68,7 @@ export const emailValidate = (rule, value, callback) => {
   if (rule.required && isFormEmpty(value)) {
     return callback(new Error('邮箱不能为空'));
   }
-  let regExp = /^[a-zA-Z0-9\._-]\w+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+  let regExp = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
   if (isFormEmpty(value) || regExp.test(value)) {
     return callback();
   }

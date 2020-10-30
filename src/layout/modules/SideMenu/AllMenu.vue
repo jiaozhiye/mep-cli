@@ -18,7 +18,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-31 10:05:52
+ * @Last Modified time: 2020-10-29 21:07:38
  **/
 import addEventListener from 'add-dom-event-listener';
 
@@ -71,23 +71,22 @@ export default {
   height: 36px;
   background-color: $menuBg;
   .title {
+    display: flex;
+    align-items: center;
     height: 100%;
-    line-height: 36px;
-    color: $menuText;
     padding-left: 20px;
+    color: $menuText;
+    line-height: 36px;
     cursor: pointer;
     &.selected,
     &:hover {
       background-color: $menuHover;
     }
     i {
-      width: 24px;
+      display: inline-block;
+      margin-right: 5px;
       font-size: 16px;
       text-align: center;
-      vertical-align: middle;
-    }
-    .text {
-      margin-left: 2px;
       vertical-align: middle;
     }
   }

@@ -18,7 +18,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-27 19:52:52
+ * @Last Modified time: 2020-10-29 21:07:56
  **/
 import { mapState } from 'vuex';
 import { size } from '@/mixins/sizeMixin';
@@ -84,6 +84,14 @@ export default {
     border: none;
     height: 100%;
     width: 100% !important;
+    [class^='el-icon-'],
+    [class^='iconfont'] {
+      display: inline-block;
+      margin-right: 5px;
+      font-size: 16px;
+      text-align: center;
+      vertical-align: middle;
+    }
     .el-menu-item {
       height: 36px;
       line-height: 36px;
@@ -96,15 +104,6 @@ export default {
       }
     }
     .el-submenu {
-      & [class^='el-icon-'],
-      & [class^='iconfont icon-'] {
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 5px;
-        width: 24px;
-        text-align: center;
-        font-size: 16px;
-      }
       .el-submenu__title {
         height: 36px;
         line-height: 36px;

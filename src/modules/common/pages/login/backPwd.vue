@@ -25,10 +25,10 @@
             <el-input v-model="formRest.newPwd" placeholder="新密码" />
           </el-form-item>
           <el-form-item prop="confirmPwd">
-            <el-input v-model="formRest.confirmPwd" placeholder="确认密码" />
+            <el-input v-model="formRest.confirmPwd" type="password" placeholder="确认密码" />
           </el-form-item>
         </el-form>
-        <el-button type="primary" style="width: 100%" @click="submitHandle">重置密码</el-button>
+        <el-button type="primary" size="medium" style="width: 100%" @click="submitHandle">重置密码</el-button>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@ export default {
       if (rule.required && isFormEmpty(value)) {
         return callback(new Error('请再次输入密码'));
       }
-      if (value !== this.form.newPwd) {
+      if (value !== this.formRest.newPwd) {
         return callback(new Error('两次输入密码不一致'));
       }
       callback();

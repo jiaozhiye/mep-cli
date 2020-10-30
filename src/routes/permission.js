@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-28 12:52:36
+ * @Last Modified time: 2020-10-30 08:32:49
  */
 import router from '@/routes';
 import store from '@/store';
@@ -20,7 +20,7 @@ NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/wechat'];
 
 // 权限白名单
-const whiteAuth = ['/login', '/home', '/iframe', '/redirect', '/404', '/user-center', '/test'];
+const whiteAuth = ['/login', '/home', '/iframe', '/redirect', '/404', '/user-center', '/notice-center', '/test'];
 
 // 路由重定向
 const redirect = (next, path) => {

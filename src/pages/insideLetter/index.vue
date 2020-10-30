@@ -148,7 +148,7 @@ export default {
       setTimeout(() => this.redirect(), 200);
     },
     redirect(params) {
-      this.$router.push({ path: this.currentKey === '1' ? '/mes1003' : '/user-center', ...params }).catch(() => {});
+      this.$router.push({ path: `/notice-center/${this.currentKey}`, ...params }).catch(() => {});
     }
   }
 };
