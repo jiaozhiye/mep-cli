@@ -21,6 +21,7 @@
       </div>
       <div class="box">
         <el-form ref="formRest" size="medium" :model="formRest" :rules="rulesRest">
+          <input type="password" name="no" class="hidden-input" />
           <el-form-item prop="newPwd">
             <el-input v-model="formRest.newPwd" placeholder="新密码" />
           </el-form-item>
@@ -40,7 +41,7 @@ import { pwdValidate } from '@/utils/validate';
 import { getForgetCode, confirmPwdBack, resetPwd } from '@common/api/login';
 
 const isPhone = val => /^1[2-9]\d{9}$/.test(val);
-const isEmail = val => /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(val);
+const isEmail = val => /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(val);
 
 const phoneOrEmail = (rule, value, callback) => {
   if (rule.required && isFormEmpty(value)) {
@@ -123,24 +124,29 @@ export default {
       try {
         const errMsg = await this.doAccountValidate();
         if (errMsg) return;
-        const isPhoneType = isPhone(this.form.phone);
         // 获取短信验证码
-        this.btnState.time = isPhoneType ? 60 : 60 * 10;
-        this.btnState.disabled = true;
+        this.setButtonState(true);
         this.timer = setInterval(() => {
           if (this.btnState.time-- <= 0) {
-            this.btnState.time = boolPhone ? 60 : 60 * 10;
-            this.btnState.disabled = false;
+            this.setButtonState(false);
             clearInterval(this.timer);
           }
         }, 1000);
         this.$message.warning('验证码发送中...');
         // 判断是手机号还是邮箱
+        const isPhoneType = isPhone(this.form.phone);
         const res = await getForgetCode({ type: isPhoneType ? 0 : 1, vMobileOrEmail: this.form.phone });
         if (res.code === 200) {
           this.$message.success(`验证码发送成功，请在${isPhoneType ? '手机' : '邮箱'}查收！`);
+        } else {
+          this.setButtonState(false);
+          this.form.phone = '';
         }
       } catch (err) {}
+    },
+    setButtonState(disabled) {
+      this.btnState.time = isPhone(this.form.phone) ? 60 : 60 * 5;
+      this.btnState.disabled = disabled;
     },
     async nextHandle() {
       try {
@@ -197,19 +203,33 @@ export default {
     transition: transform 0.3s ease;
     .box {
       width: 50%;
-      /deep/ .el-form-item {
-        margin-bottom: 20px;
-        .el-form-item__content {
-          position: relative;
-          .el-input__inner {
-            height: 42px;
-            line-height: 42px;
-            font-size: 14px;
-            border: 0;
-            border-bottom: 1px solid $borderColor !important;
-          }
-          .el-input__icon {
-            font-size: 18px;
+      /deep/ .el-form {
+        position: relative;
+        .hidden-input {
+          opacity: 0;
+          position: absolute;
+          padding: 0;
+          border: 0;
+          width: 0;
+          height: 0;
+          left: 0;
+          top: -1px;
+          z-index: -1;
+        }
+        .el-form-item {
+          margin-bottom: 20px;
+          .el-form-item__content {
+            position: relative;
+            .el-input__inner {
+              height: 42px;
+              line-height: 42px;
+              font-size: 14px;
+              border: 0;
+              border-bottom: 1px solid $borderColor !important;
+            }
+            .el-input__icon {
+              font-size: 18px;
+            }
           }
         }
       }

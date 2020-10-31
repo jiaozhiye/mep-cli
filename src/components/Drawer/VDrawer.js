@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-07 21:09:16
+ * @Last Modified time: 2020-10-30 10:17:10
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -24,6 +24,7 @@ export default {
     position: PropTypes.string.def('right'),
     lockScroll: PropTypes.bool.def(true),
     maskClosable: PropTypes.bool,
+    showFullScreen: PropTypes.bool.def(true),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('75%'),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('300px'),
     level: PropTypes.number.def(1),
@@ -70,7 +71,8 @@ export default {
     this.transitionFlag = true;
     return {
       isVisible: this.visible,
-      loading: this.visible
+      loading: this.visible,
+      fullscreen: false
     };
   },
   computed: {
@@ -89,12 +91,22 @@ export default {
     containerPosition() {
       return this.STYLE[this.position];
     },
-    containerShow() {
+    containerShowStyle() {
       const style = {
         visibility: 'visible',
         transform: `translate3d(0, 0, 0)`
       };
       return this.visible ? style : null;
+    },
+    fullScrennStyle() {
+      if (this.position === 'right' || this.position === 'left') {
+        return this.fullscreen
+          ? {
+              width: this.calcPanelSize('100%')
+            }
+          : null;
+      }
+      return null;
     }
   },
   watch: {
@@ -103,6 +115,8 @@ export default {
         if (this.destroyOnClose || !this.isVisible) {
           this.loading = val;
         }
+        // 取消全屏
+        this.fullscreen = false;
         setTimeout(() => {
           this.isVisible = val;
           this.loading = !val;
@@ -136,6 +150,10 @@ export default {
       if (from === 'mask' && !this.maskToClose) return;
       this.$emit('update:visible', false);
     },
+    handleClick() {
+      this.fullscreen = !this.fullscreen;
+      this.$emit('viewportChange', this.fullscreen ? 'fullscreen' : 'default');
+    },
     calcPanelSize(val) {
       let size = Number(val) > 0 ? `${val}px` : val;
       return `calc(${size} - ${(Number(this.level) - 1) * 60}px)`;
@@ -152,7 +170,7 @@ export default {
     }
   },
   render() {
-    const { isVisible, loading, closable, title, realzIndex, maskStyle, containerPosition, containerShow, containerStyle, $slots } = this;
+    const { isVisible, loading, title, closable, fullscreen, showFullScreen, realzIndex, maskStyle, containerPosition, containerShowStyle, containerStyle, fullScrennStyle, $slots } = this;
     const prefixCls = this.getPrefixCls('drawer--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -165,12 +183,18 @@ export default {
         [`mask-show`]: this.visible
       }
     ];
+    const fullCls = ['iconfont', fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];
     return (
       <div class={cls}>
         <div class={maskCls} style={{ ...maskStyle, zIndex: realzIndex }} onClick={() => this.close('mask')} />
-        <div ref="panel" class="drawer-container" style={{ ...containerPosition, ...containerShow, ...containerStyle, zIndex: realzIndex + 1 }}>
+        <div ref="panel" class="drawer-container" style={{ ...containerPosition, ...containerShowStyle, ...containerStyle, ...fullScrennStyle, zIndex: realzIndex + 1 }}>
           <div class="header">
             <div class="title">{$slots[`title`] || title}</div>
+            {showFullScreen && (
+              <span title={fullscreen ? this.t('baseDialog.cancelFullScreen') : this.t('baseDialog.fullScreen')} class="fullscreen-btn" onClick={this.handleClick}>
+                <i class={fullCls} />
+              </span>
+            )}
             {closable && (
               <span class="close" title={this.t('drawer.close')} onClick={this.close}>
                 <i class="iconfont icon-close" />

@@ -80,11 +80,10 @@ export default {
       this.isPassed = true;
       this.visible = false;
       // 获取短信验证码
-      this.btnState.disabled = true;
+      this.setButtonState(true);
       this.timer = setInterval(() => {
         if (this.btnState.time-- <= 0) {
-          this.btnState.time = 60;
-          this.btnState.disabled = false;
+          this.setButtonState(false);
           clearInterval(this.timer);
         }
       }, 1000);
@@ -92,7 +91,14 @@ export default {
       const res = await getCaptcha({ vMobile: this.form.account });
       if (res.code === 200) {
         this.$message.success('验证码发送成功，请查收！');
+      } else {
+        this.setButtonState(false);
+        this.form.account = '';
       }
+    },
+    setButtonState(disabled) {
+      this.btnState.time = 60;
+      this.btnState.disabled = false;
     },
     failHandle() {},
     async GET_VALUE() {

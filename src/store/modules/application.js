@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-30 08:32:19
+ * @Last Modified time: 2020-10-30 13:32:39
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -173,11 +173,12 @@ const actions = {
     commit({ type: types.COMMON_MENU, data });
   },
   createTabNavList({ commit, state }, params) {
+    const routes = params.filter(x => x.key !== '/404');
     commit({
       type: types.TAB_NAVLIST,
-      data: params
+      data: routes
     });
-    localStorage.setItem('tab_nav', JSON.stringify(params));
+    localStorage.setItem('tab_nav', JSON.stringify(routes));
   },
   checkAuthority({ commit, state }, params) {
     return state.menuList.some(x => x.key === params);

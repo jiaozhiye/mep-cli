@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 20:43:43
+ * @Last Modified time: 2020-10-31 09:45:03
  */
 @import '../../style/index.scss';
 
@@ -44,21 +44,36 @@ $prefix-cls: '#{$v-prefix}-drawer--wrapper';
       .title {
         font-size: 16px;
       }
+      .fullscreen-btn {
+        position: absolute;
+        padding: 2px;
+        right: 35px;
+        top: 12px;
+        color: $text-color-secondary;
+        line-height: 1;
+        cursor: pointer;
+        &:hover {
+          color: $primary-color;
+        }
+        i {
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
       .close {
         position: absolute;
-        padding: 10px;
-        right: 4px;
-        top: 4px;
+        padding: 5px;
+        right: 5px;
+        top: 9px;
         color: $text-color-secondary;
         line-height: 1;
         cursor: pointer;
         transition: color 0.3s ease;
         &:hover {
           color: $primary-color;
-          text-decoration: none;
         }
         i {
-          font-size: 20px;
+          font-size: 18px;
         }
       }
     }

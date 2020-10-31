@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-21 08:50:44
+ * @Last Modified time: 2020-10-30 13:58:02
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
@@ -260,6 +260,8 @@ export default {
       if (precision >= 0) {
         result = Number(result).toFixed(precision);
       }
+      // 处理换行符
+      result = result.toString().replace(/[\r\n]/g, '');
       // 处理数据格式化
       if (formatType) {
         const render = this[`${formatType}Format`];
