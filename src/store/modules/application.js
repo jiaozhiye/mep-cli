@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-30 13:32:39
+ * @Last Modified time: 2020-11-05 20:27:09
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -77,7 +77,7 @@ const state = {
   theme: variables.theme, // 主题色
   dict: {}, // 数据字典
   isNotifyMark: !1, // 页面中是否已存在消息通知组件
-  weChatOpenId: '' // 微信登录 openId
+  weChat: {} // 微信登录信息
 };
 
 // actions
@@ -108,10 +108,10 @@ const actions = {
       setTimeout(() => (window.location = '/login'), 300);
     }
   },
-  createOpenId({ commit, state }, params) {
+  createWeChat({ commit, state }, params) {
     commit({
-      type: types.OPENID,
-      data: params
+      type: types.WECHAT,
+      data: params || {}
     });
   },
   async createNavList({ dispatch, commit, state }, params) {
@@ -324,8 +324,8 @@ const mutations = {
   [types.LOGOUT](state, { data }) {
     state.loginInfo = data;
   },
-  [types.OPENID](state, { data }) {
-    state.weChatOpenId = data;
+  [types.WECHAT](state, { data }) {
+    state.weChat = data;
   },
   [types.NAVLIST](state, { data }) {
     state.navList = data;

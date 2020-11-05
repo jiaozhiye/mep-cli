@@ -82,6 +82,7 @@
 import { mapActions, mapState } from 'vuex';
 
 import { sleep, AESEncrypt } from '@/utils';
+import { setWechatAvatar } from '@/utils/cookies';
 import { doLogin, bindPhone, getLoginBg } from '@common/api/login';
 
 import Account from './account';
@@ -111,7 +112,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('app', ['weChatOpenId']),
+    ...mapState('app', ['weChat']),
     isWebkit() {
       return this.isBrowseType('AppleWebKit') && !this.isBrowseType('Edge');
     },
@@ -133,18 +134,18 @@ export default {
     curPanel() {
       this.curLabel = this.labels[0].key;
     },
-    weChatOpenId(val) {
+    [`weChat.openid`](val) {
       if (!val) return;
       this.loginHandle();
     }
   },
   mounted() {
-    window.$$setOpenId = this.createOpenId;
+    window.$$setWeChat = this.createWeChat;
     if (localLoginBg) return;
     this.getLoginImage();
   },
   methods: {
-    ...mapActions('app', ['createLoginInfo', 'createOpenId']),
+    ...mapActions('app', ['createLoginInfo', 'createWeChat']),
     isBrowseType(type) {
       return navigator.userAgent.indexOf(type) > -1;
     },
@@ -156,7 +157,7 @@ export default {
     },
     backClickHandle() {
       this.curPanel = 'sign';
-      this.createOpenId('');
+      this.createWeChat();
     },
     async getLoginImage() {
       const res = await getLoginBg();
@@ -167,7 +168,7 @@ export default {
     },
     async loginHandle() {
       const ref_str = this.curPanel === 'sign' ? `${this.curPanel}-${this.curLabel}` : this.curPanel;
-      const loginType = !this.weChatOpenId ? (this.curLabel === 'account' ? 1 : 0) : 2;
+      const loginType = !this.weChat.openid ? (this.curLabel === 'account' ? 1 : 0) : 2;
       let err, data;
       if (loginType !== 2) {
         [err, data] = await this.$refs[ref_str].GET_VALUE?.();
@@ -177,7 +178,7 @@ export default {
       try {
         const res = await doLogin({
           loginType,
-          vLogin: data?.account ?? this.weChatOpenId ?? '',
+          vLogin: data?.account ?? this.weChat.openid ?? '',
           vPwd: data?.password ? AESEncrypt(data.password, '20201010081240ff', '0102030405060708') : '',
           imgCheck: data?.vcode,
           msgCode: data?.captcha
@@ -190,6 +191,10 @@ export default {
             gray: rData.grayCode || 0,
             vDealerName: rData.vDealerName || ''
           });
+          // 存储微信头像
+          if (loginType === 2) {
+            setWechatAvatar(this.weChat.imgurl || '');
+          }
           await sleep(0);
           // grayCode -> 0 生产，1 灰度
           if (rData.grayCode) {
@@ -199,10 +204,12 @@ export default {
           }
           await sleep(1000);
         }
+        // 需要显示验证码
         if (res.code === 991) {
           this.$refs[ref_str].isVcode = !0;
           this.$refs[ref_str].handleChangeCheckCode();
         }
+        // 验证码错误
         if (res.code === 992) {
           this.$refs[ref_str].handleChangeCheckCode();
         }
@@ -216,7 +223,7 @@ export default {
     async bindPhoneHandle() {
       const [err, data] = await this.$refs[this.curPanel].GET_VALUE?.();
       if (err) return;
-      const res = await bindPhone({ vWXOpenID: this.weChatOpenId, vMobile: data.account, msgCode: data.captcha });
+      const res = await bindPhone({ vWXOpenID: this.weChat.openid, vMobile: data.account, msgCode: data.captcha });
       if (res.code === 200) {
         this.loginHandle();
       }
