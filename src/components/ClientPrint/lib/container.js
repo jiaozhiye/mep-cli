@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 09:34:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-23 16:18:09
+ * @Last Modified time: 2020-11-03 08:36:36
  */
 import { sleep } from '../../_utils/tool';
 import { mmToPx, pxToMm, insertBefore, isPageBreak } from './utils';
@@ -14,7 +14,7 @@ import Spin from '../../Spin';
 export default {
   name: 'Container',
   mixins: [PrefixCls],
-  props: ['dataSource', 'templateRender'],
+  props: ['dataSource', 'templateRender', 'directPrint'],
   inject: ['$$preview'],
   data() {
     return {
@@ -116,6 +116,16 @@ export default {
       this.createWorkspace();
     }
   },
+  mounted() {
+    if (this.directPrint) {
+      document.body.appendChild(this.$el);
+    }
+  },
+  destroyed() {
+    if (this.directPrint && this.$el && this.$el.parentNode) {
+      this.$el.parentNode.removeChild(this.$el);
+    }
+  },
   methods: {
     createPageBreak() {
       return `<tr type="page-break" style="page-break-after: always;"></tr>`;
@@ -169,6 +179,11 @@ export default {
       const {
         form: { setting, printerType }
       } = this.$$preview;
+
+      // 直接打印
+      if (this.directPrint) {
+        return this.previewHtmls.push([this.createLogo(), this.createTdCols(), ...this.elementHtmls]);
+      }
 
       // 页面高度
       let pageHeight = setting.fixedLogo ? this.workspaceHeight - config.logoHeight : this.workspaceHeight;
@@ -264,14 +279,27 @@ export default {
       this.createWorkspace();
       this.loading = !1;
     },
+    async DIRECT_PRINT() {
+      if (this.templateEl?.tagName !== 'TABLE') {
+        return this.throwError();
+      }
+      this.createTemplateCols();
+      await sleep(0);
+      this.createNodeStyle();
+      this.createWorkspace();
+      this.loading = !1;
+      this.$$preview.doPrint(this.createPrintHtml());
+      await sleep(0);
+      this.$$preview.doClose();
+    },
     throwError() {
       console.error('[PrintTemplate] 打印模板组件的根元素必须是 `table` 节点');
     }
   },
   render() {
-    const { loading, templateRender: TemplateRender, dataSource, workspaceWidth, workspaceStyle } = this;
+    const { directPrint, loading, templateRender: TemplateRender, dataSource, workspaceWidth, workspaceStyle } = this;
     const prefixCls = this.getPrefixCls('cviewport--wrapper');
-    const cls = { [prefixCls]: true };
+    const cls = { [prefixCls]: true, 'no-visible': directPrint };
     return (
       <div class={cls}>
         <Spin spinning={loading} tip="Loading..." containerStyle={{ height: `100%` }}>

@@ -2,12 +2,15 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-25 17:21:29
+ * @Last Modified time: 2020-11-05 11:36:11
  */
 import PropTypes from '../_utils/vue-types';
+import Emitter from '../_utils/mixins/emitter';
 
 export default {
   name: 'InputNumber',
+  mixins: [Emitter],
+  inject: ['elForm', 'elFormItem'],
   props: {
     value: PropTypes.number,
     min: PropTypes.number.def(0),
@@ -55,6 +58,7 @@ export default {
       val = val !== '' ? Number(val) : undefined;
       this.$emit('input', val);
       this.$emit('change', val);
+      this.dispatch('ElFormItem', 'el.form.change', [val]);
     },
     increaseHandle() {
       if (this.maxDisabled) return;
@@ -69,6 +73,9 @@ export default {
       val = val < this.min ? this.min : val;
       this.setValueHandle(val);
       this.emitEventHandle(val);
+    },
+    blur() {
+      this.dispatch('ElFormItem', 'el.form.blur', [this.currentValue]);
     },
     focus() {
       this.$refs['input']?.focus();
@@ -119,6 +126,7 @@ export default {
             // 设置数据值
             this.currentValue = val;
           }}
+          validateEvent={false}
           placeholder={placeholder}
           disabled={disabled}
           onChange={val => {
@@ -134,6 +142,7 @@ export default {
             this.setValueHandle(val);
             this.emitEventHandle(val);
           }}
+          onBlur={this.blur}
         />
       </div>
     );

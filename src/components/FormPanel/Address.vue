@@ -211,12 +211,12 @@
         for (let i in this.currentList) {
           let c = this.currentList[i];
           if (c.vLevel == vLevel) {
-            this.currentList[i] = { iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName };
+            this.currentList[i] = { iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName, vPostNo: cur.vPostNo };
             isHave = true;
           }
         }
         if (!isHave) {
-          this.currentList.push({ iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName });
+          this.currentList.push({ iD: cur.iD, vLevel: vLevel, vCode: cur.vCode, vName: cur.vName, vPostNo: cur.vPostNo });
         }
         this.currentList.sort((a, b) => {
           return a.vLevel - b.vLevel;

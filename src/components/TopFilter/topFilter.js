@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 08:46:51
+ * @Last Modified time: 2020-11-05 16:32:46
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
+import { getConfig } from '../_utils/globle-config';
 import PropTypes from '../_utils/vue-types';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
@@ -37,6 +38,7 @@ export default {
     defaultRows: PropTypes.number.def(1),
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
+    showLabelErrorColor: PropTypes.bool,
     isCollapse: PropTypes.bool.def(true),
     isDisabled: PropTypes.bool.def(false),
     isSubmitBtn: PropTypes.bool.def(true),
@@ -82,6 +84,9 @@ export default {
     },
     descContents() {
       return this.formItemList.filter(x => isObject(x.descOptions)).map(x => ({ fieldName: x.fieldName, content: x.descOptions.content }));
+    },
+    isLabelErrorColor() {
+      return this.showLabelErrorColor ?? getConfig('TopFilter_showLabelErrorColor') ?? false;
     },
     showCollapse() {
       const total = this.list.filter(x => !x.hidden).length;
@@ -930,7 +935,7 @@ export default {
                 shortcuts: dateType.includes('date') ? pickers : pickers.slice(1)
               }}
               value-format={conf[dateType].valueFormat}
-              style={{ width: `calc(50% - 5px)` }}
+              style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
               disabled={disabled || startDisabled}
               nativeOnInput={ev => {
@@ -961,7 +966,7 @@ export default {
               }}
               onChange={() => onChange(form[fieldName])}
             />
-            <span class={disabled ? 'is-disabled' : ''} style="display: inline-block; text-align: center; width: 10px;">
+            <span class={disabled ? 'is-disabled' : ''} style="display: inline-block; text-align: center; width: 14px;">
               -
             </span>
             <el-date-picker
@@ -978,7 +983,7 @@ export default {
                 }
               }}
               value-format={conf[dateType].valueFormat}
-              style={{ width: `calc(50% - 5px)` }}
+              style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
               disabled={disabled || endDisabled}
               nativeOnInput={ev => {
@@ -1627,12 +1632,13 @@ export default {
     }
   },
   render() {
-    const { form, rules, labelWidth } = this;
+    const { form, rules, labelWidth, isLabelErrorColor } = this;
     const prefixCls = this.getPrefixCls('top-filter');
     const cls = {
       [prefixCls]: true,
       [`${prefixCls}-sm`]: this.currentSize === 'small',
-      [`${prefixCls}-lg`]: this.currentSize === 'large'
+      [`${prefixCls}-lg`]: this.currentSize === 'large',
+      [`required-label-color`]: isLabelErrorColor
     };
     const wrapProps = {
       props: {

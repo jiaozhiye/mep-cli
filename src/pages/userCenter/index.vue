@@ -42,7 +42,7 @@
         </div>
       </div>
       <span slot="reference" class="avatar">
-        <img class="img" :src="info.profileUrl || avatarImg" />
+        <img class="img" :src="weChatAvatar || info.profileUrl || avatarImg" />
       </span>
     </el-popover>
   </div>

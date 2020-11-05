@@ -7,6 +7,8 @@
 | templateRender | 打印模板组件，必要参数，[配置项](#template)                  | object          | -      |
 | dataSource     | 打印数据，必要参数                                           | array \| object | -      |
 | uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                     | string          | -      |
+| defaultConfig  | 默认的打印参数设置，[配置项](#config)                        | object          | -      |
+| preview        | 是否开启打印预览                                             | boolean         | true   |
 | closeOnPrinted | 打印后是否关闭预览窗口                                       | boolean         | false  |
 | type           | 打印按钮的类型                                               | string          | -      |
 | disabled       | 打印按钮的禁用状态                                           | boolean         | false  |
@@ -48,6 +50,14 @@
 | -------------- | --------------------------------------------------------- | ------ |
 | templateRender | 异步组件，() => import(`@test/pages/printTemplate/demo2`) | func   |
 | templateRender | 模板组件，可实现动态切换模板组件                          | object |
+
+### config
+
+| 参数名称    | 说明                                       | 类型   | 默认值   |
+| ----------- | ------------------------------------------ | ------ | -------- |
+| printerType | 打印机类型，激光(laser)，针式(stylus)      | string | laser    |
+| direction   | 打印方向，纵向(vertical)，横向(horizontal) | string | vertical |
+| copies      | 打印份数                                   | number | 1        |
 
 ### 打印模板，标签支持的类属型
 

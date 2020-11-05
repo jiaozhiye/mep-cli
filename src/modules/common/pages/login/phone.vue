@@ -98,7 +98,7 @@ export default {
     },
     setButtonState(disabled) {
       this.btnState.time = 60;
-      this.btnState.disabled = false;
+      this.btnState.disabled = disabled;
     },
     failHandle() {},
     async GET_VALUE() {

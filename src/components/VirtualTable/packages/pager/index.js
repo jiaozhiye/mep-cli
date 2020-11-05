@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-19 13:45:50
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 10:26:57
+ * @Last Modified time: 2020-11-02 09:55:56
  */
 import PropTypes from '../../../_utils/vue-types';
 import config from '../config';
@@ -409,23 +409,27 @@ export default {
         this.$emit('change', { type: 'size-change', pageSize, currentPage: Math.min(this.currentPage, this.getPageCount(this.total, pageSize)) });
       }
     },
-    jumpKeydownEvent(evnt) {
-      if (evnt.keyCode === 13) {
-        this.triggerJumpEvent(evnt);
+    jumpKeydownEvent(ev) {
+      if (ev.keyCode === 13) {
+        this.triggerJumpEvent(ev);
       }
-      if (evnt.keyCode === 38) {
-        evnt.preventDefault();
+      if (ev.keyCode === 38) {
+        ev.preventDefault();
         this.nextPage();
       }
-      if (evnt.keyCode === 40) {
-        evnt.preventDefault();
+      if (ev.keyCode === 40) {
+        ev.preventDefault();
         this.prevPage();
       }
     },
-    triggerJumpEvent(evnt) {
-      const value = Number(evnt.target.value);
+    triggerJumpEvent(ev) {
+      const value = Number(ev.target.value);
+      if (Number.isNaN(value)) {
+        ev.target.value = this.currentPage;
+        ev.target.blur();
+        return;
+      }
       const current = value <= 0 ? 1 : value >= this.pageCount ? this.pageCount : value;
-      evnt.target.value = current;
       this.jumpPage(current);
     }
   }

@@ -2,15 +2,16 @@
 
 ### FormPanel
 
-| 参数         | 说明                                            | 类型                | 默认值  |
-| ------------ | ----------------------------------------------- | ------------------- | ------- |
-| list         | 表单组件数据数组，[配置项](#formItem)，必要参数 | array               | -       |
-| initialValue | 表单组件的初始值，只在组件首次加载时生效        | obkect              | -       |
-| formType     | 表单的类型                                      | default \| onlyShow | default |
-| loading      | 提交按钮的 loading 效果                         | boolean             | false   |
-| cols         | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number              | -       |
-| labelWidth   | label 标签的宽度，单位 px                       | number              | 80      |
-| isSubmitBtn  | 是否显示保存、重置按钮                          | boolean             | false   |
+| 参数                | 说明                                            | 类型                | 默认值  |
+| ------------------- | ----------------------------------------------- | ------------------- | ------- |
+| list                | 表单组件数据数组，[配置项](#formItem)，必要参数 | array               | -       |
+| initialValue        | 表单组件的初始值，只在组件首次加载时生效        | obkect              | -       |
+| formType            | 表单的类型                                      | default \| onlyShow | default |
+| loading             | 提交按钮的 loading 效果                         | boolean             | false   |
+| cols                | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number              | -       |
+| labelWidth          | label 标签的宽度，单位 px                       | number              | 80      |
+| showLabelErrorColor | 必填项的 label 标签，是否为错误色               | boolean             | -       |
+| isSubmitBtn         | 是否显示保存、重置按钮                          | boolean             | false   |
 
 ### 事件
 

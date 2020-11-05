@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-31 10:39:31
+ * @Last Modified time: 2020-11-02 17:26:32
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
@@ -20,7 +20,7 @@ import PageSetting from './setting';
 export default {
   name: 'Preview',
   mixins: [Size, Locale, PrefixCls, Emitter, Print],
-  props: ['dataSource', 'templateRender', 'uniqueKey', 'closeOnPrinted'],
+  props: ['dataSource', 'templateRender', 'preview', 'uniqueKey', 'defaultConfig', 'closeOnPrinted'],
   provide() {
     return {
       $$preview: this
@@ -30,8 +30,8 @@ export default {
     return {
       form: {
         printerName: -1,
-        printerType: 'laser',
-        copies: 1,
+        printerType: this.defaultConfig?.printerType || 'laser',
+        copies: this.defaultConfig?.copies || 1,
         scale: 1,
         setting: {
           distance: {
@@ -41,7 +41,7 @@ export default {
             bottom: config.defaultDistance
           },
           pageSize: '210*297',
-          direction: 'vertical',
+          direction: this.defaultConfig?.direction || 'vertical',
           doubleSide: 0,
           fixedLogo: 0
         }
@@ -91,6 +91,18 @@ export default {
       return this.uniqueKey ? `cprint_${this.uniqueKey}` : '';
     }
   },
+  async created() {
+    if (!this.printerKey) return;
+    try {
+      const res = await localforage.getItem(this.printerKey);
+      if (Object.keys(res).length) {
+        this.form = Object.assign({}, this.form, {
+          ...res,
+          printerName: this.printerItems.find(x => x.text === res.printerName)?.value ?? -1
+        });
+      }
+    } catch (err) {}
+  },
   methods: {
     settingChange(val) {
       this.form.setting = Object.assign({}, val);
@@ -114,22 +126,13 @@ export default {
           printerName: this.printerItems.find(x => x.value === this.form.printerName).text
         });
       } catch (err) {}
+    },
+    doClose() {
+      this.$emit('close', !0);
     }
   },
-  async created() {
-    if (!this.printerKey) return;
-    try {
-      const res = await localforage.getItem(this.printerKey);
-      if (Object.keys(res).length) {
-        this.form = Object.assign({}, this.form, {
-          ...res,
-          printerName: this.printerItems.find(x => x.text === res.printerName)?.value ?? -1
-        });
-      }
-    } catch (err) {}
-  },
   render() {
-    const { form, printerTypeItems, printerItems, currentPage, totalPage, visible, pageSize, dataSource, templateRender } = this;
+    const { form, preview, printerTypeItems, printerItems, currentPage, totalPage, visible, pageSize, dataSource, templateRender } = this;
     const prefixCls = this.getPrefixCls('cpreview--wrapper');
     const dialogProps = {
       props: {
@@ -149,7 +152,7 @@ export default {
       [`${prefixCls}-sm`]: this.currentSize === 'small',
       [`${prefixCls}-lg`]: this.currentSize === 'large'
     };
-    return (
+    return preview ? (
       <div class={cls}>
         <div class="outer">
           <div class="header">
@@ -210,7 +213,7 @@ export default {
             </span>
           </div>
           <div class="main">
-            <Container ref="container" dataSource={dataSource} templateRender={templateRender} />
+            <Container ref="container" dataSource={dataSource} templateRender={templateRender} directPrint={!1} />
           </div>
           <div class="footer">
             <span>
@@ -230,6 +233,8 @@ export default {
           <PageSetting setting={form.setting} onChange={this.settingChange} onClose={val => (this.visible = val)} />
         </BaseDialog>
       </div>
+    ) : (
+      <Container ref="container" dataSource={dataSource} templateRender={templateRender} directPrint={!0} />
     );
   }
 };

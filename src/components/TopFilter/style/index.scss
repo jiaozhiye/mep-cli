@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 20:29:13
+ * @Last Modified time: 2020-11-05 16:31:35
  */
 @import '../../style/index.scss';
 
@@ -151,11 +151,6 @@ $prefix-cls: '#{$v-prefix}-top-filter';
           margin-right: 8px;
         }
       }
-      &.is-required {
-        .el-form-item__label {
-          color: $error-color;
-        }
-      }
       &.is-error {
         .range-date {
           border-color: $error-color;
@@ -163,6 +158,13 @@ $prefix-cls: '#{$v-prefix}-top-filter';
             border-color: $error-color !important;
           }
         }
+      }
+    }
+  }
+  &.required-label-color {
+    .el-form-item.is-required {
+      .el-form-item__label {
+        color: $error-color;
       }
     }
   }

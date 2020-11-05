@@ -2,17 +2,18 @@
 
 ### TopFilter
 
-| 参数         | 说明                                            | 类型    | 默认值 |
-| ------------ | ----------------------------------------------- | ------- | ------ |
-| list         | 表单组件数据数组，[配置项](#formItem)，必要参数 | array   | -      |
-| initialValue | 表单组件的初始值，只在组件首次加载时生效        | obkect  | -      |
-| loading      | 搜索按钮的 loading 效果                         | boolean | false  |
-| defaultRows  | 收起状态默认显示的行数                          | number  | 1      |
-| cols         | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number  | -      |
-| labelWidth   | label 标签的宽度，单位 px                       | number  | 80     |
-| isSubmitBtn  | 是否显示 搜索/重置 按钮                         | boolean | true   |
-| isDisabled   | 是否禁用搜索按钮                                | boolean | false  |
-| isCollapse   | 是否显示展开/收起按钮                           | boolean | true   |
+| 参数                | 说明                                            | 类型    | 默认值 |
+| ------------------- | ----------------------------------------------- | ------- | ------ |
+| list                | 表单组件数据数组，[配置项](#formItem)，必要参数 | array   | -      |
+| initialValue        | 表单组件的初始值，只在组件首次加载时生效        | obkect  | -      |
+| loading             | 搜索按钮的 loading 效果                         | boolean | false  |
+| defaultRows         | 收起状态默认显示的行数                          | number  | 1      |
+| cols                | 每行显示的列数(被 24 整除)，不设置默认为自适应  | number  | -      |
+| labelWidth          | label 标签的宽度，单位 px                       | number  | 80     |
+| showLabelErrorColor | 必填项的 label 标签，是否为错误色               | boolean | -      |
+| isSubmitBtn         | 是否显示 搜索/重置 按钮                         | boolean | true   |
+| isDisabled          | 是否禁用搜索按钮                                | boolean | false  |
+| isCollapse          | 是否显示展开/收起按钮                           | boolean | true   |
 
 ### 事件
 

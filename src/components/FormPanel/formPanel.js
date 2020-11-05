@@ -2,11 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 08:48:09
+ * @Last Modified time: 2020-11-05 16:48:29
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
 import scrollIntoView from 'scroll-into-view-if-needed';
+import { getConfig } from '../_utils/globle-config';
 import PropTypes from '../_utils/vue-types';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
@@ -43,6 +44,7 @@ export default {
     formType: PropTypes.string.def('default'),
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
+    showLabelErrorColor: PropTypes.bool,
     isSubmitBtn: PropTypes.bool.def(false),
     defultValueOnClear: PropTypes.bool.def(false)
   },
@@ -100,6 +102,9 @@ export default {
     },
     descContents() {
       return this.formItemList.filter(x => isObject(x.descOptions)).map(x => ({ fieldName: x.fieldName, content: x.descOptions.content }));
+    },
+    isLabelErrorColor() {
+      return this.showLabelErrorColor ?? getConfig('FormPanel_showLabelErrorColor') ?? false;
     },
     isCollapse() {
       return this.dividers.some(x => !!x.collapse);
@@ -1031,7 +1036,7 @@ export default {
                 shortcuts: dateType.includes('date') ? pickers : pickers.slice(1)
               }}
               value-format={conf[dateType].valueFormat}
-              style={{ width: `calc(50% - 5px)` }}
+              style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
               disabled={disabled || startDisabled}
               nativeOnInput={ev => {
@@ -1062,7 +1067,7 @@ export default {
               }}
               onChange={() => onChange(form[fieldName])}
             />
-            <span class={disabled ? 'is-disabled' : ''} style="display: inline-block; text-align: center; width: 10px;">
+            <span class={disabled ? 'is-disabled' : ''} style="display: inline-block; text-align: center; width: 14px;">
               -
             </span>
             <el-date-picker
@@ -1079,7 +1084,7 @@ export default {
                 }
               }}
               value-format={conf[dateType].valueFormat}
-              style={{ width: `calc(50% - 5px)` }}
+              style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
               disabled={disabled || endDisabled}
               nativeOnInput={ev => {
@@ -1978,13 +1983,14 @@ export default {
     }
   },
   render() {
-    const { form, formType, rules, labelWidth } = this;
+    const { form, formType, rules, labelWidth, isLabelErrorColor } = this;
     const prefixCls = this.getPrefixCls('form-panel');
     const cls = {
       [prefixCls]: true,
-      [`${prefixCls}-show`]: formType === 'onlyShow',
       [`${prefixCls}-sm`]: this.currentSize === 'small',
-      [`${prefixCls}-lg`]: this.currentSize === 'large'
+      [`${prefixCls}-lg`]: this.currentSize === 'large',
+      [`only-show`]: formType === 'onlyShow',
+      [`required-label-color`]: isLabelErrorColor
     };
     const wrapProps = {
       props: {

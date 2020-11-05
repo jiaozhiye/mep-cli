@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-01 13:58:16
+ * @Last Modified time: 2020-11-02 18:07:35
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import moment from 'moment';
@@ -135,9 +135,8 @@ export default {
       // 监听事件
       LODOP.On_Return = (TaskID, Value) => {
         this.dispatch('ClientPrint', 'print', Value);
-        if (typeof Value !== 'boolean') return;
         if (Value) {
-          closeOnPrinted && this.$emit('close');
+          closeOnPrinted && this.doClose();
         } else {
           this.$message.error(this.t('clientPrint.printError'));
         }
@@ -185,7 +184,7 @@ export default {
       LODOP.On_Return = (TaskID, Value) => {
         this.dispatch('ClientPrint', 'export', Value);
         if (Value) {
-          closeOnPrinted && this.$emit('close');
+          closeOnPrinted && this.doClose();
         } else {
           this.$message.error(this.t('clientPrint.exportError'));
         }

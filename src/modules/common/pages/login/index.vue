@@ -160,9 +160,8 @@ export default {
     },
     async getLoginImage() {
       const res = await getLoginBg();
-      if (res.code === 200 && res.data?.vUrl) {
-        this.bgUrl = res.data.vUrl;
-        // 设置本地缓存
+      if (res.code === 200) {
+        this.bgUrl = res.data?.vUrl || defaultBg;
         localStorage.setItem('login_bg', this.bgUrl);
       }
     },
