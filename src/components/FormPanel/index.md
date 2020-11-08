@@ -120,7 +120,7 @@
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string                     | 0        |
 | dateType      | 日期控件的类型，[配置项](#dateType) - DATE/RANGE_DATE            | string                               | -        |
 | timeFormat    | 时间控件得格式，[配置项](#timeFormat) - TIME/RANGE_TIME          | string                               | -        |
-| shortCuts     | 是否显示日期组件的快捷选项 - DATE                                | boolean                              | true     |
+| shortCuts     | 是否显示日期组件的快捷选项 - DATE/RANGE_DATE                     | boolean                              | true     |
 | minDateTime   | 最小日期，小于该时间的日期段将被禁用                             | string                               | -        |
 | maxDateTime   | 最大日期，大于该时间的日期段将被禁用                             | string                               | -        |
 | defaultTime   | 默认的时间，格式 HH:mm:ss                                        | string                               | -        |

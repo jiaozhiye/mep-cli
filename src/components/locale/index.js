@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-30 14:59:03
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 10:19:01
+ * @Last Modified time: 2020-11-08 14:57:48
  */
 import Vue from 'vue';
 import { merge } from 'lodash';
@@ -26,6 +26,10 @@ const format = (string, ...args) => {
     args = {};
   }
 
+  if (Array.isArray(string)) {
+    return string.map(x => format(x, ...args));
+  }
+
   return string.replace(RE_NARGS, (match, prefix, i, index) => {
     let result;
 
@@ -36,7 +40,6 @@ const format = (string, ...args) => {
       if (result === null || result === undefined) {
         return '';
       }
-
       return result;
     }
   });
@@ -70,6 +73,7 @@ export const t = function(path, options) {
     if (!value) return '';
     current = value;
   }
+
   return '';
 };
 

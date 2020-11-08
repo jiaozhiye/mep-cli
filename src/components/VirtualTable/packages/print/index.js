@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-07 12:37:28
+ * @Last Modified time: 2020-11-06 13:54:04
  */
 import { convertToRows, deepFindColumn, filterTableColumns, downloadFile, getCellValue } from '../utils';
 import config from '../config';
@@ -127,12 +127,17 @@ export default {
             res.push(tmp);
           }
           i++;
-        } else {
+        } else if (i > 0) {
           columns.splice(0, i);
           res.push(tmp);
           tmp = [];
           sum = 0;
           i = 0;
+        } else {
+          column.width = config.printWidth;
+          tmp.push(column);
+          res.push(tmp);
+          i++;
         }
       }
       return res;

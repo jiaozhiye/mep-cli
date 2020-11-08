@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-05 16:32:46
+ * @Last Modified time: 2020-11-08 10:46:16
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -879,7 +879,7 @@ export default {
         }
       };
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
-      const { dateType = 'daterange', minDateTime, maxDateTime, startDisabled, endDisabled } = options;
+      const { dateType = 'daterange', minDateTime, maxDateTime, startDisabled, endDisabled, shortCuts = !0 } = options;
       const [startDate = minDateTime, endDate = maxDateTime] = form[fieldName];
       // 日期区间快捷键方法
       const createPicker = (picker, days) => {
@@ -932,7 +932,7 @@ export default {
                 disabledDate: time => {
                   return this.setDisabledDate(time, [minDateTime, endDate]);
                 },
-                shortcuts: dateType.includes('date') ? pickers : pickers.slice(1)
+                shortcuts: shortCuts ? (dateType.includes('date') ? pickers : pickers.slice(1)) : null
               }}
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 7px)` }}

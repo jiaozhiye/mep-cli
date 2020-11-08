@@ -133,7 +133,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-casc-select--wrapper {
+@import '../style/index.scss';
+$prefix-cls: '#{$v-prefix}-casc-select--wrapper';
+
+.#{$prefix-cls} {
   .table {
     tr {
       th {
@@ -158,10 +161,10 @@ export default {
             top: 7px;
           }
           &:hover {
-            background-color: #f5f7fa;
+            background-color: $background-color-cecondary;
           }
           &.selected {
-            color: $primaryColor;
+            color: $primary-color;
           }
         }
       }
