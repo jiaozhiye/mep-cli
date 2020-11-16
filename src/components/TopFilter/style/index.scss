@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-05 16:31:35
+ * @Last Modified time: 2020-11-11 15:44:45
  */
 @import '../../style/index.scss';
 
@@ -90,9 +90,9 @@ $prefix-cls: '#{$v-prefix}-top-filter';
             .el-input__prefix {
               left: 0;
             }
-            .el-input__suffix {
-              right: 0;
-            }
+          }
+          .el-input__suffix {
+            background-color: transparent;
           }
         }
         &.disabled {

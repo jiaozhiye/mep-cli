@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 14:57:53
+ * @Last Modified time: 2020-11-10 09:12:51
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -25,6 +25,7 @@ export default {
     name: PropTypes.string, // tds
     filters: PropTypes.arrayOf(PropTypes.shape({ fieldName: PropTypes.string }).loose).def([]),
     initialValue: PropTypes.object.def({}),
+    showFilterCollapse: PropTypes.bool.def(true),
     table: PropTypes.shape({
       columns: PropTypes.array.def([]),
       rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def('uid'),
@@ -243,11 +244,11 @@ export default {
     }
   },
   render() {
-    const { loading, initialValue, topFilters, height, columns, fetch, disabled } = this;
+    const { loading, initialValue, topFilters, showFilterCollapse, height, columns, fetch, disabled } = this;
     return (
       <div>
         <Spin spinning={loading} tip="Loading...">
-          <TopFilter ref="topFilter" initialValue={initialValue} list={topFilters} onChange={this.filterChangeHandle} onCollapseChange={this.collapseHandle} />
+          <TopFilter ref="topFilter" initialValue={initialValue} list={topFilters} isCollapse={showFilterCollapse} onChange={this.filterChangeHandle} onCollapseChange={this.collapseHandle} />
           <VirtualTable
             ref="vTable"
             height={height}

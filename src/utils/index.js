@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-17 13:18:00
+ * @Last Modified time: 2020-11-16 13:01:59
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import CryptoJS from 'crypto-js';
@@ -107,15 +107,15 @@ export const confirmAction = async (msg = i18n.t('information.confirm'), type = 
  * @description Notification 通知提示
  * @param {string} msg 提示的文本
  * @param {string} type 提示类型
- * @param {number} delay 延迟的时间，单位 毫秒，如果值是 0，为手动关闭模式
+ * @param {number} delay 延迟的时间，单位 秒，如果值是 0，为手动关闭模式
  * @returns
  */
-export const notifyAction = async (msg = '', type = 'success', delay = 3000) => {
+export const notifyAction = async (msg = '', type = 'success', delay = 4.5) => {
   if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
   await sleep(0);
-  Notification({ title: i18n.t('information.title'), message: msg, type, duration: delay, dangerouslyUseHTMLString: true });
-  await sleep(3000);
+  Notification({ title: i18n.t('information.title'), message: msg, type, duration: delay * 1000, dangerouslyUseHTMLString: true });
+  await sleep(delay * 1000);
   store.dispatch('app/createNotifyState', false);
 };
 
@@ -123,14 +123,15 @@ export const notifyAction = async (msg = '', type = 'success', delay = 3000) => 
  * @description Message 消息提示
  * @param {string} msg 提示的文本
  * @param {string} type 提示类型
+ * @param {number} delay 延迟的时间，单位 秒
  * @returns
  */
-export const messageAction = async (msg = '', type = 'info') => {
+export const messageAction = async (msg = '', type = 'info', delay = 4) => {
   if (config.onlyOneMessage && store.state.app.isNotifyMark) return;
   store.dispatch('app/createNotifyState', true);
   await sleep(0);
-  Message({ message: msg, showClose: true, type, duration: 3000 });
-  await sleep(3000);
+  Message({ message: msg, showClose: true, type, duration: delay * 1000 });
+  await sleep(delay * 1000);
   store.dispatch('app/createNotifyState', false);
 };
 

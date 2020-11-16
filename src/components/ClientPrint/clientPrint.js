@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-03 08:38:57
+ * @Last Modified time: 2020-11-10 18:59:30
  **/
 import PropTypes from '../_utils/vue-types';
 import { sleep } from '../_utils/tool';
@@ -43,11 +43,11 @@ export default {
         this.loading = !1;
         if (typeof res === 'boolean' && !res) return;
         await this.DO_PRINT();
-      } catch (err) {
-        this.loading = !1;
-      }
+      } catch (err) {}
+      this.loading = !1;
     },
     async DO_PRINT() {
+      await sleep(0);
       this.visible = !0;
       await sleep(this.preview ? 500 : 0);
       const { SHOW_PREVIEW, DIRECT_PRINT } = this.$refs.preview.$refs.container;

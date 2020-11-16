@@ -3,7 +3,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-30 13:39:09
+ * @Last Modified time: 2020-11-16 11:05:49
  **/
 import { get, set, cloneDeep, uniqBy, intersection, isEqual, isUndefined, isNumber, isObject, isNull, isFunction, isRegExp } from 'lodash';
 import moment from 'moment';
@@ -1659,7 +1659,7 @@ export default {
       let num = prefix ? list[0].slice(1) : list[0];
       let result = '';
       while (num.length > 3) {
-        result = `, ${num.slice(-3)}${result}`;
+        result = `,${num.slice(-3)}${result}`;
         num = num.slice(0, num.length - 3);
       }
       if (num) {

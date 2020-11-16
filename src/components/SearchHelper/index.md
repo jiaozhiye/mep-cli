@@ -2,18 +2,19 @@
 
 ### SearchHelper
 
-| 参数            | 说明                                                      | 类型                   | 默认值 |
-| --------------- | --------------------------------------------------------- | ---------------------- | ------ |
-| filters         | 顶部筛选条件配置，参考 TopFilter 组件，必要参数           | array                  | -      |
-| initialValue    | 筛选条件的初始值                                          | object                 | -      |
-| table           | 列表组件配置，[配置项](#table)，必要参数                  | array                  | -      |
-| fieldAliasMap   | 表单字段与回传数据字段的映射，[配置项](#alias)， 必要参数 | func                   | -      |
-| beforeFetch     | 在执行查询接口之前，处理请求参数，返回处理后的数据        | Function(form):newForm | -      |
-| dataIndex       | 当前搜索帮助列的 dataIndex - 只对表格的搜索帮助有效       | string                 | -      |
-| callback        | 回传数据的回调函数 - 只对表格的搜索帮助有效               | func                   | -      |
-| name            | 搜索帮助名称 for TDS                                      | string                 | -      |
-| fieldsDefine    | 表单字段的定义，[配置项](#define) for TDS                 | object                 | -      |
-| getServerConfig | 从服务端获取搜索帮助定义信息 for TDS                      | func                   | -      |
+| 参数               | 说明                                                      | 类型                   | 默认值 |
+| ------------------ | --------------------------------------------------------- | ---------------------- | ------ |
+| filters            | 顶部筛选条件配置，参考 TopFilter 组件，必要参数           | array                  | -      |
+| initialValue       | 筛选条件的初始值                                          | object                 | -      |
+| showFilterCollapse | 是否显示展开/收起按钮                                     | boolean                | true   |
+| table              | 列表组件配置，[配置项](#table)，必要参数                  | array                  | -      |
+| fieldAliasMap      | 表单字段与回传数据字段的映射，[配置项](#alias)， 必要参数 | func                   | -      |
+| beforeFetch        | 在执行查询接口之前，处理请求参数，返回处理后的数据        | Function(form):newForm | -      |
+| dataIndex          | 当前搜索帮助列的 dataIndex - 只对表格的搜索帮助有效       | string                 | -      |
+| callback           | 回传数据的回调函数 - 只对表格的搜索帮助有效               | func                   | -      |
+| name               | 搜索帮助名称 for TDS                                      | string                 | -      |
+| fieldsDefine       | 表单字段的定义，[配置项](#define) for TDS                 | object                 | -      |
+| getServerConfig    | 从服务端获取搜索帮助定义信息 for TDS                      | func                   | -      |
 
 ### 事件
 

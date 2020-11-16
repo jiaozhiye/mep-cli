@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-20 11:55:10
+ * @Last Modified time: 2020-11-16 11:05:37
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -401,7 +401,7 @@ export const formatNumber = (value = '') => {
   let num = prefix ? list[0].slice(1) : list[0];
   let result = '';
   while (num.length > 3) {
-    result = `, ${num.slice(-3)}${result}`;
+    result = `,${num.slice(-3)}${result}`;
     num = num.slice(0, num.length - 3);
   }
   if (num) {

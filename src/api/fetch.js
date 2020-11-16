@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-06 23:03:01
+ * @Last Modified time: 2020-11-16 13:01:24
  */
 import axios from 'axios';
 import qs from 'qs';
@@ -57,7 +57,7 @@ const instance = axios.create({
 const errorHandler = error => {
   const { response = {} } = error;
   const errortext = codeMessage[response.status] || response.statusText || i18n.t('fetch.default');
-  notifyAction(errortext, 'error');
+  notifyAction(errortext, 'error', 10);
   return Promise.reject(error);
 };
 
@@ -85,7 +85,7 @@ instance.interceptors.response.use(response => {
     if (data.code === 40105) {
       store.dispatch('app/createLogout');
     }
-    data.msg && notifyAction(data.msg, 'error');
+    data.msg && notifyAction(data.msg, 'error', 10);
   }
   // 判断是否为导出/下载
   if (config.responseType === 'blob') {

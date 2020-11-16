@@ -59,6 +59,7 @@
 | CLEAR_TABLE_DATA | 清空表格数据                                   | -                                          | -      |
 | CLEAR_LOG        | 清空表格操作记录                               | -                                          | -      |
 | SCROLL_TO_RECORD | 滚动到指定数据行                               | Function(rowKey)                           | -      |
+| SCROLL_TO_COLUMN | 滚动到指定表格列                               | Function(dataIndex)                        | -      |
 | INSERT_RECORDS   | 插入表格行数据                                 | Function(rows \| row, bottom(默认) \| top) | -      |
 | REMOVE_RECORDS   | 移除表格数据                                   | Function(rowKeys \| rows \| row )          | -      |
 | FORM_VALIDATE    | 表格中的表单校验                               | -                                          | object |

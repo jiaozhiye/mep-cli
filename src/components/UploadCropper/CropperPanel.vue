@@ -23,7 +23,7 @@
         />
       </div>
       <!-- 预览框 -->
-      <div class="show-preview" :style="{ width: '300px', height: '300px', overflow: 'hidden', display: 'flex', 'align-items': 'center' }">
+      <div class="show-preview" :style="{ width: '400px', height: '350px', overflow: 'hidden', display: 'flex', 'align-items': 'center' }">
         <div :style="previews.div" class="preview">
           <img :src="previews.url" :style="previews.img" />
         </div>
@@ -39,7 +39,7 @@
       </div>
       <!-- 确认上传按钮 -->
       <div class="upload-btn">
-        <el-button type="primary" :loading="loading" @click="uploadImg('base64')">上传</el-button>
+        <el-button type="primary" icon="el-icon-upload" :loading="loading" @click="uploadImg('base64')">上传</el-button>
       </div>
     </div>
   </div>
@@ -70,8 +70,8 @@ export default {
         autoCropWidth: 300, // 默认生成截图框宽度  (默认:80%)
         autoCropHeight: 300, // 默认生成截图框高度  (默认:80%)
         fixedBox: false, // 固定截图框大小 不允许改变  (默认:false)
-        fixed: true, // 是否开启截图框宽高固定比例  (默认:true)
-        fixedNumber: [1.5, 1] // 截图框比例  (默认:[1:1])
+        fixed: !!this.fixedNumber.length, // 是否开启截图框宽高固定比例  (默认:true)
+        fixedNumber: this.fixedNumber.length ? this.fixedNumber : [1.5, 1] // 截图框比例  (默认:[1:1])
       }
     };
   },
@@ -110,49 +110,41 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .cropper-wrap {
   flex: 1;
   .cropper-content {
     display: flex;
     justify-content: flex-end;
-    -webkit-justify-content: flex-end;
     .cropper {
-      width: 350px;
-      height: 300px;
+      width: 400px;
+      height: 350px;
     }
     .show-preview {
       flex: 1;
-      -webkit-flex: 1;
       display: flex;
       justify-content: center;
-      -webkit-justify-content: center;
       overflow: hidden;
       background: #d8d8d8;
-      margin-left: 20px;
+      margin-left: 10px;
     }
   }
   .preview {
     overflow: hidden;
   }
   .footer-btn {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     justify-content: flex-end;
-    -webkit-justify-content: flex-end;
   }
   .footer-btn .scope-btn {
-    width: 350px;
     display: flex;
-    justify-content: space-between;
-    -webkit-justify-content: space-between;
+    justify-content: flex-start;
   }
   .footer-btn .upload-btn {
     flex: 1;
-    -webkit-flex: 1;
     display: flex;
-    justify-content: center;
-    -webkit-justify-content: center;
+    justify-content: flex-end;
   }
 }
 </style>

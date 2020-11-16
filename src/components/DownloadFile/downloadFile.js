@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-25 18:43:05
+ * @Last Modified time: 2020-11-10 09:40:39
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -12,7 +12,11 @@ export default {
   name: 'DownloadFile',
   mixins: [Locale],
   props: {
-    actionUrl: PropTypes.string.isRequired,
+    actionUrl: PropTypes.string,
+    actionUrlFetch: PropTypes.shape({
+      api: PropTypes.func.isRequired, // api 接口
+      params: PropTypes.object // 接口参数
+    }),
     headers: PropTypes.object.def({}),
     fileName: PropTypes.string.def(''),
     params: PropTypes.object.def({}),
@@ -25,11 +29,19 @@ export default {
   },
   methods: {
     async clickHandle() {
-      if (!this.actionUrl) return;
+      this.loading = true;
       try {
-        this.loading = true;
-        await this.downloadFile(this.actionUrl, this.params);
-        this.$emit('success');
+        let actionUrl = this.actionUrl;
+        if (this.actionUrlFetch?.api) {
+          const res = await this.actionUrlFetch.api(this.actionUrlFetch.params);
+          if (res.code === 200) {
+            actionUrl = res.data?.url || res.data?.vUrl;
+          }
+        }
+        if (actionUrl) {
+          await this.downloadFile(actionUrl, this.params);
+          this.$emit('success');
+        }
       } catch (err) {
         this.$emit('error', err);
         this.$message.error(this.t('downLoadFile.error'));
@@ -45,7 +57,7 @@ export default {
       const { headers, data } = await this.downLoadByUrl(url, params);
       const contentDisposition = headers['content-disposition'];
       // 获取文件名
-      const fileName = contentDisposition ? contentDisposition.split(';')[1].split('filename=')[1] : !this.fileName ? url.slice(url.lastIndexOf('/') + 1) : this.fileName;
+      const fileName = this.fileName ? this.fileName : contentDisposition ? contentDisposition.split(';')[1].split('filename=')[1] : url.slice(url.lastIndexOf('/') + 1);
       // ie10+
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(data, decodeURI(fileName));

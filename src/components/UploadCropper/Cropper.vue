@@ -145,7 +145,7 @@ export default {
     // 截图框展示宽高类型
     infoTrue: {
       type: Boolean,
-      default: false
+      default: true
     },
     // 可以压缩图片宽高  默认不超过200
     maxImgSize: {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-24 16:54:00
+ * @Last Modified time: 2020-11-16 10:53:39
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -31,8 +31,8 @@ export default {
       params: PropTypes.object,
       callback: PropTypes.func
     }),
-    isCalcHeight: PropTypes.bool.def(false),
-    fixedSize: PropTypes.array.def([5, 4]),
+    isCalcHeight: PropTypes.bool.def(true),
+    fixedSize: PropTypes.array.def([1.5, 1]),
     titles: PropTypes.array.def([]),
     limit: PropTypes.number.def(1),
     params: PropTypes.object.def({}),
@@ -140,7 +140,7 @@ export default {
       this.isLoading = false;
     },
     setUploadWrapHeight() {
-      const iHeight = !this.isCalcHeight ? this.height : Number.parseInt((this.width * this.fixedSize[1]) / this.fixedSize[0]);
+      const iHeight = this.isCalcHeight && this.fixedSize.length === 2 ? Number.parseInt((this.width * this.fixedSize[1]) / this.fixedSize[0]) : this.height;
       this.uploadWrap.style.height = `${iHeight}px`;
       this.uploadWrap.style.lineHeight = `${iHeight - 2}px`;
     },
@@ -226,7 +226,7 @@ export default {
       props: {
         visible: this.cropperVisible,
         title: this.t('uploadCropper.cropper'),
-        width: '800px',
+        width: '830px',
         destroyOnClose: true
       },
       on: {
