@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-05 07:58:01
+ * @Last Modified time: 2020-11-25 10:16:51
  */
 'use strict';
 
@@ -52,6 +52,7 @@ module.exports = {
     }
   },
   module: {
+    noParse: /^(vue|vuex|vue-router)$/,
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
@@ -66,7 +67,7 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        use: ['babel-loader?cacheDirectory'],
+        use: process.env.NODE_ENV === 'production' ? ['thread-loader', 'babel-loader?cacheDirectory'] : ['babel-loader?cacheDirectory'],
         include: [utils.resolve('src')],
         exclude: /node_modules/
       },

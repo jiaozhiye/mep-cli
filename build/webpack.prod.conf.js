@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-25 09:26:11
+ * @Last Modified time: 2020-11-25 10:16:02
  */
 'use strict';
 
@@ -63,8 +63,8 @@ const webpackConfig = merge(baseWebpackConfig, {
           test: /[\\/]node_modules[\\/]/,
           priority: -10
         },
-        default: {
-          name: 'app.commons',
+        common: {
+          name: 'app.common',
           minChunks: 2, // 最小被引用的次数
           priority: -20, // 优先级，多个分组冲突时决定把代码放在哪块
           reuseExistingChunk: true // 是否重用已经存在的模块
