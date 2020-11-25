@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-12 09:15:17
+ * @Last Modified time: 2020-11-17 10:01:47
  */
 import { isEqual, isFunction, isObject } from 'lodash';
 import moment from 'moment';
@@ -16,6 +16,7 @@ import SearchHelper from '../../../SearchHelper';
 import BaseDialog from '../../../BaseDialog';
 
 const noop = () => {};
+const trueNoop = () => true;
 
 export default {
   name: 'CellEdit',
@@ -320,6 +321,9 @@ export default {
                 result[key] = data[dataKey];
               }
               const current = alias[dataIndex] ? data[alias[dataIndex]] : '';
+              // 关闭的前置钩子
+              const beforeClose = helper.beforeClose ?? helper.close ?? trueNoop;
+              if (!beforeClose(data, { [this.dataKey]: prevValue }, row, column)) return;
               // 对表格单元格赋值
               setHelperValues(current, result);
             }
@@ -351,8 +355,9 @@ export default {
               icon="el-icon-search"
               onClick={ev => {
                 if (isObject(helper)) {
-                  const { open = () => true } = helper;
-                  if (!open({ [this.dataKey]: prevValue }, row, column)) return;
+                  // 打开的前置钩子
+                  const beforeOpen = helper.beforeOpen ?? helper.open ?? trueNoop;
+                  if (!beforeOpen({ [this.dataKey]: prevValue }, row, column)) return;
                   this.shVisible = !0;
                 } else {
                   onClick({ [this.dataKey]: prevValue }, row, column, setHelperValues, ev);

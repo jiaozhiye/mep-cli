@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-30 13:37:01
+ * @Last Modified time: 2020-11-21 13:35:16
  */
 import { formatNumber, setCellValue, getCellValue } from '../utils';
 import config from '../config';
@@ -85,6 +85,7 @@ export default {
     },
     renderCell(column, row, index) {
       const {
+        tableFullData,
         leftFixedColumns,
         rightFixedColumns,
         getStickyLeft,
@@ -93,7 +94,7 @@ export default {
         scrollY,
         isIE
       } = this.$$table;
-      const { dataIndex, fixed, align } = column;
+      const { dataIndex, fixed, align, summation } = column;
       const cls = [
         `v-footer--column`,
         `col--ellipsis`,
@@ -112,7 +113,7 @@ export default {
             right: fixed === 'right' ? `${getStickyRight(dataIndex) + (scrollY ? gutterWidth : 0)}px` : null
           }
         : null;
-      const text = getCellValue(row, dataIndex);
+      const text = summation?.render ? summation.render(tableFullData) : getCellValue(row, dataIndex);
       return (
         <td key={dataIndex} class={cls} style={{ ...stys }}>
           <div class="v-cell">{index === 0 && text === '' ? config.summaryText() : text}</div>

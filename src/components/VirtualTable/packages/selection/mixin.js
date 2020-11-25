@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-21 08:50:48
+ * @Last Modified time: 2020-11-18 11:36:45
  */
 import { deepFindRowKey, isArrayContain } from '../utils';
 import config from '../config';
@@ -46,16 +46,17 @@ const selectionMixin = {
       return arr;
     },
     // 选择列已选中 keys
-    createSelectionKeys() {
-      const { rowSelection, isTreeTable } = this;
-      const { type, checkStrictly = !0, selectedRowKeys = [] } = rowSelection || {};
+    createSelectionKeys(keys) {
+      const { rowSelection, selectionKeys, isTreeTable } = this;
+      const { type, checkStrictly = !0 } = rowSelection || {};
+      const rowSelectionKeys = Array.isArray(keys) ? keys : selectionKeys;
       let result = [];
       if (isTreeTable && !checkStrictly) {
-        selectedRowKeys.forEach(x => {
-          result.push(...this.createTreeSelectionKeys(x, selectedRowKeys));
+        rowSelectionKeys.forEach(x => {
+          result.push(...this.createTreeSelectionKeys(x, rowSelectionKeys));
         });
       }
-      return type === 'radio' ? selectedRowKeys.slice(0, 1) : [...new Set([...selectedRowKeys, ...result])];
+      return type === 'radio' ? rowSelectionKeys.slice(0, 1) : [...new Set([...rowSelectionKeys, ...result])];
     }
   }
 };

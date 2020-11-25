@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-20 16:21:17
+ * @Last Modified time: 2020-11-21 14:15:20
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -29,7 +29,7 @@ const columnItem = {
     )
   }),
   precision: PropTypes.number, // 数值类型字段的精度
-  formatType: PropTypes.oneOf(['date', 'datetime', 'finance', 'secret-name', 'secret-phone', 'secret-IDnumber']), // 字段的格式化类型
+  formatType: PropTypes.oneOf(['date', 'datetime', 'dateShortTime', 'finance', 'secret-name', 'secret-phone', 'secret-IDnumber']), // 字段的格式化类型
   required: PropTypes.bool, // 可编辑列是否必填
   editRender: PropTypes.func, // 可编辑单元格，参数: row, column; 返回值类型: object
   // 数据字典项
@@ -43,9 +43,17 @@ const columnItem = {
   summation: PropTypes.shape({
     dataKey: PropTypes.string, // 服务端合计的数据字段名(路径)
     unit: PropTypes.string, // 合计字段的单位
+    render: PropTypes.func, // 自定义渲染方法
     onChange: PropTypes.func // 字段合计变化时触发
   }),
-  groupSummary: PropTypes.bool.def(false), // 分组汇总
+  groupSummary: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      dataKey: PropTypes.string, // 服务端合计的数据字段名(路径)
+      unit: PropTypes.string, // 合计字段的单位
+      render: PropTypes.func // 自定义渲染方法
+    })
+  ]).def(false), // 分组汇总
   render: PropTypes.func, // 列渲染方法，参数: text, row, column, rowIndex, cellIndex; 返回值类型: JSX
   extraRender: PropTypes.func // 额外的渲染方法，用于处理导出或打印单元格的值，参数: text, row, column, rowIndex, cellIndex; 返回值类型: string/number
 };
@@ -76,7 +84,9 @@ const columnItem = {
  *     filters: PropTypes.object,
  *     table: PropTypes.object,
  *     fieldAliasMap: PropTypes.func,
- *     open: PropTypes.func,
+ *     beforeOpen: PropTypes.func,
+ *     opened: PropTypes.func,
+ *     beforeClose: PropTypes.func,
  *     closed: PropTypes.func
  *   }),
  *   rules: PropTypes.arrayOf(PropTypes.shape({
@@ -215,6 +225,8 @@ export default {
  * GET_LOG: 获取操作记录，非空校验、格式校验、数据操作记录，返回值：object
  * CLEAR_LOG: 清空表格操作记录
  * CLEAR_TABLE_DATA: 清空表格数据
+ * SCROLL_TO_RECORD: 滚动到指定数据行，参数 rowKey
+ * SCROLL_TO_COLUMN: 滚动到指定表格列，参数 dataIndex
  */
 
 // 清空高级检索: 1. fetch.params 变化  2. headFilters 变化  3. 点击清空按钮

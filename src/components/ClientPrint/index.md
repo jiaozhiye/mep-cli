@@ -4,7 +4,7 @@
 
 | 参数           | 说明                                                         | 类型            | 默认值 |
 | -------------- | ------------------------------------------------------------ | --------------- | ------ |
-| templateRender | 打印模板组件，必要参数，[配置项](#template)                  | object          | -      |
+| templateRender | 打印模板组件，必要参数                                       | object          | -      |
 | dataSource     | 打印数据，必要参数                                           | array \| object | -      |
 | uniqueKey      | 设置打印各种配置信息的本地缓存，不能重复                     | string          | -      |
 | defaultConfig  | 默认的打印参数设置，[配置项](#config)                        | object          | -      |
@@ -22,12 +22,12 @@
 
 ### ClientPrintItem
 
-| 参数           | 说明                                        | 类型            | 默认值 |
-| -------------- | ------------------------------------------- | --------------- | ------ |
-| label          | 打印选项卡名称                              | string          | -      |
-| dataSource     | 打印数据，必要参数                          | array \| object | -      |
-| templateRender | 打印模板组件，必要参数，[配置项](#template) | object          | -      |
-| disabled       | 是否禁用当前选项卡                          | boolean         | false  |
+| 参数           | 说明                   | 类型            | 默认值 |
+| -------------- | ---------------------- | --------------- | ------ |
+| label          | 打印选项卡名称         | string          | -      |
+| dataSource     | 打印数据，必要参数     | array \| object | -      |
+| templateRender | 打印模板组件，必要参数 | object          | -      |
+| disabled       | 是否禁用当前选项卡     | boolean         | false  |
 
 ### 方法
 
@@ -43,13 +43,6 @@
 | export   | 导出的回调事件，参数表示是否成功导出 | Function(bool) |
 | open     | 打印预览窗口，打开时触发             | -              |
 | close    | 打印预览窗口，关闭时触发             | -              |
-
-### template
-
-| 参数名称       | 说明                                                      | 类型   |
-| -------------- | --------------------------------------------------------- | ------ |
-| templateRender | 异步组件，() => import(`@test/pages/printTemplate/demo2`) | func   |
-| templateRender | 模板组件，可实现动态切换模板组件                          | object |
 
 ### config
 
@@ -98,12 +91,15 @@
 ```bash
 # template
 <template>
-  <client-print uniqueKey="print_jzy" :dataSource="printData" :click="printHandle" :templateRender="() => import(`@test/pages/printTemplate/demo2`)">打印</client-print>
+  <client-print uniqueKey="print_jzy" :dataSource="printData" :click="printHandle" :templateRender="printTemplate">打印</client-print>
 </template>
 
 # js
+import DemoTemplate from '@test/pages/printTemplate/demo2';
+
 export default {
   data: {
+    printTemplate: DemoTemplate, // 可以动态切换
     printData: []
   },
   methods: {

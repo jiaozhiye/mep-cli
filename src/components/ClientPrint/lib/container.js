@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 09:34:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-03 08:36:36
+ * @Last Modified time: 2020-11-24 16:57:35
  */
 import { sleep } from '../../_utils/tool';
 import { mmToPx, pxToMm, insertBefore, isPageBreak } from './utils';
@@ -265,7 +265,15 @@ export default {
       return __html__;
     },
     createExportHtml() {
-      return '<table>' + this.createLogo() + this.createTdCols() + this.elementHtmls.join('') + '</table>';
+      let exportHtmls = [];
+      for (let i = 0; i < this.elementHtmls.length; i++) {
+        exportHtmls[i] = this.elementHtmls[i]
+          .replace(/[\r\n]/g, '')
+          .replace(/\s+/g, ' ')
+          .replace(/(<td[^>]+>)\s+/, '$1')
+          .replace(/\s+(<\/td>)/, '$1');
+      }
+      return '<table>' + this.createLogo() + this.createTdCols() + exportHtmls.join('') + '</table>';
     },
     // 加载完成打印模板组件，创建预览工作区
     async SHOW_PREVIEW() {

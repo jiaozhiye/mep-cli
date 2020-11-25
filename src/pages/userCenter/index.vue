@@ -185,6 +185,7 @@ export default {
     .content {
       display: flex;
       flex-wrap: wrap;
+      margin: 0;
       padding-top: 6px;
       line-height: 1.75;
       max-height: 260px;

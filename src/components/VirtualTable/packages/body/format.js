@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-24 18:37:10
+ * @Last Modified time: 2020-11-17 20:08:20
  */
 import moment from 'moment';
 import { formatNumber } from '../utils';
@@ -15,6 +15,10 @@ const formatMixin = {
     },
     datetimeFormat(val) {
       const res = val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '';
+      return !res.startsWith('1900-01-01') ? res : '';
+    },
+    dateShortTimeFormat(val) {
+      const res = val ? moment(val).format('YYYY-MM-DD HH:mm') : '';
       return !res.startsWith('1900-01-01') ? res : '';
     },
     financeFormat(val) {

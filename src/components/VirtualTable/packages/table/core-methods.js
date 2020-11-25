@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-21 08:50:42
+ * @Last Modified time: 2020-11-18 13:58:32
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -75,6 +75,7 @@ export default {
             this.createTableData(items);
             this.setRecordsTotal(total);
             this.createServerSummation(res.data);
+            this.fetchChangeHandle(res.data);
           }
         } else {
           this.createTableData([]);
@@ -243,6 +244,10 @@ export default {
       results.push.apply(results, this.findParentRowKeys(deriveRowKeys, results[results.length - 1]));
     }
     return results;
+  },
+  // 请求数据接口事件
+  fetchChangeHandle(data) {
+    this.$emit('fetchChange', data);
   },
   // 数据变化事件
   dataChangeHandle() {

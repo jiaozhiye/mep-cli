@@ -1,6 +1,6 @@
 <template>
   <div class="nomatch-wrap">
-    <div class="content">
+    <div class="container">
       <h2>404</h2>
       <div class="desc">{{ $t('noMatch.text') }}</div>
       <!-- <div class="actions">
@@ -27,8 +27,9 @@ export default {
   align-items: center;
   height: 100%;
   background: url(../../assets/img/not-found.svg) 30% 40% no-repeat;
-  .content {
+  .container {
     flex: 1;
+    margin: 0;
     margin-top: -10vh;
     margin-left: 50vw;
     h2 {

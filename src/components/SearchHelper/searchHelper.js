@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-10 09:12:51
+ * @Last Modified time: 2020-11-24 09:16:57
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -50,7 +50,8 @@ export default {
       fetch: {
         api: fetch.api,
         params: cloneDeep(Object.assign({}, fetch.params, this.initialValue)),
-        dataKey: fetch.dataKey
+        dataKey: fetch.dataKey,
+        xhrAbort: fetch.xhrAbort || false
       },
       loading: false,
       alias: this.fieldAliasMap() || {}
@@ -178,7 +179,8 @@ export default {
       ];
     },
     filterChangeHandle(val) {
-      let params = this.table.fetch?.params;
+      let params = this.table.fetch?.params ?? {};
+      // 处理查询参数
       if (isFunction(this.beforeFetch)) {
         val = this.beforeFetch(val);
       }
@@ -186,6 +188,7 @@ export default {
       if (isFunction(this.getServerConfig)) {
         val = { name: this.name, condition: val };
       }
+      this.fetch.xhrAbort = !1;
       this.fetch.params = merge({}, params, val);
     },
     collapseHandle() {

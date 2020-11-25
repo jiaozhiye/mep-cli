@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-20 16:56:17
+ * @Last Modified time: 2020-11-18 11:28:51
  */
 import baseProps from './props';
 import Store from '../store';
@@ -118,7 +118,7 @@ export default {
         footerHeight: 0
       },
       // 选择列，已选中行的 keys
-      selectionKeys: [],
+      selectionKeys: this.rowSelection?.selectedRowKeys ?? [],
       // 行高亮，已选中的 key
       highlightKey: this.rowHighlight?.currentRowKey ?? '',
       // 已展开行的 keys
@@ -304,7 +304,7 @@ export default {
     },
     [`rowSelection.selectedRowKeys`](next) {
       this.$$tableBody.setClickedValues([next[0], 'index']);
-      this.selectionKeys = this.createSelectionKeys();
+      this.selectionKeys = this.createSelectionKeys(next);
       if (this.isTreeTable) {
         this.rowExpandedKeys = this.createRowExpandedKeys();
       }

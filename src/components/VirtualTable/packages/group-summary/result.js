@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-02 13:49:33
+ * @Last Modified time: 2020-11-21 14:02:58
  */
-import { maxBy, minBy, sumBy } from 'lodash';
+import { maxBy, minBy, sumBy, isObject } from 'lodash';
 import { groupBy, getCellValue, setCellValue } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
@@ -81,10 +81,17 @@ export default {
           dataIndex: x.dataIndex,
           dictItems: x.dictItems
         })),
-        ...summaryColumns.map(x => ({
-          ...x,
-          ...(x.formula === 'count' || x.formula === 'sum' ? { summation: this.$$table.isFetch ? { dataKey: x.dataIndex } : {} } : null)
-        }))
+        ...summaryColumns.map(x => {
+          let groupSummary = this.columns.find(k => k.dataIndex === x.dataIndex)?.groupSummary;
+          let summation = groupSummary ? { summation: isObject(groupSummary) ? groupSummary : {} } : null;
+          if (x.dataIndex === config.groupSummary.total.value) {
+            summation = { dataIndex: config.groupSummary.recordTotalIndex, summation: { render: () => this.$$table.total } };
+          }
+          return {
+            ...x,
+            ...(x.formula === 'count' || x.formula === 'sum' ? summation : null)
+          };
+        })
       ];
     },
     createvTableData(list) {
@@ -102,7 +109,7 @@ export default {
           setCellValue(record, dataIndex, getCellValue(arr[0], dataIndex));
         });
         this.summary.forEach(x => {
-          let key = x.summary;
+          let key = x.summary !== config.groupSummary.total.value ? x.summary : config.groupSummary.recordTotalIndex;
           let fn = x.formula;
           if (fn === 'count') {
             setCellValue(record, key, arr.length);

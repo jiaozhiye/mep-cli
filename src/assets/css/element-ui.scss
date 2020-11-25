@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 15:16:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-05 18:50:26
+ * @Last Modified time: 2020-11-20 09:50:28
  */
 .el-notification {
   a {
@@ -84,6 +84,12 @@
     transition: none;
   }
 }
+.el-textarea {
+  .el-textarea__inner {
+    padding-left: $modulePadding;
+    padding-right: $modulePadding;
+  }
+}
 .el-radio-group {
   line-height: inherit;
 }
@@ -97,24 +103,30 @@
   }
 }
 .el-select {
-  .el-input {
-    .el-input__suffix {
-      background-color: transparent;
+  .el-input > .el-input__suffix {
+    background-color: transparent;
+  }
+  .el-select__tags {
+    .el-select__input {
+      margin-left: $moduleMargin;
+    }
+    .el-tag > .el-tag__close {
+      right: -3px;
     }
   }
-  .el-select-dropdown {
-    .el-select-group__wrap {
-      .el-select-group__title {
-        padding: 0 $modulePadding;
-      }
-      &::after {
-        left: 10px;
-        right: 10px;
-      }
-    }
-    .el-select-dropdown__item {
+}
+.el-select-dropdown {
+  .el-select-group__wrap {
+    .el-select-group__title {
       padding: 0 $modulePadding;
     }
+    &::after {
+      left: $moduleMargin;
+      right: $moduleMargin;
+    }
+  }
+  .el-select-dropdown__item {
+    padding: 0 $modulePadding;
   }
 }
 .el-autocomplete-suggestion {

@@ -2,10 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-04 14:35:49
+ * @Last Modified time: 2020-11-16 20:09:34
  **/
 import axios from 'axios';
-import { cloneDeep } from 'lodash';
 import { Message } from 'element-ui';
 import PropTypes from '../_utils/vue-types';
 import Locale from '../_utils/mixins/locale';
@@ -21,9 +20,9 @@ export default {
       PropTypes.shape({
         name: PropTypes.string,
         url: PropTypes.string
-      })
+      }).loose
     ).def([]),
-    fileTypes: PropTypes.array.def(['jpg', 'png', 'pdf', 'xls', 'xlsx']),
+    fileTypes: PropTypes.array.def([]),
     isOnlyButton: PropTypes.bool.def(false),
     limit: PropTypes.number.def(1),
     fileSize: PropTypes.number.def(5),
@@ -57,7 +56,7 @@ export default {
   },
   methods: {
     beforeUploadHandle(file) {
-      const isType = this.fileTypes.includes(file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase());
+      const isType = this.fileTypes.length ? this.fileTypes.includes(file.name.slice(file.name.lastIndexOf('.') + 1).toLowerCase()) : !0;
       const isLt5M = file.size / 1024 / 1024 < this.fileSize;
       const result = isType && isLt5M;
       if (!isType) {
@@ -138,7 +137,7 @@ export default {
         action: $props.actionUrl,
         headers: $props.headers,
         data: $props.params,
-        fileList: cloneDeep(fileList),
+        fileList,
         limit: $props.limit,
         showFileList: !$props.isOnlyButton,
         multiple: false,
@@ -166,7 +165,7 @@ export default {
         <el-button {...btnProps}>{$slots['default']}</el-button>
         {!$props.isOnlyButton ? (
           <div slot="tip" class="el-upload__tip" style="line-height: 1.5">
-            {`${this.t('uploadFile.tooltip', { type: fileTypes.join(',') })}，${this.t('uploadFile.sizeLimit', { size: fileSize })}`}
+            {(fileTypes.length ? `${this.t('uploadFile.tooltip', { type: fileTypes.join(',') })}，` : '') + `${this.t('uploadFile.sizeLimit', { size: fileSize })}`}
           </div>
         ) : null}
       </el-upload>

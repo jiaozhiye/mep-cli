@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-08 10:43:35
+ * @Last Modified time: 2020-11-24 14:28:45
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -149,6 +149,16 @@ export default {
         this.$emit('valuesChange', diff);
       },
       deep: true
+    },
+    desc: {
+      handler(val) {
+        this.formItemList.forEach(x => {
+          if (isObject(x.descOptions)) {
+            x.descOptions.content = val[x.fieldName];
+          }
+        });
+      },
+      deep: true
     }
   },
   created() {
@@ -283,7 +293,20 @@ export default {
         disabled,
         onChange = noop
       } = option;
-      const { minlength = 0, maxlength, showLimit, password = false, noInput = false, pattern, unitRender, onInput = noop, onEnter = noop, onFocus = noop, onBlur = noop } = options;
+      const {
+        minlength = 0,
+        maxlength,
+        showLimit,
+        password = false,
+        noInput = false,
+        unitRender,
+        onInput = noop,
+        onEnter = noop,
+        onFocus = noop,
+        onBlur = noop,
+        onClick = noop,
+        onDblClick = noop
+      } = options;
       const isSearchHelper = !!Object.keys(searchHelper).length;
       const dialogProps = isSearchHelper
         ? {
@@ -311,15 +334,18 @@ export default {
                 const aliasKeys = Object.keys(alias);
                 if (isObject(data) && aliasKeys.length) {
                   for (let key in alias) {
-                    if (key !== 'extra') {
+                    if (key !== 'extra' && !key.endsWith('__desc')) {
                       form[key] = data[alias[key]];
-                    } else {
+                    }
+                    if (key === 'extra') {
                       this.desc[fieldName] = data[alias[key]];
+                    }
+                    if (key.endsWith('__desc')) {
+                      this.desc[key.slice(0, -6)] = data[alias[key]];
                     }
                   }
                   if (aliasKeys.includes(fieldName)) {
-                    let id_key = aliasKeys.find(x => x !== fieldName && x !== 'extra');
-                    onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
+                    shChangeHandle(form[fieldName]);
                   }
                 }
                 const { closed = noop } = searchHelper;
@@ -329,10 +355,28 @@ export default {
             }
           }
         : null;
+      // 搜索帮助 change 事件
+      const shChangeHandle = val => {
+        const others = {};
+        this[`${fieldName}ExtraKeys`].forEach(key => (others[key] = form[key]));
+        this.$nextTick(() => onChange(val, Object.keys(others).length ? others : null));
+      };
       if (isSearchHelper) {
         let fieldKeys = [...Object.keys(searchHelper.fieldAliasMap?.() ?? {}), ...Object.values(searchHelper.fieldsDefine ?? {})];
+        // 其他表单项的 fieldName
         if (!this[`${fieldName}ExtraKeys`]) {
-          this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra');
+          this[`${fieldName}ExtraKeys`] = fieldKeys.filter(x => x !== fieldName && x !== 'extra' && !x.endsWith('__desc'));
+        }
+        // 表单项的表述信息
+        if (!this[`${fieldName}DescKeys`]) {
+          this[`${fieldName}DescKeys`] = fieldKeys
+            .filter(x => x === 'extra' || x.endsWith('__desc'))
+            .map(x => {
+              if (x === 'extra') {
+                return fieldName;
+              }
+              return x.slice(0, -6);
+            });
         }
       }
       this.setViewValue(fieldName, form[fieldName]);
@@ -361,19 +405,25 @@ export default {
             onChange={val => {
               form[fieldName] = val.trim();
               // 搜索帮助
-              const extraKeys = this[`${fieldName}ExtraKeys`];
               if (!val && (isSearchHelper || noInput)) {
-                if (Array.isArray(extraKeys)) {
-                  extraKeys.forEach(key => (form[key] = ''));
+                if (Array.isArray(this[`${fieldName}ExtraKeys`])) {
+                  this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
                 }
-                this.desc[fieldName] = '';
+                if (Array.isArray(this[`${fieldName}DescKeys`])) {
+                  this[`${fieldName}DescKeys`].forEach(key => (this.desc[key] = ''));
+                }
               }
-              const id_key = extraKeys?.find(x => x !== fieldName && x !== 'extra');
-              onChange(form[fieldName], id_key && { [id_key]: form[id_key] });
+              isSearchHelper ? shChangeHandle(form[fieldName]) : onChange(form[fieldName], null);
             }}
             onFocus={onFocus}
-            onBlur={() => onBlur(form[fieldName])}
+            onBlur={() => {
+              onBlur(form[fieldName]);
+            }}
+            nativeOnclick={ev => {
+              onClick(form[fieldName]);
+            }}
             nativeOnDblclick={ev => {
+              onDblClick(form[fieldName]);
               if (!isSearchHelper || disabled) return;
               const { open = () => true } = searchHelper;
               if (!open(this.form)) return;
@@ -1305,8 +1355,8 @@ export default {
     },
     TEXT_AREA(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
-      const { rows = 2, maxrows, maxlength = 200, onInput = noop } = options;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
+      const { rows = 2, maxrows, maxlength = 200, onInput = noop, onClick = noop, onDblClick = noop } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -1325,7 +1375,14 @@ export default {
             clearable
             autosize={{ minRows: rows, maxRows: maxrows }}
             maxlength={maxlength}
+            readonly={readonly}
             showWordLimit
+            nativeOnclick={ev => {
+              onClick(form[fieldName]);
+            }}
+            nativeOnDblclick={ev => {
+              onDblClick(form[fieldName]);
+            }}
             onChange={val => {
               form[fieldName] = val.trim();
               onChange(form[fieldName]);
@@ -1446,7 +1503,7 @@ export default {
         clearable = !0,
         onChange = noop
       } = option;
-      const { filterable, limit } = options;
+      const { filterable = true, limit } = options;
       const { fetchApi, params = {} } = request;
       let itemList = options.itemList || [];
       if (!options.itemList && fetchApi) {
@@ -1730,8 +1787,10 @@ export default {
       return isErr;
     },
     resetForm() {
-      const noResetValue = {};
       this.formItemList.forEach(x => {
+        if (!x.noResetable) {
+          this.SET_FIELDS_VALUE({ [x.fieldName]: cloneDeep(this.initialValues[x.fieldName]) });
+        }
         // 搜索帮助
         let extraKeys = this[`${x.fieldName}ExtraKeys`];
         if (Array.isArray(extraKeys) && extraKeys.length) {
@@ -1739,20 +1798,18 @@ export default {
             this.SET_FORM_VALUES({ [key]: undefined });
           });
         }
-        if (!x.noResetable) return;
-        noResetValue[x.fieldName] = this.form[x.fieldName];
+        let descKeys = this[`${x.fieldName}DescKeys`];
+        if (Array.isArray(descKeys) && descKeys.length) {
+          descKeys.forEach(key => {
+            this.desc[key] = undefined;
+          });
+        }
       });
-      this.$refs.form.resetFields();
+      // this.$refs.form.resetFields();
       this.desc = Object.assign({}, this.initialExtras);
-      Object.assign(this.form, noResetValue);
-      this.excuteFormValue(this.form);
-      // 解决 附件/图片 重复校验的 bug
+      // 解决日期区间(拆分后)重复校验的 bug
       this.$nextTick(() => {
-        this.formItemList.forEach(x => {
-          if (['RANGE_DATE', 'UPLOAD_FILE', 'UPLOAD_IMG'].includes(x.type)) {
-            this.doClearValidate(this.$refs[x.fieldName]);
-          }
-        });
+        this.$refs.form.clearValidate();
       });
     },
     clearForm() {

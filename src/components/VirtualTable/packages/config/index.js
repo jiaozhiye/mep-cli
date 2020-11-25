@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-18 08:36:38
+ * @Last Modified time: 2020-11-21 14:14:14
  */
 import i18n from '../locale';
 
@@ -31,6 +31,7 @@ const config = {
   // 汇总
   groupSummary: {
     total: { text: '记录数', value: '*' },
+    recordTotalIndex: 'nRecordsCount', // 记录数对应的后台数据的 key
     summaryFieldName: 'tsummary',
     groupbyFieldName: 'tgroupby'
   },

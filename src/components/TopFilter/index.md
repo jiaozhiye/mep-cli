@@ -87,7 +87,7 @@
 | 参数          | 说明                                                             | 类型             | 默认值   |
 | ------------- | ---------------------------------------------------------------- | ---------------- | -------- |
 | itemList      | 下拉框的列表数据，[配置项](#item) - SELECT/MULTIPLE_CHECKBOX     | array            | -        |
-| filterable    | 是否开启下拉框的拼音头快速检索功能 - SELECT/MULTIPLE_CHECKBOX    | bool             | false    |
+| filterable    | 是否开启下拉框的拼音头快速检索功能 - SELECT/MULTIPLE_CHECKBOX    | bool             | true     |
 | limit         | 最多可以选择的项目数 - MULTIPLE_SELECT/MULTIPLE_CHECKBOX         | number           | -        |
 | rows          | 文本域的行数 - TEXT_AREA                                         | number           | -        |
 | minlength     | 原生属性，最小输入长度 - INPUT                                   | number           | 0        |
@@ -115,6 +115,8 @@
 | columns       | 配置搜索帮助下拉面板的显示列 - SEARCH_HELPER                     | array            | -        |
 | onInput       | 输入框 input 事件的回调 - INPUT                                  | func             | -        |
 | onFocus       | 输入框获得焦点事件的回调 - INPUT                                 | func             | -        |
+| onClick       | 输入框单击事件的回调 - INPUT/TEXT_AREA                           | func             | -        |
+| onDblClick    | 输入框双击事件的回调 - INPUT/TEXT_AREA                           | func             | -        |
 | unitRender    | 输入框后置内容的渲染方法 - INPUT                                 | func             | JSX Node |
 
 ### dateType
@@ -134,12 +136,25 @@
 
 ### searchHelper
 
-| 参数   | 说明                                                            | 类型                     | 默认值 |
-| ------ | --------------------------------------------------------------- | ------------------------ | ------ |
-| width  | dialog 弹出框的宽度                                             | number \| string         | 60%    |
-| height | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
-| open   | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
-| closed | 关闭搜索帮助的后置钩子                                          | Function(tableData)      | -      |
+| 参数          | 说明                                                            | 类型                     | 默认值 |
+| ------------- | --------------------------------------------------------------- | ------------------------ | ------ |
+| width         | dialog 弹出框的宽度                                             | number \| string         | 60%    |
+| height        | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
+| fieldAliasMap | 表单字段与回传数据字段的映射，返回值 [配置项](#aliasMap)        | func                     | -      |
+| open          | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
+| closed        | 关闭搜索帮助的后置钩子                                          | Function(tableData)      | -      |
+
+### aliasMap
+
+注意：
+
+1. key 为 extra 时，对应的数据会显示成该表单元素的描述信息
+2. key 为 [fieldName]\_\_desc 时，对应的数据会显示成对应表单元素的描述信息，支持配置多个
+
+| 参数  | 说明                         | 类型   | 默认值 |
+| ----- | ---------------------------- | ------ | ------ |
+| key   | 表单字段名                   | string | -      |
+| value | 搜索帮助接口数据对应的字段名 | string | -      |
 
 ### labelOption
 
@@ -203,23 +218,73 @@ export default {
           type: 'INPUT',
           label: '条件1',
           fieldName: 'a',
-          readonly: true,
-          options: {
-            unitRender: () => {
-              return (
-                <el-button
-                  icon="el-icon-search"
-                  onClick={() => {
-                    this.visible_filter = true;
-                  }}
-                />
-              );
+          searchHelper: {
+            // tds =============
+            // name: 'hello',
+            // getServerConfig: () => {},
+            // initialValue: { x2: '1' },
+            // table: {
+            //   rowKey: record => record.id,
+            //   fetch: {
+            //     api: () => {},
+            //     params: {},
+            //     dataKey: 'items'
+            //   }
+            // },
+            // fieldsDefine: {
+            //   valueName: 'id',
+            //   displayName: 'a',
+            //   descriptionName: 'extra'
+            // }
+            // tds =============
+            filters: [
+              {
+                type: 'INPUT',
+                label: '条件1',
+                fieldName: 'a1'
+              },
+              {
+                type: 'INPUT',
+                label: '条件2',
+                fieldName: 'a2'
+              },
+              {
+                type: 'INPUT',
+                label: '条件3',
+                fieldName: 'a3'
+              },
+              {
+                type: 'INPUT',
+                label: '条件4',
+                fieldName: 'a4'
+              }
+            ],
+            table: {
+              columns: [
+                {
+                  title: '创建时间',
+                  dataIndex: 'date'
+                },
+                {
+                  title: '姓名',
+                  dataIndex: 'person.name'
+                }
+              ],
+              rowKey: record => record.id,
+              fetch: {
+                api: () => {},
+                params: {},
+                dataKey: 'items'
+              }
+            },
+            fieldAliasMap: () => {
+              return { a: 'date', code: 'date', a__desc: 'date' };
             }
           },
-          rules: [
-            { required: true, message: '请输入条件', trigger: 'change' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'change' }
-          ]
+          style: { width: `calc(100% - 80px)` },
+          descOptions: {
+            style: { width: '70px' }
+          }
         },
         {
           type: 'SELECT',

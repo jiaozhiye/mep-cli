@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 09:53:04
+ * @Last Modified time: 2020-11-23 19:19:59
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -32,6 +32,16 @@ export default {
       updated: updated.filter(row => ![...intersection(updated, inserted), ...intersection(updated, removed)].includes(row)),
       removed: removed.filter(row => !intersections.includes(row))
     };
+  },
+  // 获取表格的查询参数
+  GET_FETCH_PARAMS() {
+    let params = {};
+    for (let key in this.fetchParams) {
+      // 过滤分页参数
+      if (Object.keys(this.pagination).includes(key)) continue;
+      params[key] = this.fetchParams[key];
+    }
+    return params;
   },
   // 打开单元格搜索帮助面板
   OPEN_SEARCH_HELPER(rowKey, dataIndex) {

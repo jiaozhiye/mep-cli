@@ -56,6 +56,7 @@
 | CALCULATE_HEIGHT | 计算表格高度                                   | -                                          | -      |
 | DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | Function(callback)                         | -      |
 | GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                          | object |
+| GET_FETCH_PARAMS | 获取表格的查询参数                             | -                                          | object |
 | CLEAR_TABLE_DATA | 清空表格数据                                   | -                                          | -      |
 | CLEAR_LOG        | 清空表格操作记录                               | -                                          | -      |
 | SCROLL_TO_RECORD | 滚动到指定数据行                               | Function(rowKey)                           | -      |
@@ -85,7 +86,7 @@
 | editRender   | 可编辑单元格，返回值请参考 [配置项](#editable) | Function(row, column):object                                      | -      |
 | dictItems    | 数据字典配置，[配置项](#item)                  | array                                                             | -      |
 | summation    | 底部合计，[配置项](#summation)                 | object                                                            | -      |
-| groupSummary | 分组汇总                                       | boolean                                                           | false  |
+| groupSummary | 分组汇总，[配置项](#groupSummary)              | object \| boolean                                                 | false  |
 | render       | 列渲染方法                                     | Function(text, row, column, rowIndex, cellIndex):JSX Node         | -      |
 | extraRender  | 额外的列渲染方法，用于处理导出和打印数据       | Function(text, row, column, rowIndex, cellIndex):string \| number | -      |
 
@@ -192,13 +193,14 @@
 
 ### helper
 
-| 参数          | 说明                                                            | 类型                                  | 默认值 |
-| ------------- | --------------------------------------------------------------- | ------------------------------------- | ------ |
-| filters       | 顶部筛选条件配置，参考 TopFilter 组件，必要参数                 | array                                 | -      |
-| table         | 列表组件配置，[配置项](#table)，必要参数                        | array                                 | -      |
-| fieldAliasMap | 表单字段与回传数据字段的映射，[配置项](#alias)， 必要参数       | func                                  | -      |
-| open          | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function，[参数列表](#shParams): bool | -      |
-| closed        | 关闭搜索帮助的后置钩子，参数是带回的行数据                      | Function(tableData)                   | -      |
+| 参数          | 说明                                                      | 类型                                               | 默认值 |
+| ------------- | --------------------------------------------------------- | -------------------------------------------------- | ------ |
+| filters       | 顶部筛选条件配置，参考 TopFilter 组件，必要参数           | array                                              | -      |
+| table         | 列表组件配置，[配置项](#table)，必要参数                  | array                                              | -      |
+| fieldAliasMap | 表单字段与回传数据字段的映射，[配置项](#alias)， 必要参数 | func                                               | -      |
+| beforeOpen    | 打开搜索帮助的前置钩子，返回 true 打开、false 不打开      | Function(cell, row, column): bool                  | -      |
+| beforeClose   | 关闭搜索帮助的前置钩子，返回 true 关闭、false 不关闭      | Function(searchHelperRow, cell, row, column): bool | -      |
+| closed        | 关闭搜索帮助的后置钩子                                    | Function(row): bool                                | -      |
 
 ### rule
 
@@ -215,6 +217,13 @@
 | dataKey  | 服务端合计，合计数据的 key，支持 `a.b.c` 的路径写法 | string                 | -      |
 | unit     | 合计字段的单位                                      | string                 | -      |
 | onChange | 字段合计变化时触发                                  | Function(value:number) | -      |
+
+### groupSummary
+
+| 参数    | 说明                                                | 类型   | 默认值 |
+| ------- | --------------------------------------------------- | ------ | ------ |
+| dataKey | 服务端合计，合计数据的 key，支持 `a.b.c` 的路径写法 | string | -      |
+| unit    | 合计字段的单位                                      | string | -      |
 
 ### rowSelection
 
