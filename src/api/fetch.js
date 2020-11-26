@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 13:01:24
+ * @Last Modified time: 2020-11-25 20:05:23
  */
 import axios from 'axios';
 import qs from 'qs';
@@ -42,6 +42,19 @@ const getConfigHeaders = () => {
   };
 };
 
+// 取消 ajax 请求
+const CancelToken = axios.CancelToken;
+const pending = [];
+
+const removePending = config => {
+  for (let i = 0; i < pending.length; i++) {
+    if (pending[i].u === `${config.url}&${config.method}`) {
+      pending[i].f();
+      pending.splice(i--, 1);
+    }
+  }
+};
+
 // 创建 axios 实例
 const instance = axios.create({
   baseURL: config.host,
@@ -57,12 +70,14 @@ const instance = axios.create({
 const errorHandler = error => {
   const { response = {} } = error;
   const errortext = codeMessage[response.status] || response.statusText || i18n.t('fetch.default');
-  notifyAction(errortext, 'error', 10);
+  !error.__CANCEL__ && notifyAction(errortext, 'error', 10);
   return Promise.reject(error);
 };
 
 // 请求拦截
 instance.interceptors.request.use(config => {
+  // 取消相同的请求
+  removePending(config);
   // 请求头信息，token 验证
   config.headers = {
     ...config.headers,
@@ -73,12 +88,18 @@ instance.interceptors.request.use(config => {
     ...config.params,
     _t: +new Date().getTime()
   };
+  // 处理 cancelToken
+  config.cancelToken = new CancelToken(c => {
+    pending.push({ u: `${config.url}&${config.method}`, f: c });
+  });
   return config;
 }, errorHandler);
 
 // 响应拦截
 instance.interceptors.response.use(response => {
   let { config, headers, data } = response;
+  // 取消相同的请求
+  removePending(config);
   // 请求异常提示信息
   if (data.code !== 200) {
     // token 过期，需要重新登录
