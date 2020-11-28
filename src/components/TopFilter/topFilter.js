@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-24 11:02:29
+ * @Last Modified time: 2020-11-27 11:31:21
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import moment from 'moment';
@@ -1498,6 +1498,7 @@ export default {
       });
       // this.$refs.form.resetFields();
       this.desc = Object.assign({}, this.initialExtras);
+      this.excuteFormValue(this.form);
       // 解决日期区间(拆分后)重复校验的 bug
       this.$nextTick(() => {
         this.$refs.form.clearValidate();

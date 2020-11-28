@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-07 16:10:11
+ * @Last Modified time: 2020-11-27 17:13:35
  */
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
@@ -26,6 +26,9 @@ export default {
   computed: {
     filterColumns() {
       return filterTableColumns(this.flattenColumns, ['__expandable__', '__selection__', config.operationColumn]);
+    },
+    exportFetch() {
+      return this.$$table.exportExcel.fetch ?? null;
     },
     fields() {
       const target = {};
@@ -71,22 +74,51 @@ export default {
       if (!fetch) {
         return null;
       }
-      const { api, params, dataKey, total } = fetch;
+      const { api, dataKey, total } = fetch;
       return {
         fetch: {
           api,
           params: {
-            ...params,
+            ...this.$$table.fetchParams,
             currentPage: 1,
             pageSize: total
           },
           dataKey
         }
       };
+    },
+    async exportHandle(fileName) {
+      const { fetchParams } = this.$$table;
+      try {
+        const res = await this.exportFetch.api({
+          ...fetchParams,
+          tsortby: undefined,
+          tsummary: undefined,
+          tgroupby: undefined,
+          currentPage: undefined,
+          pageSize: undefined
+        });
+        if (!res.data) return;
+        this.downloadFile(res.data, fileName);
+      } catch (err) {}
+    },
+    // 执行下载动作
+    downloadFile(blob, fileName) {
+      // ie10+
+      if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(blob, decodeURI(fileName));
+      } else {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = decodeURI(fileName);
+        a.click();
+        a = null;
+      }
     }
   },
   render() {
-    const { data, fields, fileName, fetch } = this;
+    const { data, fields, fileName, fetch, exportFetch } = this;
     const exportFileName = fileName ?? `${moment().format('YYYYMMDDHHmmss')}.xlsx`;
     const wrapProps = {
       props: {
@@ -98,11 +130,24 @@ export default {
         formatHandle: this.createDataList
       }
     };
-    const cls = [`v-export--wrapper`, `size--${this.$$table.tableSize}`];
+    const cls = [
+      `v-export--wrapper`,
+      `size--${this.$$table.tableSize}`,
+      {
+        disabled: !this.$$table.total
+      }
+    ];
     return (
-      <div class={cls} title={this.t('table.export.text')}>
-        <JsonToExcel type="text" {...wrapProps} />
-      </div>
+      <span
+        class={cls}
+        title={this.t('table.export.text')}
+        onClick={() => {
+          if (!exportFetch) return;
+          this.exportHandle(exportFileName);
+        }}
+      >
+        {exportFetch ? <i class="iconfont icon-export-excel" /> : <JsonToExcel type="text" {...wrapProps} />}
+      </span>
     );
   }
 };

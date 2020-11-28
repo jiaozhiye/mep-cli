@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-25 20:05:23
+ * @Last Modified time: 2020-11-27 11:11:24
  */
 import axios from 'axios';
 import qs from 'qs';
@@ -90,7 +90,9 @@ instance.interceptors.request.use(config => {
   };
   // 处理 cancelToken
   config.cancelToken = new CancelToken(c => {
-    pending.push({ u: `${config.url}&${config.method}`, f: c });
+    if (config.cancelRequest) {
+      pending.push({ u: `${config.url}&${config.method}`, f: c });
+    }
   });
   return config;
 }, errorHandler);

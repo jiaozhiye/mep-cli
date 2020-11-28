@@ -2,13 +2,16 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:26:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-09 10:33:21
+ * @Last Modified time: 2020-11-27 17:13:50
  */
 .v-export--wrapper {
+  @include button-align(28px);
+  padding: 3px;
+  cursor: pointer;
   .el-button {
     @include button-align(28px);
-    padding: 3px;
-    color: $v-font-color;
+    padding: 0;
+    color: inherit;
     border: 0;
     transition: color 0.3s ease;
     i {
@@ -18,6 +21,10 @@
     &:hover {
       color: $v-primary-color;
     }
+  }
+  &.disabled {
+    color: $v-font-disabled-color;
+    pointer-events: none;
   }
   &.size--mini {
     .el-button {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-21 14:15:20
+ * @Last Modified time: 2020-11-27 13:10:41
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -188,7 +188,11 @@ export default {
   showRefresh: PropTypes.bool.def(true),
   // 导出表格数据
   exportExcel: PropTypes.shape({
-    fileName: PropTypes.string // 导出的文件名，需包含扩展名[xlsx|csv]
+    fileName: PropTypes.string, // 导出的文件名，需包含扩展名[xlsx|csv]
+    fetch: PropTypes.shape({
+      api: PropTypes.func.isRequired, // api 接口
+      params: PropTypes.object // 接口参数
+    })
   }),
   // 表格打印
   tablePrint: PropTypes.shape({

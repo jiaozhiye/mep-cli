@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-19 15:58:23
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 10:06:50
+ * @Last Modified time: 2020-11-24 13:09:14
  */
 import config from '../config';
 import Locale from '../locale/mixin';
@@ -48,7 +48,7 @@ export default {
     return (
       <div class={cls}>
         <span class="summary-button" title={this.t('table.groupSummary.text')} onClick={this.clickHandle}>
-          <i class="iconfont icon-linechart" />
+          <i class="iconfont icon-piechart" />
         </span>
         <BaseDialog {...wrapProps}>
           <GroupSummarySetting columns={columns} onClose={this.closeHandle} />
