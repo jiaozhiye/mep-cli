@@ -80,9 +80,10 @@ export const licensePlateValidate = (rule, value, callback) => {
   if (rule.required && isFormEmpty(value)) {
     return callback(new Error('车牌号不能为空'));
   }
-  let regExp1 = /^[\u4e00-\u9fa5]{1}[A-Z]{0,1}[-]{0,1}[A-Z0-9]{0,5}[挂学警港澳台使领]{0,1}$/;
+  let regExp1 = /^[\u4e00-\u9fa5]{1}[A-Z]{1}[-]{0,1}[A-Z0-9]{4,6}[挂学警港澳台使领]{0,1}$/;
   let regExp2 = /^[W][J][\u4e00-\u9fa5]{0,1}[A-Z0-9-]{5,10}$/;
-  if (isFormEmpty(value) || regExp1.test(value) || regExp2.test(value)) {
+  let regExp3 = /(^未上牌$)|^无$/;
+  if (isFormEmpty(value) || regExp1.test(value) || regExp2.test(value) || regExp3.test(value)) {
     return callback();
   }
   callback(new Error('车牌号格式不正确'));

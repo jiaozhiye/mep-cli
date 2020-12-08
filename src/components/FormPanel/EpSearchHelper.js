@@ -2,10 +2,10 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: shen
- * @LastEditTime: 2020-10-14 08:25:55
+ * @LastEditTime: 2020-12-05 10:06:29
  */
 
-import { get, isObject, template } from 'lodash';
+import { get, isObject, template, isFunction } from 'lodash';
 import PropTypes from '../_utils/vue-types';
 
 export default {
@@ -92,7 +92,14 @@ export default {
   render() {
     const { option } = this;
     const { options = {}, style = {}, fieldName, placeholder = this.$t('form.inputPlaceholder'), disabled, readonly = false, clearable = !0, searchHelper } = option;
-    const { onEnter } = options;
+    const { onEnter, searchAppend } = options;
+    const { icon = 'icon-container', onClick } = isObject(searchAppend) ? searchAppend : {}
+    const searchStyle = isObject(searchAppend) ? {
+      position: 'relative',
+      zIndex: 1,
+      paddingRight: '8px'
+    } : {}
+
     const dialogProps = {
       props: {
         visible: this.visible,
@@ -117,6 +124,7 @@ export default {
         }
       }
     };
+
     return (
       <div style="flex: 1;position: relative">
         <el-autocomplete
@@ -158,17 +166,19 @@ export default {
           }}
         >
           <template slot="append">
-            <el-button icon="el-icon-search" />
+            <el-button disabled={disabled} onClick={() => {this.$emit('open')}} icon="el-icon-search" style={searchStyle} />
+            {
+              isObject(searchAppend) &&
+                  <el-button onClick={() => isFunction(onClick) && onClick()} style="padding-left: 18px;padding-right: 10px">
+                    <i class={`iconfont ${icon}`}></i>
+                  </el-button>
+            }
+            {
+              isObject(searchAppend) &&
+                  <div style="position: absolute;top: 0; bottom: 0; left: 50%; width: 1px; background: #d9d9d9; z-index: 2"></div>
+            }
           </template>
         </el-autocomplete>
-        <div
-          class="ep-search-helper-button"
-          style={disabled && { cursor: 'not-allowed' }}
-          onClick={ev => {
-            if (disabled) return;
-            this.$emit('open');
-          }}
-        ></div>
         <BaseDialog {...dialogProps}>
           <SearchHelper {...shProps} />
         </BaseDialog>
@@ -176,7 +186,7 @@ export default {
     );
   }
 };
-// 使用
+// 使用.icon-container
 // import EpSearchHelper from './EpSearchHelper';
 // EP_SEARCH_HELPER(option) {
 //   const { form, formType } = this;

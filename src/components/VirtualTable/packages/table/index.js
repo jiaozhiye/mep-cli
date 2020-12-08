@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-27 10:06:27
+ * @Last Modified time: 2020-12-07 12:32:07
  */
 import baseProps from './props';
 import Store from '../store';
@@ -56,7 +56,7 @@ export default {
     // 内存分页，每页显示的数据
     this.pageTableData = [];
     // 高级检索的条件
-    this.superSearchQuery = '';
+    this.superFilters = [];
     // 列汇总条件
     this.columnSummaryQuery = this.createColumnSummary();
     return {
@@ -203,7 +203,7 @@ export default {
     },
     fetchParams() {
       const orderby = createOrderBy(this.sorter);
-      const query = createWhereSQL(this.filters) || this.superSearchQuery || '';
+      const query = createWhereSQL(this.filters, config.showFilterType) || createWhereSQL(this.superFilters, config.showFilterType);
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
       const filter = query ? { [config.filterFieldName]: query } : null;

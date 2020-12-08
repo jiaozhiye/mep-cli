@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-18 13:58:32
+ * @Last Modified time: 2020-12-07 12:46:01
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -270,8 +270,8 @@ export default {
     this.pageTableData = this.tableFullData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   },
   // 设置高级检索的条件
-  createSuperSearch(val = '') {
-    this.superSearchQuery = val;
+  createSuperSearch(val) {
+    this.superFilters = val;
   },
   // 设置列汇总条件
   createColumnSummary() {
@@ -307,7 +307,7 @@ export default {
   },
   // 清空高级检索的条件
   clearSuperSearch() {
-    this.createSuperSearch('');
+    this.createSuperSearch([]);
   },
   // 清空列汇总条件
   clearColumnSummary() {

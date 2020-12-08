@@ -1,8 +1,8 @@
 /*
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
- * @LastEditors: 申庆柱
- * @LastEditTime: 2020-08-31 15:09:04
+ * @LastEditors: shen
+ * @LastEditTime: 2020-12-04 10:54:48
  */
 
 import { get } from 'lodash';
@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     item() {
-      return this.$refs.cascader.getCheckedNodes()[0].data;
+      return this.$refs.cascader.getCheckedNodes()[0]?.data;
     }
   },
   watch: {

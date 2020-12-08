@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-31 08:18:09
+ * @Last Modified time: 2020-12-07 12:40:50
  */
 import localforage from 'localforage';
-import { stringify, array_format, isBracketBalance } from '../filter-sql';
-import { createUidKey, hasOwn } from '../utils';
+import { isBracketBalance } from '../filter-sql';
+import { hasOwn, createUidKey, createWhereSQL } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
 
@@ -45,18 +45,7 @@ export default {
       return this.columns.filter(column => !!column.filter);
     },
     query() {
-      let __query__ = ``;
-      let cutStep = 0;
-      for (let i = 0, len = this.currentData.length; i < len; i++) {
-        let x = this.currentData[i];
-        if (!x.fieldName) continue;
-        let type = this.filterColumns.find(k => k.dataIndex === x.fieldName).filter.type;
-        let val = Array.isArray(x.condition) ? array_format(x.condition) : stringify(type === 'number' ? Number(x.condition) : x.condition, '^');
-        __query__ += `${x.bracket_left} ${x.fieldName} ${x.expression} ${val} ${x.bracket_right} ${x.logic} `;
-        cutStep = x.logic.length;
-      }
-      __query__ = __query__.slice(0, -1 * cutStep - 2);
-      return __query__.replace(/\s+/g, ' ').trim();
+      return createWhereSQL(this.currentData);
     },
     confirmDisabled() {
       return !(this.query && isBracketBalance(this.query));
@@ -130,6 +119,8 @@ export default {
                 let dataIndex = Object.values(cell)[0];
                 let filterType = this.filterColumns.find(x => x.dataIndex === dataIndex)?.filter.type;
                 let expressionItems = this.getExpressionHandle(filterType);
+                // 重置 字段类型
+                row[`fieldType`] = filterType;
                 // 重置 运算
                 row[`expression`] = dataIndex ? expressionItems[0]?.value : '';
                 // 重置 条件值
@@ -141,6 +132,12 @@ export default {
               }
             };
           }
+        },
+        {
+          title: '字段类型',
+          dataIndex: 'fieldType',
+          width: 100,
+          hidden: true
         },
         {
           title: '运算',
@@ -316,8 +313,8 @@ export default {
         this.$$table.fetch.xhrAbort = !1;
       }
       clearTableFilter();
-      createSuperSearch(this.query);
-      this.$nextTick(() => this.$$table.$refs[`tableHeader`]?.filterHandle(this.query));
+      createSuperSearch(this.currentData);
+      this.$nextTick(() => this.$$table.$refs[`tableHeader`]?.filterHandle());
       setTimeout(() => this.cancelHandle(), 200);
     },
     cancelHandle() {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-21 14:14:14
+ * @Last Modified time: 2020-12-07 12:28:43
  */
 import i18n from '../locale';
 
@@ -53,6 +53,8 @@ const config = {
   sorterFieldName: 'tsortby',
   // 表头筛选的参数名
   filterFieldName: 'twhere',
+  // 是否显示筛选字段类型
+  showFilterType: true,
   // 打印纸的宽度 A4 -> 1040px
   printWidth: 1040,
   // 可选择列

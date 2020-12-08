@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:11:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-12 15:29:44
+ * @Last Modified time: 2020-12-07 18:33:59
  */
 .v-table--header-wrapper {
   background-color: $v-table-header-background-color;
@@ -17,8 +17,18 @@
 }
 
 .v-header--column {
-  position: relative;
+  text-align: left !important;
   user-select: none;
+  &.col--center {
+    .v-cell--text {
+      justify-content: center;
+    }
+  }
+  &.col--right {
+    .v-cell--text {
+      justify-content: flex-end;
+    }
+  }
   &.v-column--required {
     .v-cell {
       &::before {
@@ -28,63 +38,61 @@
       }
     }
   }
-
   .v-cell--wrapper {
     display: flex;
-    align-items: center;
     height: 100%;
-    .v-cell {
+    .v-cell--text {
+      display: flex;
+      justify-content: flex-start;
       flex: 1;
+      /* 重要 */
+      width: 0;
+      align-items: center;
+      .v-cell {
+        padding-right: 0;
+        line-height: 1;
+      }
     }
   }
 
   /* 排序 */
-  .v-cell--sort {
-    position: absolute;
-    width: 12px;
+  .v-cell--sorter {
+    position: relative;
+    flex-shrink: 0;
+    width: 16px;
     height: 20px;
-    right: 5px;
-    top: 50%;
-    margin-top: -10px;
-    text-align: left;
-    -webkit-transform: scale(0.9);
     transform: scale(0.9);
+    cursor: pointer;
     .v-sort--asc-btn,
     .v-sort--desc-btn {
       position: absolute;
-      width: 12px;
+      width: 100%;
       height: 12px;
       color: $v-icon-color;
-      cursor: pointer;
       &.sort--active {
         color: $v-primary-color;
       }
     }
     .v-sort--asc-btn {
-      top: 0;
+      top: 0px;
     }
     .v-sort--desc-btn {
-      bottom: 0;
+      bottom: 0px;
     }
   }
 
   /* 筛选 */
   .v-cell--filter {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
     width: 20px;
-    z-index: 1;
+    flex-shrink: 0;
     .v-filter-btn {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
       height: 100%;
-      cursor: pointer;
       color: $v-icon-color;
       transition: all 0.3s ease;
+      cursor: pointer;
       .icon-filter {
         width: 12px;
         height: 12px;

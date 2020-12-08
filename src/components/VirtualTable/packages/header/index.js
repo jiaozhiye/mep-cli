@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-11 10:24:45
+ * @Last Modified time: 2020-12-07 16:37:37
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
+import config from '../config';
 import { where } from '../filter-sql';
 import { hasOwn, convertToRows, deepFindColumn, getCellValue, createWhereSQL, isEmpty } from '../utils';
 
@@ -124,13 +125,16 @@ export default {
       const isResizable = resizable && !['__expandable__', '__selection__'].includes(dataIndex);
       return (
         <th key={dataIndex} class={cls} style={{ ...stys }} colspan={colSpan} rowspan={rowSpan} onClick={ev => this.thClickHandle(ev, column)}>
-          <div class="v-cell--wrapper">{this.renderCell(column)}</div>
+          <div class="v-cell--wrapper">
+            <div class="v-cell--text">{this.renderCell(column)}</div>
+            {filter ? this.renderFilter(column) : null}
+          </div>
           {isResizable && <Resizable column={column} />}
         </th>
       );
     },
     renderCell(column) {
-      const { dataIndex, type, sorter, filter, title } = column;
+      const { dataIndex, type, sorter, title } = column;
       const { selectionKeys } = this.$$table;
       if (dataIndex === '__selection__' && type === 'checkbox') {
         return (
@@ -139,18 +143,15 @@ export default {
           </div>
         );
       }
-      let vNodes = [];
-      if (sorter) {
-        vNodes.push(this.renderSorter(this.sorter[dataIndex]));
-      }
-      if (filter) {
-        vNodes.push(this.renderFilter(column));
-      }
-      vNodes.unshift(
+      const vNodes = [];
+      vNodes.push(
         <div class="v-cell" title={title}>
           {title}
         </div>
       );
+      if (sorter) {
+        vNodes.push(this.renderSorter(this.sorter[dataIndex]));
+      }
       return vNodes;
     },
     renderSorter(order) {
@@ -167,10 +168,10 @@ export default {
         }
       ];
       return (
-        <span class="v-cell--sort" title={this.t('table.sorter.text')}>
+        <div class="v-cell--sorter" title={this.t('table.sorter.text')}>
           <SvgIcon class={ascCls} icon-class="caret-up" />
           <SvgIcon class={descCls} icon-class="caret-down" />
-        </span>
+        </div>
       );
     },
     renderFilter(column) {
@@ -230,16 +231,15 @@ export default {
       }
     },
     // 表头筛选
-    filterHandle(sql) {
+    filterHandle() {
       if (!this.isClientFilter) return;
-      this.clientFilter(sql);
+      this.clientFilter();
     },
     // 客户端筛选
-    clientFilter(sql) {
-      if (typeof sql === 'undefined') {
-        sql = createWhereSQL(this.filters);
-      }
-      this.$$table.tableFullData = sql !== '' ? where(this.$$table.tableOriginData, sql) : [...this.$$table.tableOriginData];
+    clientFilter() {
+      const { tableOriginData, superFilters } = this.$$table;
+      const sql = !superFilters.length ? createWhereSQL(this.filters) : createWhereSQL(superFilters);
+      this.$$table.tableFullData = sql !== '' ? where(tableOriginData, sql) : [...tableOriginData];
       // 执行排序
       this.sorterHandle();
     },
@@ -264,7 +264,7 @@ export default {
           }
         }
         // result[`${type}|${property}`]
-        result[property] = filters[key];
+        result[config.showFilterType ? `${type}|${property}` : property] = filters[key];
       }
       return result;
     },

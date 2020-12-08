@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-20 09:36:38
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-21 14:02:58
+ * @Last Modified time: 2020-11-30 15:07:15
  */
 import { maxBy, minBy, sumBy, isObject } from 'lodash';
 import { groupBy, getCellValue, setCellValue } from '../utils';
@@ -27,6 +27,7 @@ export default {
       }
       return { dataIndex: x.summary, ...this.formatColumn(x.summary), formula: x.formula };
     });
+    this.groupTypes = ['date'];
     return {
       loading: !1,
       list: [], // 汇总表格数据
@@ -60,7 +61,14 @@ export default {
       const params = Object.assign({}, fetchParams, {
         [config.sorterFieldName]: undefined,
         [config.groupSummary.summaryFieldName]: this.summary.map(x => `${x.formula}|${x.summary}`).join(','),
-        [config.groupSummary.groupbyFieldName]: this.group.map(x => `${x.group}`).join(','),
+        [config.groupSummary.groupbyFieldName]: this.group
+          .map(x => {
+            const { filter, fieldType } = this.columns.find(k => k.dataIndex === x.group);
+            const type = filter?.type || fieldType;
+            // ** 适应 MEP 后端 **
+            return !this.groupTypes.includes(type) ? `${x.group}` : `${x.group}|${type}`;
+          })
+          .join(','),
         usedJH: 2,
         currentPage: 1
       });

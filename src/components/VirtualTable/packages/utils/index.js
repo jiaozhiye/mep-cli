@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 11:05:37
+ * @Last Modified time: 2020-12-07 13:00:09
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -462,19 +462,32 @@ export const createOrderBy = sorter => {
 };
 
 // 生成查询条件的 sql 片段
-export const createWhereSQL = filters => {
+export const createWhereSQL = (filters, showType = false) => {
   let __query__ = ``;
-  let cutStep = 5;
-  for (let key in filters) {
-    const property = key.includes('|') ? key.split('|')[1] : key;
-    const filterVal = filters[key];
-    for (let mark in filterVal) {
-      let val = Array.isArray(filterVal[mark]) ? array_format(filterVal[mark]) : stringify(filterVal[mark], '^');
-      if (val === "''" || val === '[]') continue;
-      __query__ += `${property} ${mark} ${val} and `;
+  if (!Array.isArray(filters)) {
+    let cutStep = 5;
+    for (let key in filters) {
+      const property = key.includes('|') ? key.split('|')[1] : key;
+      const type = key.includes('|') ? key.split('|')[0] : '';
+      const filterVal = filters[key];
+      for (let mark in filterVal) {
+        let val = Array.isArray(filterVal[mark]) ? array_format(filterVal[mark]) : stringify(filterVal[mark], '^');
+        if (val === "''" || val === '[]') continue;
+        __query__ += `${!showType ? property : `${property}|${type}`} ${mark} ${val} and `;
+      }
     }
+    __query__ = __query__.slice(0, -1 * cutStep);
+  } else {
+    let cutStep = 0;
+    for (let i = 0, len = filters.length; i < len; i++) {
+      let x = filters[i];
+      if (!x.fieldName) continue;
+      let val = Array.isArray(x.condition) ? array_format(x.condition) : stringify(x.fieldType === 'number' ? Number(x.condition) : x.condition, '^');
+      __query__ += `${x.bracket_left} ${!showType ? x.fieldName : `${x.fieldName}|${x.fieldType}`} ${x.expression} ${val} ${x.bracket_right} ${x.logic} `;
+      cutStep = x.logic.length;
+    }
+    __query__ = __query__.slice(0, -1 * cutStep - 2);
   }
-  __query__ = __query__.slice(0, -1 * cutStep);
   // console.log('where:', __query__);
   return __query__.replace(/\s+/g, ' ').trim();
 };

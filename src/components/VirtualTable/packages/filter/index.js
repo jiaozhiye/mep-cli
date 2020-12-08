@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 15:39:53
+ * @Last Modified time: 2020-12-07 16:16:23
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -378,14 +378,14 @@ export default {
       }
     ];
     return (
-      <span class="v-cell--filter" title={this.t('table.filter.text')}>
+      <div class="v-cell--filter" title={this.t('table.filter.text')}>
         <Popper {...wrapProps}>
           <div class={filterBtnCls} slot="reference">
             <SvgIcon class="icon-filter" icon-class="filter" />
           </div>
           <div class="v-popper">{this.renderContent()}</div>
         </Popper>
-      </span>
+      </div>
     );
   }
 };

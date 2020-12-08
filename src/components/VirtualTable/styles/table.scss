@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-14 10:19:46
+ * @Last Modified time: 2020-12-07 18:39:02
  */
 @import './common.scss';
 
@@ -222,9 +222,8 @@
 
   &.is--sortable {
     .v-column-has-sorter {
-      padding-right: 10px;
-      cursor: pointer;
       transition: background-color 0.3s ease;
+      cursor: pointer;
       &:hover {
         background-color: $v-table-column-sort-hover-color;
       }
@@ -234,21 +233,6 @@
     }
     .v-column--sort {
       background-color: $v-table-header-background-color;
-    }
-  }
-
-  &.is--filterable {
-    .v-column-has-filter {
-      padding-right: 10px;
-    }
-  }
-
-  &.is--sortable.is--filterable {
-    .v-column-has-sorter.v-column-has-filter {
-      padding-right: 26px !important;
-      .v-cell--sort {
-        right: 20px !important;
-      }
     }
   }
 
