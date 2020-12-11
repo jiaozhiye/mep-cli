@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-02 18:07:35
+ * @Last Modified time: 2020-12-11 10:14:46
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import config from './config';
 
 export default {
@@ -192,7 +192,7 @@ export default {
 
       LODOP.ADD_PRINT_TABLE(0, 0, 'RightMargin: 0', 'BottomMargin: 0', this.createStyle() + __html__);
 
-      LODOP.SAVE_TO_FILE(`${moment().format('YYYYMMDDHHmmss')}.xlsx`);
+      LODOP.SAVE_TO_FILE(`${dayjs().format('YYYYMMDDHHmmss')}.xlsx`);
     }
   }
 };

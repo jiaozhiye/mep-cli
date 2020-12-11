@@ -2,23 +2,23 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-17 20:08:20
+ * @Last Modified time: 2020-12-11 10:17:18
  */
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { formatNumber } from '../utils';
 
 const formatMixin = {
   methods: {
     dateFormat(val) {
-      const res = val ? moment(val).format('YYYY-MM-DD') : '';
+      const res = val ? dayjs(val).format('YYYY-MM-DD') : '';
       return !res.startsWith('1900-01-01') ? res : '';
     },
     datetimeFormat(val) {
-      const res = val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '';
+      const res = val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '';
       return !res.startsWith('1900-01-01') ? res : '';
     },
     dateShortTimeFormat(val) {
-      const res = val ? moment(val).format('YYYY-MM-DD HH:mm') : '';
+      const res = val ? dayjs(val).format('YYYY-MM-DD HH:mm') : '';
       return !res.startsWith('1900-01-01') ? res : '';
     },
     financeFormat(val) {

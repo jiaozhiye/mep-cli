@@ -2,11 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 13:01:59
+ * @Last Modified time: 2020-12-11 10:21:39
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import CryptoJS from 'crypto-js';
-import moment from 'moment';
 import { cloneDeep } from 'lodash';
 import config from '@/config';
 import i18n from '@/lang';
@@ -133,34 +132,6 @@ export const messageAction = async (msg = '', type = 'info', delay = 4) => {
   Message({ message: msg, showClose: true, type, duration: delay * 1000 });
   await sleep(delay * 1000);
   store.dispatch('app/createNotifyState', false);
-};
-
-/**
- * @description 字符串转 moment 对象
- * @param {string|array} value 入参
- * @param {string} valueFormat 日期类型
- * @returns moment 对象
- */
-export const stringToMoment = (value, valueFormat) => {
-  if (Array.isArray(value)) {
-    return value.map(val => (typeof val === 'string' && val ? moment(val, valueFormat) : val || null));
-  } else {
-    return typeof value === 'string' && value ? moment(value, valueFormat) : value || null;
-  }
-};
-
-/**
- * @description moment 对象转成日期格式字符串
- * @param {string|array} value 入参
- * @param {string} valueFormat 日期类型
- * @returns 转换后的日期格式字符串
- */
-export const momentToString = (value, valueFormat) => {
-  if (Array.isArray(value)) {
-    return value.map(val => (moment.isMoment(val) ? val.format(valueFormat) : val));
-  } else {
-    return moment.isMoment(value) ? value.format(valueFormat) : value;
-  }
 };
 
 /**

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-27 17:13:35
+ * @Last Modified time: 2020-12-11 10:17:38
  */
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
@@ -10,7 +10,7 @@ import JsonToExcel from '../../../JsonToExcel';
 import config from '../config';
 import Locale from '../locale/mixin';
 import { setCellValue, filterTableColumns } from '../utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { get, isFunction } from 'lodash';
 
 export default {
@@ -119,7 +119,7 @@ export default {
   },
   render() {
     const { data, fields, fileName, fetch, exportFetch } = this;
-    const exportFileName = fileName ?? `${moment().format('YYYYMMDDHHmmss')}.xlsx`;
+    const exportFileName = fileName ?? `${dayjs().format('YYYYMMDDHHmmss')}.xlsx`;
     const wrapProps = {
       props: {
         initialValue: data,

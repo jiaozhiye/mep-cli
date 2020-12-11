@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-17 10:01:47
+ * @Last Modified time: 2020-12-11 10:17:38
  */
 import { isEqual, isFunction, isObject } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Locale from '../locale/mixin';
 import { getCellValue, setCellValue, deepFindColumn } from '../utils';
 
@@ -183,7 +183,7 @@ export default {
           size={this.size}
           type={!isDateTime ? 'date' : 'datetime'}
           style={{ width: '100%' }}
-          value={prevValue ? moment(prevValue).format(dateFormat.replace('yyyy', 'YYYY').replace('dd', 'DD')) : prevValue}
+          value={prevValue ? dayjs(prevValue).format(dateFormat.replace('yyyy', 'YYYY').replace('dd', 'DD')) : prevValue}
           onInput={val => {
             setCellValue(row, dataIndex, val);
           }}
@@ -376,12 +376,12 @@ export default {
     // 设置日期控件的禁用状态
     setDisabledDate(oDate, [minDateTime, maxDateTime]) {
       const min = minDateTime
-        ? moment(minDateTime)
+        ? dayjs(minDateTime)
             .toDate()
             .getTime()
         : 0;
       const max = maxDateTime
-        ? moment(maxDateTime)
+        ? dayjs(maxDateTime)
             .toDate()
             .getTime()
         : 0;

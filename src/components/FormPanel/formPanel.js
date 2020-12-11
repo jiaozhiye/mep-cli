@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-27 11:31:54
+ * @Last Modified time: 2020-12-11 10:15:34
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { getConfig } from '../_utils/globle-config';
 import PropTypes from '../_utils/vue-types';
@@ -981,7 +981,7 @@ export default {
               this.isDateChange = !1;
               const currentVal = C.$el.children[0].value;
               if (!/^[\d-\s\:]+$/.test(currentVal)) return;
-              const passed = !this.setDisabledDate(moment(currentVal).toDate(), [minDateTime, maxDateTime]);
+              const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
               if (passed) {
                 form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat);
                 onChange(form[fieldName]);
@@ -992,7 +992,7 @@ export default {
                 if (!this.isDateChange) return;
                 const currentVal = ev.target.value;
                 if (!/^[\d-\s\:]+$/.test(currentVal)) return;
-                const passed = !this.setDisabledDate(moment(currentVal).toDate(), [minDateTime, maxDateTime]);
+                const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
                 if (passed) {
                   form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat);
                 }
@@ -1036,7 +1036,7 @@ export default {
         const end = new Date();
         const start = new Date();
         start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
-        !endDisabled && (form[fieldName][1] = `${moment(end).format('YYYY-MM-DD')} 23:59:59`);
+        !endDisabled && (form[fieldName][1] = `${dayjs(end).format('YYYY-MM-DD')} 23:59:59`);
         picker.$emit('pick', start);
       };
       const pickers = [
@@ -1098,7 +1098,7 @@ export default {
                 this.isDateChange = !1;
                 const startVal = C.$el.children[0].value;
                 if (!/^[\d-\s\:]+$/.test(startVal)) return;
-                const passed = !this.setDisabledDate(moment(startVal).toDate(), [minDateTime, endDate]);
+                const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                 if (passed) {
                   form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat);
                 }
@@ -1108,7 +1108,7 @@ export default {
                   if (!this.isDateChange) return;
                   const startVal = ev.target.value;
                   if (!/^[\d-\s\:]+$/.test(startVal)) return;
-                  const passed = !this.setDisabledDate(moment(startVal).toDate(), [minDateTime, endDate]);
+                  const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                   if (passed) {
                     form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat);
                   }
@@ -1146,7 +1146,7 @@ export default {
                 this.isDateChange = !1;
                 const endVal = C.$el.children[0].value;
                 if (!/^[\d-\s\:]+$/.test(endVal)) return;
-                const passed = !this.setDisabledDate(moment(endVal).toDate(), [startDate, maxDateTime]);
+                const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                 if (passed) {
                   form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat);
                 }
@@ -1156,7 +1156,7 @@ export default {
                   if (!this.isDateChange) return;
                   const endVal = ev.target.value;
                   if (!/^[\d-\s\:]+$/.test(endVal)) return;
-                  const passed = !this.setDisabledDate(moment(endVal).toDate(), [startDate, maxDateTime]);
+                  const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                   if (passed) {
                     form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat);
                   }
@@ -1251,7 +1251,7 @@ export default {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, disabled, onChange = noop } = option;
       const { startTime = '00:00', endTime = '23:45', stepTime = '00:15', startDisabled, endDisabled } = options;
-      const stepMinute = moment(stepTime, valueFormat).minute();
+      const stepMinute = dayjs(stepTime, valueFormat).minute();
       const [startVal, endVal] = form[fieldName];
       this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
@@ -1879,12 +1879,12 @@ export default {
     // 设置日期控件的禁用状态
     setDisabledDate(oDate, [minDateTime, maxDateTime]) {
       const min = minDateTime
-        ? moment(minDateTime)
+        ? dayjs(minDateTime)
             .toDate()
             .getTime()
         : 0;
       const max = maxDateTime
-        ? moment(maxDateTime)
+        ? dayjs(maxDateTime)
             .toDate()
             .getTime()
         : 0;
@@ -1901,24 +1901,24 @@ export default {
     },
     getDefaultStartTime(datetime) {
       const defultValue = this.defultValueOnClear ? `1900-01-01 00:00:00` : '';
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 00:00:00` : defultValue;
+      return datetime ? `${dayjs(datetime).format('YYYY-MM-DD')} 00:00:00` : defultValue;
     },
     getDefaultEndTime(datetime) {
-      const defultValue = this.defultValueOnClear ? `${moment().format('YYYY-MM-DD')} 23:59:59` : '';
-      return datetime ? `${moment(datetime).format('YYYY-MM-DD')} 23:59:59` : defultValue;
+      const defultValue = this.defultValueOnClear ? `${dayjs().format('YYYY-MM-DD')} 23:59:59` : '';
+      return datetime ? `${dayjs(datetime).format('YYYY-MM-DD')} 23:59:59` : defultValue;
     },
     // 日期格式化
     formatDate(val, vf, nft) {
       const arr = Array.isArray(val) ? val : [val];
       const mType = vf.replace('yyyy', 'YYYY').replace('dd', 'DD');
       let res = arr.map((x = '', i) => {
-        let item = /^[\d-\s\:]+$/.test(x) ? moment(x).format(mType) : '';
+        let item = /^[\d-\s\:]+$/.test(x) ? dayjs(x).format(mType) : '';
         if (item === 'Invalid date') {
           item = '';
         }
         if (!item) {
           let defaultDateTime = i === 0 ? this.getDefaultStartTime() : this.getDefaultEndTime();
-          item = defaultDateTime ? moment(defaultDateTime).format(mType) : item;
+          item = defaultDateTime ? dayjs(defaultDateTime).format(mType) : item;
         }
         if (!nft) {
           item = i === 0 ? item.replace(/\d{2}:\d{2}:\d{2}$/, '00:00:00') : item.replace(/\d{2}:\d{2}:\d{2}$/, '23:59:59');
@@ -1926,7 +1926,7 @@ export default {
         return item;
       });
       // 日期区间类型 & 后边小于前边
-      if (res.length === 2 && moment(res[1]).isBefore(res[0])) {
+      if (res.length === 2 && dayjs(res[1]).isBefore(res[0])) {
         res[1] = res[0];
       }
       if (res.every(x => !x)) {

@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 10:26:05
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-07 16:03:45
+ * @Last Modified time: 2020-12-11 10:17:05
  */
 import { get, isFunction, isObject, isBoolean } from 'lodash';
 import XLSX from 'xlsx';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Message } from 'element-ui';
 import PropTypes from '../_utils/vue-types';
 import Locale from '../_utils/mixins/locale';
@@ -85,7 +85,7 @@ export default {
       }
       let json = this.getProcessedJson(data, this.fields);
       // 执行导出
-      this.export(this.getSheetData([json]), this.fileName ?? `${moment().format('YYYYMMDDHHmmss')}.xlsx`);
+      this.export(this.getSheetData([json]), this.fileName ?? `${dayjs().format('YYYYMMDDHHmmss')}.xlsx`);
     },
     getSheetData(data) {
       this.clearWorkbook();

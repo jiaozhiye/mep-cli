@@ -80,15 +80,15 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-02 10:49:26
+ * @Last Modified time: 2020-12-11 10:19:50
  **/
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default {
   props: ['data'],
   data() {
     return {
-      nowTime: moment().format('YYYY-MM-DD HH:mm:ss')
+      nowTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
     };
   },
   computed: {

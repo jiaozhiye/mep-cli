@@ -3,10 +3,10 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 11:05:49
+ * @Last Modified time: 2020-12-11 10:19:29
  **/
 import { get, set, cloneDeep, uniqBy, intersection, isEqual, isUndefined, isNumber, isObject, isNull, isFunction, isRegExp } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import config from './config';
 import { mergeProps, getOptionProps } from '../_utils/props-util';
 import { debounce } from '../_utils/tool';
@@ -543,7 +543,7 @@ export default {
           <el-date-picker
             type={conf.dateType}
             size="small"
-            value={prevValue ? moment(prevValue).format(momentFormat) : prevValue}
+            value={prevValue ? dayjs(prevValue).format(momentFormat) : prevValue}
             onInput={val => set(props.row, dataIndex, val)}
             placeholder={conf.placeholder}
             format={conf.format}
@@ -556,7 +556,7 @@ export default {
                   const target = !this.isDate(minDateTime) ? this.getFormatData(props.row, minDateTime) : minDateTime;
                   return (
                     time.getTime() <
-                    moment(target, momentFormat)
+                    dayjs(target, momentFormat)
                       .toDate()
                       .getTime()
                   );
@@ -565,7 +565,7 @@ export default {
                   const target = !this.isDate(maxDateTime) ? this.getFormatData(props.row, maxDateTime) : maxDateTime;
                   return (
                     time.getTime() >
-                    moment(target, momentFormat)
+                    dayjs(target, momentFormat)
                       .toDate()
                       .getTime()
                   );
@@ -918,7 +918,7 @@ export default {
     dateFormat(column, input) {
       if (column.dateFormat) {
         const dateFormat = column.dateFormat.replace('yyyy', 'YYYY').replace('dd', 'DD');
-        const dateVal = moment(input).format(dateFormat);
+        const dateVal = dayjs(input).format(dateFormat);
         input = dateVal === 'Invalid date' ? input : dateVal;
       }
       return input;
@@ -1310,7 +1310,7 @@ export default {
           }
           if (type === 'date-range' && this.filters[attr].length) {
             // 是否在时间范围内
-            return moment(target, 'YYYY-MM-DD').isBetween(this.filters[attr][0], this.filters[attr][1], null, '[]');
+            return dayjs(target, 'YYYY-MM-DD').isBetween(this.filters[attr][0], this.filters[attr][1], null, '[]');
           }
           return true;
         });
