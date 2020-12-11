@@ -166,15 +166,15 @@
   .v-body--expanded-column,
   .v-footer--column {
     position: relative;
-    line-height: $v-table-row-line-height;
     text-align: left;
+    line-height: $v-table-row-line-height;
     &:not(.col--ellipsis) {
       padding: #{floor(($v-table-row-height-default - $v-table-row-line-height) / 2)} 0;
     }
-    &.col--center {
+    &.col--center:not(.v-header--column) {
       text-align: center;
     }
-    &.col--right {
+    &.col--right:not(.v-header--column) {
       text-align: right;
     }
   }

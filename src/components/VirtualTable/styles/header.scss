@@ -2,13 +2,32 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:11:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 18:33:59
+ * @Last Modified time: 2020-12-10 14:30:49
  */
+%TheadAlignCenter {
+  .v-cell--text {
+    justify-content: center !important;
+  }
+  &:not(.v-column-has-sorter):not(.v-column-has-filter) {
+    .v-cell--text {
+      .v-cell {
+        padding-right: $v-module-distance;
+      }
+    }
+  }
+}
+
+%TheadAlignRight {
+  .v-cell--text {
+    justify-content: flex-end !important;
+  }
+}
+
 .v-table--header-wrapper {
   background-color: $v-table-header-background-color;
   .v-table--header {
     tr > th[colspan]:not([colspan='1']) {
-      text-align: center;
+      @extend %TheadAlignCenter;
     }
   }
   .gutter {
@@ -17,17 +36,26 @@
 }
 
 .v-header--column {
-  text-align: left !important;
-  user-select: none;
-  &.col--center {
+  .v-cell--wrapper {
+    display: flex;
+    height: 100%;
     .v-cell--text {
-      justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex: 1;
+      /* 重要 */
+      width: 0;
+      .v-cell {
+        padding-right: 0;
+      }
     }
   }
+  &.col--center {
+    @extend %TheadAlignCenter;
+  }
   &.col--right {
-    .v-cell--text {
-      justify-content: flex-end;
-    }
+    @extend %TheadAlignRight;
   }
   &.v-column--required {
     .v-cell {
@@ -35,22 +63,6 @@
         content: '*';
         color: $v-danger-color;
         margin-right: 2px;
-      }
-    }
-  }
-  .v-cell--wrapper {
-    display: flex;
-    height: 100%;
-    .v-cell--text {
-      display: flex;
-      justify-content: flex-start;
-      flex: 1;
-      /* 重要 */
-      width: 0;
-      align-items: center;
-      .v-cell {
-        padding-right: 0;
-        line-height: 1;
       }
     }
   }
@@ -62,6 +74,7 @@
     width: 16px;
     height: 20px;
     transform: scale(0.9);
+    -webkit-transform: scale(0.9);
     cursor: pointer;
     .v-sort--asc-btn,
     .v-sort--desc-btn {
@@ -110,11 +123,10 @@
 
   .v-resizable {
     position: absolute;
-    right: -5px;
+    top: 0;
     bottom: 0;
+    right: -5px;
     width: 10px;
-    height: 100%;
-    text-align: center;
     z-index: 1;
     cursor: col-resize;
     &.is--line {
