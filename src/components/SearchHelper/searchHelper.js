@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-16 09:44:12
+ * @Last Modified time: 2020-12-16 13:34:25
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -209,7 +209,7 @@ export default {
       } else {
         const res = await this.fetch.api(this.fetch.params);
         if (res.code === 200) {
-          this.tableList = get(res.data, this.fetch.dataKey) ?? Array.isArray(res.data) ? res.data : [];
+          this.tableList = get(res.data, this.fetch.dataKey) ?? (Array.isArray(res.data) ? res.data : []);
         }
       }
       this.loading = false;
