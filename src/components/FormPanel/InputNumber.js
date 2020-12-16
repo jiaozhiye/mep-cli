@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-05 11:36:11
+ * @Last Modified time: 2020-12-14 15:13:21
  */
 import PropTypes from '../_utils/vue-types';
 import Emitter from '../_utils/mixins/emitter';
@@ -20,6 +20,8 @@ export default {
     precision: PropTypes.number,
     controls: PropTypes.bool.def(false),
     placeholder: PropTypes.string,
+    clearable: PropTypes.bool.def(false),
+    readonly: PropTypes.bool.def(false),
     disabled: PropTypes.bool.def(false)
   },
   data() {
@@ -85,7 +87,7 @@ export default {
     }
   },
   render() {
-    const { inputNumberSize, currentValue, min, max, maxlength, precision, controls, placeholder, disabled, minDisabled, maxDisabled } = this;
+    const { inputNumberSize, currentValue, min, max, maxlength, precision, controls, placeholder, clearable, readonly, disabled, minDisabled, maxDisabled } = this;
     const regExp = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
     const cls = [
       'el-input-number',
@@ -128,6 +130,8 @@ export default {
           }}
           validateEvent={false}
           placeholder={placeholder}
+          clearable={clearable}
+          readonly={readonly}
           disabled={disabled}
           onChange={val => {
             // 处理 val 值得特殊情况

@@ -24,11 +24,12 @@
 
 ### table
 
-| 参数    | 说明                      | 类型           | 默认值 |
-| ------- | ------------------------- | -------------- | ------ |
-| columns | 参考 Table 组件，必要参数 | array          | -      |
-| rowKey  | 参考 Table 组件，必要参数 | string \| func | -      |
-| fetch   | 参考 Table 组件，必要参数 | object         | -      |
+| 参数          | 说明                      | 类型           | 默认值 |
+| ------------- | ------------------------- | -------------- | ------ |
+| columns       | 参考 Table 组件，必要参数 | array          | -      |
+| rowKey        | 参考 Table 组件，必要参数 | string \| func | -      |
+| fetch         | 参考 Table 组件，必要参数 | object         | -      |
+| webPagination | 是否是前端分页            | boolean        | false  |
 
 ### alias
 

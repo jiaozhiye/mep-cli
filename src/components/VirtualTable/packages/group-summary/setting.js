@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-05-19 16:19:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-14 14:03:00
+ * @Last Modified time: 2020-12-15 17:25:54
  */
 import localforage from 'localforage';
 import { createUidKey } from '../utils';
+import { getConfig } from '../../../_utils/globle-config';
 import config from '../config';
 import Locale from '../locale/mixin';
 
@@ -76,13 +77,17 @@ export default {
   },
   async created() {
     if (!this.groupSummaryKey) return;
-    try {
-      const res = await localforage.getItem(this.groupSummaryKey);
-      if (Array.isArray(res) && res.length) {
-        this.savedItems = res;
-        this.currentKey = res[0].value;
+    let res = await localforage.getItem(this.groupSummaryKey);
+    if (!res) {
+      res = await this.getGroupSummaryConfig(this.groupSummaryKey);
+      if (Array.isArray(res)) {
+        await localforage.setItem(this.groupSummaryKey, res);
       }
-    } catch (err) {}
+    }
+    if (Array.isArray(res) && res.length) {
+      this.savedItems = res;
+      this.currentKey = res[0].value;
+    }
   },
   methods: {
     findColumn(columns, dataIndex) {
@@ -196,6 +201,10 @@ export default {
         disabled: this.summaryTableData.findIndex(k => k.summary === x.value) > -1
       }));
     },
+    // 切换配置信息
+    toggleHandle(key) {
+      this.currentKey = key !== this.currentKey ? key : '';
+    },
     // 保存配置
     async saveConfigHandle() {
       if (!this.groupSummaryKey) {
@@ -211,14 +220,29 @@ export default {
           summary: this.summaryTableData
         }
       });
-      try {
-        await localforage.setItem(this.groupSummaryKey, this.savedItems);
-        this.currentKey = uuid;
-      } catch (err) {}
+      this.currentKey = uuid;
+      await localforage.setItem(this.groupSummaryKey, this.savedItems);
+      await this.saveGroupSummaryConfig(this.groupSummaryKey, this.savedItems);
     },
-    // 切换配置信息
-    toggleHandle(key) {
-      this.currentKey = key !== this.currentKey ? key : '';
+    async getGroupSummaryConfig(key) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('getComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        const res = await fetchFn({ key });
+        if (res.code === 200) {
+          return res.data;
+        }
+      } catch (err) {}
+      return null;
+    },
+    async saveGroupSummaryConfig(key, value) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('saveComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        await fetchFn({ [key]: value });
+      } catch (err) {}
     },
     // 移除保存的 汇总配置项
     async removeSavedHandle(ev, key) {
@@ -226,12 +250,11 @@ export default {
       if (!key) return;
       const index = this.savedItems.findIndex(x => x.value === key);
       this.savedItems.splice(index, 1);
-      try {
-        await localforage.setItem(this.groupSummaryKey, this.savedItems);
-        if (key === this.currentKey) {
-          this.currentKey = '';
-        }
-      } catch (err) {}
+      if (key === this.currentKey) {
+        this.currentKey = '';
+      }
+      await localforage.setItem(this.groupSummaryKey, this.savedItems);
+      await this.saveGroupSummaryConfig(this.groupSummaryKey, this.savedItems);
     },
     // 关闭
     cancelHandle() {

@@ -2,14 +2,16 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-02 17:26:32
+ * @Last Modified time: 2020-12-15 19:03:11
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
+import { isObject } from 'lodash';
 import Size from '../../_utils/mixins/size';
 import Locale from '../../_utils/mixins/locale';
 import PrefixCls from '../../_utils/mixins/prefix-cls';
 import Emitter from '../../_utils/mixins/emitter';
+import { getConfig } from '../../_utils/globle-config';
 import config from './config';
 import Print from './print';
 
@@ -94,8 +96,14 @@ export default {
   async created() {
     if (!this.printerKey) return;
     try {
-      const res = await localforage.getItem(this.printerKey);
-      if (Object.keys(res).length) {
+      let res = await localforage.getItem(this.printerKey);
+      if (!res) {
+        res = await this.getPrintConfig(this.printerKey);
+        if (isObject(res)) {
+          await localforage.setItem(this.printerKey, res);
+        }
+      }
+      if (isObject(res) && Object.keys(res).length) {
         this.form = Object.assign({}, this.form, {
           ...res,
           printerName: this.printerItems.find(x => x.text === res.printerName)?.value ?? -1
@@ -121,10 +129,32 @@ export default {
       this.doPrint(this.$$container.createPrintHtml(this.printPage));
       // 存储配置信息
       try {
-        await localforage.setItem(this.printerKey, {
+        const printConfig = {
           ...this.form,
           printerName: this.printerItems.find(x => x.value === this.form.printerName).text
-        });
+        };
+        await localforage.setItem(this.printerKey, printConfig);
+        await this.savePrintConfig(this.printerKey, printConfig);
+      } catch (err) {}
+    },
+    async getPrintConfig(key) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('getComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        const res = await fetchFn({ key });
+        if (res.code === 200) {
+          return res.data;
+        }
+      } catch (err) {}
+      return null;
+    },
+    async savePrintConfig(key, value) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('saveComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        await fetchFn({ [key]: value });
       } catch (err) {}
     },
     doClose() {

@@ -2,14 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-24 09:16:57
+ * @Last Modified time: 2020-12-16 09:44:12
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
 import TopFilter from '../TopFilter';
 import VirtualTable from '../VirtualTable';
 
-import { merge, cloneDeep, isFunction } from 'lodash';
+import { merge, cloneDeep, get, isFunction } from 'lodash';
 import { getParentNode, debounce, sleep } from '../_utils/tool';
 import PropTypes from '../_utils/vue-types';
 
@@ -29,7 +29,8 @@ export default {
     table: PropTypes.shape({
       columns: PropTypes.array.def([]),
       rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def('uid'),
-      fetch: PropTypes.object.isRequired
+      fetch: PropTypes.object.isRequired,
+      webPagination: PropTypes.bool.def(false)
     }),
     fieldAliasMap: PropTypes.func.def(noop),
     beforeFetch: PropTypes.func,
@@ -39,7 +40,7 @@ export default {
     getServerConfig: PropTypes.func // tds
   },
   data() {
-    const { fetch } = this.table;
+    const { fetch, webPagination } = this.table;
     // tds
     this.DEFINE = ['valueName', 'displayName', 'descriptionName'];
     return {
@@ -47,12 +48,14 @@ export default {
       topFilters: this.createTopFilters(),
       height: 300,
       columns: this.createTableColumns(),
+      tableList: [],
       fetch: {
         api: fetch.api,
         params: cloneDeep(Object.assign({}, fetch.params, this.initialValue)),
         dataKey: fetch.dataKey,
         xhrAbort: fetch.xhrAbort || false
       },
+      webPagination: webPagination || false,
       loading: false,
       alias: this.fieldAliasMap() || {}
     };
@@ -70,6 +73,7 @@ export default {
   },
   created() {
     this.getHelperConfig();
+    this.getTableData();
   },
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
@@ -190,6 +194,25 @@ export default {
       }
       this.fetch.xhrAbort = !1;
       this.fetch.params = merge({}, params, val);
+      // 内存分页，获取数据
+      this.getTableData();
+    },
+    async getTableData() {
+      if (!this.webPagination) return;
+      if (!this.fetch.api || this.fetch.xhrAbort) return;
+      // console.log(`ajax 请求参数：`, this.fetch.params);
+      this.loading = true;
+      if (process.env.MOCK_DATA === 'true') {
+        await sleep(500);
+        const { data } = cloneDeep(require('@/mock/tableData').default);
+        this.tableList = data.items;
+      } else {
+        const res = await this.fetch.api(this.fetch.params);
+        if (res.code === 200) {
+          this.tableList = get(res.data, this.fetch.dataKey) ?? Array.isArray(res.data) ? res.data : [];
+        }
+      }
+      this.loading = false;
     },
     collapseHandle() {
       this.$nextTick(() => this.calcTableHeight());
@@ -247,7 +270,8 @@ export default {
     }
   },
   render() {
-    const { loading, initialValue, topFilters, showFilterCollapse, height, columns, fetch, disabled } = this;
+    const { loading, initialValue, topFilters, showFilterCollapse, height, columns, tableList, fetch, webPagination, disabled } = this;
+    const tableProps = { props: !webPagination ? { fetch } : { dataSource: tableList, webPagination: !0 } };
     return (
       <div>
         <Spin spinning={loading} tip="Loading...">
@@ -256,8 +280,8 @@ export default {
             ref="vTable"
             height={height}
             columns={columns}
+            {...tableProps}
             rowKey={this.table.rowKey}
-            fetch={fetch}
             rowSelection={{
               type: 'radio',
               onChange: this.selectedRowChange

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 10:15:34
+ * @Last Modified time: 2020-12-14 16:54:15
  **/
 import { get, set, xor, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -289,6 +289,7 @@ export default {
         searchHelper = {},
         style = {},
         placeholder = this.t('form.inputPlaceholder'),
+        clearable = !0,
         readonly,
         disabled,
         onChange = noop
@@ -396,12 +397,12 @@ export default {
             minlength={minlength}
             maxlength={maxlength}
             placeholder={!disabled ? (!isSearchHelper ? placeholder : this.t('form.selectPlaceholder')) : ''}
+            clearable={clearable}
             readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             show-password={password}
             show-word-limit={showLimit}
-            clearable
             onChange={val => {
               form[fieldName] = val.trim();
               // 搜索帮助
@@ -462,7 +463,20 @@ export default {
     },
     INPUT_NUMBER(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, descOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
+      const {
+        label,
+        fieldName,
+        labelWidth,
+        labelOptions,
+        descOptions,
+        options = {},
+        style = {},
+        placeholder = this.t('form.inputPlaceholder'),
+        clearable,
+        readonly,
+        disabled,
+        onChange = noop
+      } = option;
       const { maxlength, min = 0, max, step, precision, controls = !1 } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
@@ -478,6 +492,8 @@ export default {
             maxlength={maxlength}
             controls={controls}
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             onChange={onChange}
@@ -488,7 +504,7 @@ export default {
     },
     RANGE_INPUT(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, clearable, readonly, disabled, onChange = noop } = option;
       const [startFieldName, endFieldName] = fieldName.split('|');
       this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
@@ -497,20 +513,20 @@ export default {
           <el-input
             v-model={form[fieldName][0]}
             placeholder={!disabled ? this.t('form.startValue') : ''}
+            clearable={clearable}
             readonly={readonly}
             disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
-            clearable
             onChange={() => onChange({ [startFieldName]: form[fieldName][0] })}
           />
           <span style="display: inline-block; text-align: center; width: 14px;">-</span>
           <el-input
             v-model={form[fieldName][1]}
             placeholder={!disabled ? this.t('form.endValue') : ''}
+            clearable={clearable}
             readonly={readonly}
             disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
-            clearable
             onChange={() => onChange({ [endFieldName]: form[fieldName][1] })}
           />
         </el-form-item>
@@ -518,7 +534,7 @@ export default {
     },
     RANGE_INPUT_NUMBER(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, clearable, readonly, disabled, onChange = noop } = option;
       const { min = 0, max, step = 1, precision } = options;
       const [startVal = min, endVal = max] = form[fieldName];
       this.setViewValue(fieldName, form[fieldName].join('-'));
@@ -533,6 +549,8 @@ export default {
             precision={precision}
             controls={false}
             placeholder={!disabled ? this.t('form.startValue') : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
@@ -546,6 +564,8 @@ export default {
             precision={precision}
             controls={false}
             placeholder={!disabled ? this.t('form.endValue') : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
@@ -555,7 +575,7 @@ export default {
     },
     INPUT_TREE(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       const { itemList } = options;
       const treeWrapProps = {
         props: {
@@ -609,7 +629,7 @@ export default {
               placeholder={!disabled ? placeholder : ''}
               readonly={readonly}
               disabled={disabled}
-              clearable
+              clearable={clearable}
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.treeNodeClickHandle(fieldName, {});
@@ -622,7 +642,7 @@ export default {
     },
     INPUT_CASCADER(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.selectPlaceholder'), readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.selectPlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       const { itemList, titles = [], mustCheckLast } = options;
       this.setViewValue(fieldName, this[`${fieldName}CascaderText`]);
       return (
@@ -651,9 +671,9 @@ export default {
               slot="reference"
               value={this[`${fieldName}CascaderText`]}
               placeholder={!disabled ? placeholder : ''}
+              clearable={clearable}
               readonly={readonly}
               disabled={disabled}
-              clearable
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.cascaderChangeHandle(fieldName, []);
@@ -666,7 +686,7 @@ export default {
     },
     INPUT_ADDRESS(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       this[`${fieldName}AddressText`] = (form[fieldName] ?? []).map(x => x.vName).join(' / ');
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -693,9 +713,9 @@ export default {
               slot="reference"
               value={this[`${fieldName}AddressText`]}
               placeholder={!disabled ? placeholder : ''}
+              clearable={clearable}
               readonly={readonly}
               disabled={disabled}
-              clearable
               style={disabled && { pointerEvents: 'none' }}
               onClear={() => {
                 this.addressChangeHandle(fieldName, []);
@@ -798,7 +818,20 @@ export default {
     },
     SEARCH_HELPER(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, request = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
+      const {
+        label,
+        fieldName,
+        labelWidth,
+        labelOptions,
+        options = {},
+        request = {},
+        style = {},
+        placeholder = this.t('form.inputPlaceholder'),
+        clearable = !0,
+        readonly,
+        disabled,
+        onChange = noop
+      } = option;
       const { columns = [], fieldAliasMap, onlySelect = true } = options;
       if (!isFunction(fieldAliasMap)) {
         console.error('[SEARCH_HELPER] 类型的 `fieldAliasMap` 参数不正确');
@@ -811,9 +844,10 @@ export default {
             v-model={form[fieldName]}
             popper-class="search-helper-popper"
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
-            clearable
             onSelect={val => {
               const alias = fieldAliasMap();
               for (let key in alias) {
@@ -858,7 +892,7 @@ export default {
     },
     SEARCH_HELPER_WEB(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, options = {}, labelOptions, style = {}, placeholder = this.t('form.inputPlaceholder'), disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, options = {}, labelOptions, style = {}, placeholder = this.t('form.inputPlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       const { itemList } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
@@ -868,9 +902,10 @@ export default {
             v-model={form[fieldName]}
             valueKey="text"
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
-            clearable
             onChange={onChange}
             fetchSuggestions={(queryString, cb) => this.querySearchHandle(fieldName, itemList, queryString, cb)}
             scopedSlots={{
@@ -915,7 +950,7 @@ export default {
           valueFormat: 'yyyy'
         }
       };
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, clearable = !0, readonly, disabled, onChange = noop } = option;
       const { dateType = 'date', minDateTime, maxDateTime, defaultTime, shortCuts = !0 } = options;
       // 日期快捷键方法
       const createPicker = (picker, days) => {
@@ -964,6 +999,8 @@ export default {
             default-time={defaultTime}
             value-format={conf[dateType].valueFormat}
             placeholder={!disabled ? conf[dateType].placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             picker-options={{
@@ -1028,7 +1065,7 @@ export default {
           valueFormat: 'yyyy'
         }
       };
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, clearable = !0, readonly, disabled, onChange = noop } = option;
       const { dateType = 'daterange', minDateTime, maxDateTime, startDisabled, endDisabled, shortCuts = !0 } = options;
       const [startDate = minDateTime, endDate = maxDateTime] = form[fieldName];
       // 日期区间快捷键方法
@@ -1088,6 +1125,8 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
+              readonly={readonly}
+              clearable={clearable}
               disabled={disabled || startDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -1136,6 +1175,8 @@ export default {
               value-format={conf[dateType].valueFormat}
               style={{ width: `calc(50% - 7px)` }}
               placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
+              readonly={readonly}
+              clearable={clearable}
               disabled={disabled || endDisabled}
               nativeOnInput={ev => {
                 ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
@@ -1171,7 +1212,7 @@ export default {
     },
     TIME(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.datetimePlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       const { timeFormat = 'HH:mm:ss', defaultTime } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
@@ -1186,6 +1227,8 @@ export default {
             value-format={timeFormat}
             format={timeFormat}
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             onChange={onChange}
@@ -1195,7 +1238,7 @@ export default {
     },
     RANGE_TIME(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, clearable = !0, readonly, disabled, onChange = noop } = option;
       const { timeFormat = 'HH:mm:ss' } = options;
       this.setViewValue(fieldName, form[fieldName].join('-'));
       return (
@@ -1215,6 +1258,8 @@ export default {
             range-separator="-"
             start-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
             end-placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             onChange={() => onChange(form[fieldName])}
@@ -1224,7 +1269,20 @@ export default {
     },
     TIME_SELECT(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, placeholder = this.t('form.datetimePlaceholder'), disabled, onChange = noop } = option;
+      const {
+        label,
+        fieldName,
+        labelWidth,
+        labelOptions,
+        options = {},
+        valueFormat = 'HH:mm',
+        style = {},
+        placeholder = this.t('form.datetimePlaceholder'),
+        clearable = !0,
+        readonly,
+        disabled,
+        onChange = noop
+      } = option;
       const { defaultTime, startTime = '00:00', endTime = '23:45', stepTime = '00:15' } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
@@ -1240,6 +1298,8 @@ export default {
             default-value={defaultTime ? defaultTime.slice(0, 5) : defaultTime}
             value-format={valueFormat}
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
             onChange={onChange}
@@ -1249,7 +1309,7 @@ export default {
     },
     RANGE_TIME_SELECT(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, valueFormat = 'HH:mm', style = {}, clearable = !0, readonly, disabled, onChange = noop } = option;
       const { startTime = '00:00', endTime = '23:45', stepTime = '00:15', startDisabled, endDisabled } = options;
       const stepMinute = dayjs(stepTime, valueFormat).minute();
       const [startVal, endVal] = form[fieldName];
@@ -1270,6 +1330,8 @@ export default {
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[0] : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled || startDisabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
@@ -1288,6 +1350,8 @@ export default {
             }}
             value-format={valueFormat}
             placeholder={!disabled ? this.t('form.datetimerangePlaceholder')[1] : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled || endDisabled}
             style={{ width: `calc(50% - 7px)` }}
             onChange={() => onChange(form[fieldName])}
@@ -1355,7 +1419,7 @@ export default {
     },
     TEXT_AREA(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.inputPlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
       const { rows = 2, maxrows, maxlength = 200, onInput = noop, onClick = noop, onDblClick = noop } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
@@ -1370,12 +1434,12 @@ export default {
               onInput(val);
             }}
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
+            readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
-            clearable
             autosize={{ minRows: rows, maxRows: maxrows }}
             maxlength={maxlength}
-            readonly={readonly}
             showWordLimit
             nativeOnclick={ev => {
               onClick(form[fieldName]);
@@ -1498,9 +1562,9 @@ export default {
         request = {},
         style = {},
         placeholder = this.t('form.selectPlaceholder'),
+        clearable = !0,
         showTags,
         disabled,
-        clearable = !0,
         onChange = noop
       } = option;
       const { filterable = true, limit } = options;
@@ -1540,9 +1604,9 @@ export default {
             filterable={filterable}
             title={multiple ? textVal : null}
             placeholder={!disabled ? placeholder : ''}
+            clearable={clearable}
             disabled={disabled}
             style={{ ...style }}
-            clearable={clearable}
             on-visible-change={visible => {
               if (filterable && !visible) {
                 setTimeout(() => {

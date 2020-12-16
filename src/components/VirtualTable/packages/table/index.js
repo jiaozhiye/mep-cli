@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 12:32:07
+ * @Last Modified time: 2020-12-11 15:46:37
  */
 import baseProps from './props';
 import Store from '../store';
@@ -206,7 +206,8 @@ export default {
       const query = createWhereSQL(this.filters, config.showFilterType) || createWhereSQL(this.superFilters, config.showFilterType);
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
-      const filter = query ? { [config.filterFieldName]: query } : null;
+      // 去掉单引号，兼容 MEP
+      const filter = query ? { [config.filterFieldName]: query.replace(/'/g, '') } : null;
       const summary = this.columnSummaryQuery ? { [config.groupSummary.summaryFieldName]: this.columnSummaryQuery, usedJH: 1 } : null;
       return {
         ...sorter,

@@ -2,11 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 12:40:50
+ * @Last Modified time: 2020-12-15 17:25:58
  */
 import localforage from 'localforage';
 import { isBracketBalance } from '../filter-sql';
 import { hasOwn, createUidKey, createWhereSQL } from '../utils';
+import { getConfig } from '../../../_utils/globle-config';
 import config from '../config';
 import Locale from '../locale/mixin';
 
@@ -62,13 +63,17 @@ export default {
   },
   async created() {
     if (!this.highSearchKey) return;
-    try {
-      const res = await localforage.getItem(this.highSearchKey);
-      if (Array.isArray(res) && res.length) {
-        this.savedItems = res;
-        this.currentKey = res[0].value;
+    let res = await localforage.getItem(this.highSearchKey);
+    if (!res) {
+      res = await this.getHighSearchConfig(this.highSearchKey);
+      if (Array.isArray(res)) {
+        await localforage.setItem(this.highSearchKey, res);
       }
-    } catch (err) {}
+    }
+    if (Array.isArray(res) && res.length) {
+      this.savedItems = res;
+      this.currentKey = res[0].value;
+    }
   },
   methods: {
     findColumn(dataIndex) {
@@ -275,6 +280,9 @@ export default {
         row[dataIndex] = !row[dataIndex] ? ')' : '';
       }
     },
+    toggleHandle(key) {
+      this.currentKey = key !== this.currentKey ? key : '';
+    },
     async saveConfigHandle() {
       if (!this.highSearchKey) {
         return console.error('[Table]: 必须设置组件参数 `uniqueKey` 才能保存');
@@ -286,25 +294,40 @@ export default {
         value: uuid,
         list: this.currentData.filter(x => !!x.fieldName)
       });
-      try {
-        await localforage.setItem(this.highSearchKey, this.savedItems);
-        this.currentKey = uuid;
-      } catch (err) {}
+      this.currentKey = uuid;
+      await localforage.setItem(this.highSearchKey, this.savedItems);
+      await this.saveHighSearchConfig(this.highSearchKey, this.savedItems);
     },
-    toggleHandle(key) {
-      this.currentKey = key !== this.currentKey ? key : '';
+    async getHighSearchConfig(key) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('getComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        const res = await fetchFn({ key });
+        if (res.code === 200) {
+          return res.data;
+        }
+      } catch (err) {}
+      return null;
+    },
+    async saveHighSearchConfig(key, value) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('saveComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        await fetchFn({ [key]: value });
+      } catch (err) {}
     },
     async removeSavedHandle(ev, key) {
       ev.stopPropagation();
       if (!key) return;
       const index = this.savedItems.findIndex(x => x.value === key);
       this.savedItems.splice(index, 1);
-      try {
-        await localforage.setItem(this.highSearchKey, this.savedItems);
-        if (key === this.currentKey) {
-          this.currentKey = '';
-        }
-      } catch (err) {}
+      if (key === this.currentKey) {
+        this.currentKey = '';
+      }
+      await localforage.setItem(this.highSearchKey, this.savedItems);
+      await this.saveHighSearchConfig(this.highSearchKey, this.savedItems);
     },
     confirmHandle() {
       const { clearTableFilter, createSuperSearch, fetch } = this.$$table;

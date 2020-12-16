@@ -2,24 +2,50 @@
  * @Author: 焦质晔
  * @Date: 2020-03-30 11:34:10
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-29 19:32:38
+ * @Last Modified time: 2020-12-16 11:33:40
  */
-import { xor, isUndefined } from 'lodash';
+import { xor, isEqual, isUndefined } from 'lodash';
+import { getConfig } from '../../../_utils/globle-config';
 
 const noop = () => {};
 
 const localStorageMixin = {
   methods: {
-    // 获取本地存储 columns
+    async getTableColumnsConfig(key) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('getComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        const res = await fetchFn({ key });
+        if (res.code === 200) {
+          return res.data;
+        }
+      } catch (err) {}
+      return null;
+    },
+    async saveTableColumnsConfig(key, value) {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('saveComponentConfigApi');
+      if (!fetchFn) return;
+      try {
+        await fetchFn({ [key]: value });
+      } catch (err) {}
+    },
     getLocalColumns() {
       if (!this.uniqueKey) return;
       // 本地存储
-      const result = localStorage.getItem(this.uniqueKey);
-      if (!result) return;
-      let localColumns = [];
-      try {
-        localColumns = JSON.parse(result);
-      } catch (e) {}
+      let localColumns = JSON.parse(localStorage.getItem(this.uniqueKey));
+      // 服务端获取
+      if (!localColumns) {
+        this.getTableColumnsConfig(this.uniqueKey)
+          .then(result => {
+            if (!result) return;
+            localStorage.setItem(this.uniqueKey, JSON.stringify(result));
+            this.initLocalColumns();
+          })
+          .catch(err => {});
+      }
+      if (!localColumns) return;
       const diffs = xor(
         localColumns.map(x => x.dataIndex),
         this.columns.map(x => x.dataIndex)
@@ -54,7 +80,6 @@ const localStorageMixin = {
         return { ...target, ...x };
       });
     },
-    // 本地存储 columns
     setLocalColumns(columns) {
       if (!this.uniqueKey) return;
       const result = columns.map(x => {
@@ -76,11 +101,16 @@ const localStorageMixin = {
           ...target
         };
       });
+      const localColumns = JSON.parse(localStorage.getItem(this.uniqueKey));
+      if (isEqual(result, localColumns)) return;
       // 本地存储
       localStorage.setItem(this.uniqueKey, JSON.stringify(result));
+      // 服务端存储
+      this.saveTableColumnsConfig(this.uniqueKey, result);
     },
     initLocalColumns() {
       const { columnsChange = noop } = this;
+      // 获取本地 columns
       const localColumns = this.getLocalColumns();
       if (!localColumns) return;
       columnsChange(localColumns);
