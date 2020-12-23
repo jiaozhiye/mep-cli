@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 09:34:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-24 16:57:35
+ * @Last Modified time: 2020-12-19 12:30:53
  */
 import { sleep } from '../../_utils/tool';
 import { mmToPx, pxToMm, insertBefore, isPageBreak } from './utils';
@@ -182,7 +182,7 @@ export default {
 
       // 直接打印
       if (this.directPrint) {
-        return this.previewHtmls.push([this.createLogo(), this.createTdCols(), ...this.elementHtmls]);
+        return this.previewHtmls.push([this.createTdCols(), this.createLogo(), ...this.elementHtmls]);
       }
 
       // 页面高度
@@ -194,7 +194,7 @@ export default {
 
       // 针式打印机  连续打印
       if (printerType === 'stylus') {
-        this.previewHtmls.push([...(setting.fixedLogo ? [this.createLogo()] : []), this.createTdCols(), ...this.elementHtmls]);
+        this.previewHtmls.push([this.createTdCols(), ...(setting.fixedLogo ? [this.createLogo()] : []), ...this.elementHtmls]);
       } else {
         let sum = 0;
         for (let i = 0, len = this.elementHeights.length; i < len; i++) {
@@ -211,7 +211,7 @@ export default {
           if (sum <= pageHeight) {
             tmpArr.push(item);
           } else {
-            this.previewHtmls.push([...(setting.fixedLogo ? [this.createLogo()] : []), this.createTdCols(), ...tmpArr]);
+            this.previewHtmls.push([this.createTdCols(), ...(setting.fixedLogo ? [this.createLogo()] : []), ...tmpArr]);
             tmpArr = [];
             sum = 0;
             i -= 1;
@@ -219,14 +219,14 @@ export default {
 
           // 最后一页
           if (i === len - 1 && tmpArr.length) {
-            this.previewHtmls.push([...(setting.fixedLogo ? [this.createLogo()] : []), this.createTdCols(), ...tmpArr]);
+            this.previewHtmls.push([this.createTdCols(), ...(setting.fixedLogo ? [this.createLogo()] : []), ...tmpArr]);
           }
         }
       }
 
       // 不固定 logo
       if (!setting.fixedLogo) {
-        this.previewHtmls[0]?.unshift(this.createLogo());
+        this.previewHtmls[0]?.splice(1, 0, this.createLogo());
       }
 
       // 分页符

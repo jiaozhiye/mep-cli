@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 15:46:37
+ * @Last Modified time: 2020-12-23 17:07:24
  */
 import baseProps from './props';
 import Store from '../store';
@@ -238,16 +238,22 @@ export default {
     tableStyles() {
       const { fullHeight, autoHeight } = this;
       const height = parseHeight(this.height);
+      const minHeight = parseHeight(this.minHeight);
       const maxHeight = parseHeight(this.maxHeight);
-      if (fullHeight) {
-        return { height: `${fullHeight}px` };
-      }
-      if (height) {
-        return height !== 'auto' ? { height: `${height}px` } : { height: `${autoHeight}px` };
+      const result = {};
+      if (minHeight) {
+        Object.assign(result, { minHeight: `${minHeight}px` });
       }
       if (maxHeight) {
-        return { maxHeight: `${maxHeight}px` };
+        Object.assign(result, { maxHeight: `${maxHeight}px` });
       }
+      if (fullHeight) {
+        return { ...result, height: `${fullHeight}px` };
+      }
+      if (height) {
+        return { ...result, height: height !== 'auto' ? `${height}px` : `${autoHeight}px` };
+      }
+      return result;
     }
   },
   watch: {
@@ -362,6 +368,9 @@ export default {
     this.loadTableData().then(() => {
       this.doLayout();
     });
+  },
+  activated() {
+    this.scrollYLoad && this.loadScrollYData(0);
   },
   mounted() {
     this.doLayout();
@@ -494,6 +503,7 @@ export default {
     const exportProps = exportExcel
       ? {
           props: {
+            tableColumns,
             flattenColumns,
             data: tableFullData,
             fileName: exportExcel.fileName,

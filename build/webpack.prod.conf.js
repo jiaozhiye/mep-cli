@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-25 10:16:02
+ * @Last Modified time: 2020-12-22 10:54:31
  */
 'use strict';
 
@@ -48,7 +48,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         parallel: true,
         sourceMap: config.build.productionSourceMap, // set to true if you want JS source maps
         uglifyOptions: {
-          warnings: false
+          warnings: false,
+          compress: {
+            drop_debugger: true
+          }
         }
       }),
       new OptimizeCSSPlugin({

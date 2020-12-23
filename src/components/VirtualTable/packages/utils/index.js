@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 13:00:09
+ * @Last Modified time: 2020-12-17 20:17:55
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -471,6 +471,7 @@ export const createWhereSQL = (filters, showType = false) => {
       const type = key.includes('|') ? key.split('|')[0] : '';
       const filterVal = filters[key];
       for (let mark in filterVal) {
+        // 用 ^ 替换字符串中的空格
         let val = Array.isArray(filterVal[mark]) ? array_format(filterVal[mark]) : stringify(filterVal[mark], '^');
         if (val === "''" || val === '[]') continue;
         __query__ += `${!showType ? property : `${property}|${type}`} ${mark} ${val} and `;

@@ -98,8 +98,9 @@
 | 参数          | 说明                                                             | 类型                                 | 默认值   |
 | ------------- | ---------------------------------------------------------------- | ------------------------------------ | -------- |
 | itemList      | 下拉框的列表数据，[配置项](#item) - SELECT/MULTIPLE_CHECKBOX     | array                                | -        |
-| filterable    | 是否开启下拉框的拼音头快速检索功能 - SELECT/MULTIPLE_CHECKBOX    | bool                                 | true     |
+| filterable    | 是否开启下拉框的快速检索功能 - SELECT/MULTIPLE_CHECKBOX          | bool                                 | true     |
 | limit         | 最多可以选择的项目数 - MULTIPLE_SELECT/MULTIPLE_CHECKBOX         | number                               | -        |
+| openPyt       | 是否开启拼音头快速检索 - SELECT/MULTIPLE_CHECKBOX                | bool                                 | true     |
 | rows          | 文本域的行数 - TEXT_AREA                                         | number                               | -        |
 | minlength     | 原生属性，最小输入长度 - INPUT                                   | number                               | 0        |
 | maxlength     | 原生属性，最大输入长度 - INPUT/TEXT_AREA                         | number                               | 200      |
@@ -115,6 +116,7 @@
 | startDisabled | 是否禁用开始项 - RANGE_DATE                                      | boolean                              | -        |
 | endDisabled   | 是否禁用结束项 - RANGE_DATE                                      | boolean                              | -        |
 | noInput       | 不允许手动输入，支持清除操作 - INPUT                             | boolean                              | false    |
+| toUpper       | 输入框自动转大写 - INPUT                                         | boolean                              | false    |
 | divider       | 分隔符的类型 - BREAK_SPACE                                       | default \| border                    | default  |
 | trueValue     | 选中的值 - CHECKBOX                                              | number \| string                     | 1        |
 | falseValue    | 非中的值 - CHECKBOX                                              | number \| string                     | 0        |
@@ -164,13 +166,15 @@
 
 ### searchHelper
 
-| 参数          | 说明                                                            | 类型                     | 默认值 |
-| ------------- | --------------------------------------------------------------- | ------------------------ | ------ |
-| width         | dialog 弹出框的宽度                                             | number \| string         | 60%    |
-| height        | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
-| fieldAliasMap | 表单字段与回传数据字段的映射，返回值 [配置项](#aliasMap)        | func                     | -      |
-| open          | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
-| closed        | 关闭搜索帮助的后置钩子，参数是带回的行数据                      | Function(tableData)      | -      |
+| 参数             | 说明                                                            | 类型                     | 默认值 |
+| ---------------- | --------------------------------------------------------------- | ------------------------ | ------ |
+| width            | dialog 弹出框的宽度                                             | number \| string         | 60%    |
+| height           | dialog 弹出框的高度，默认自适应屏幕高度                         | number \| string         | -      |
+| fieldAliasMap    | 表单字段与回传数据字段的映射，返回值 [配置项](#aliasMap)        | func: object             | -      |
+| filterAliasMap   | 搜索帮助查询条件字段名                                          | func: array              | -      |
+| closeServerMatch | 是否关闭服务端联想并回显值，默认开启                            | bool                     | -      |
+| open             | 打开搜索帮助的前置钩子，返回 bool 类型，true 打开、false 不打开 | Function(formData): bool | -      |
+| closed           | 关闭搜索帮助的后置钩子，参数是带回的行数据                      | Function(tableData)      | -      |
 
 ### aliasMap
 

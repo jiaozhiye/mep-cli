@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-30 13:58:02
+ * @Last Modified time: 2020-12-16 15:04:25
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
@@ -47,21 +47,19 @@ export default {
       return tableBodyWidth ? `${tableBodyWidth - (scrollY ? gutterWidth : 0)}px` : null;
     },
     wrapStyle() {
-      const { layout, height, maxHeight, fullHeight, autoHeight, isTableEmpty } = this.$$table;
+      const { layout, height, minHeight, maxHeight, fullHeight, autoHeight } = this.$$table;
       const { headerHeight, viewportHeight, footerHeight } = layout;
-      if (fullHeight || autoHeight || height) {
-        return { height: `${viewportHeight}px` };
-      }
-      if (isTableEmpty) {
-        return { minHeight: `100px` };
+      const result = {};
+      if (minHeight) {
+        Object.assign(result, { minHeight: `${parseHeight(minHeight) - headerHeight - footerHeight}px` });
       }
       if (maxHeight) {
-        const maxTableHeight = parseHeight(maxHeight);
-        if (typeof maxTableHeight === 'number') {
-          return { maxHeight: `${maxTableHeight - headerHeight - footerHeight}px` };
-        }
+        Object.assign(result, { maxHeight: `${parseHeight(maxHeight) - headerHeight - footerHeight}px` });
       }
-      return null;
+      if (height || fullHeight || autoHeight) {
+        return { ...result, height: `${viewportHeight}px` };
+      }
+      return result;
     },
     editableColumns() {
       return this.flattenColumns.filter(x => isFunction(x.editRender));

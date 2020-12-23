@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-27 13:10:41
+ * @Last Modified time: 2020-12-16 14:28:22
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -122,6 +122,8 @@ export default {
   border: PropTypes.bool.def(true),
   // 表格的高度
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  // 表格的最小高度
+  minHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(150),
   // 表格的最大高度
   maxHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // 页面是否加载中

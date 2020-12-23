@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-09 19:34:34
+ * @Last Modified time: 2020-12-18 11:43:44
  */
 import i18n from '@/lang';
 
@@ -37,6 +37,8 @@ const config = {
     barBgColor: 'rgba(0, 0, 0, 0.05)',
     // 盒子外发光效果
     boxShadow: '0 0 4px rgba(0, 0, 0, 0.35)',
+    // 工具提示文字颜色
+    tipTextColor: 'rgba(0, 0, 0, 0.65)',
     // 坐标轴颜色
     lineColor: 'rgba(0, 0, 0, 0.35)'
   },

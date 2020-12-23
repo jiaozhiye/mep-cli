@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-14 16:54:28
+ * @Last Modified time: 2020-12-23 11:57:30
  **/
-import { get, set, xor, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
+import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
 import { getConfig } from '../_utils/globle-config';
 import PropTypes from '../_utils/vue-types';
@@ -12,6 +12,7 @@ import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
 import FormCols from '../_utils/mixins/form-cols';
+import { sleep } from '../_utils/tool';
 import pinyin, { STYLE_FIRST_LETTER } from '../Pinyin';
 import InputNumber from '../FormPanel/InputNumber';
 import Cascader from '../FormPanel/Cascader.vue';
@@ -252,8 +253,120 @@ export default {
         disabled,
         onChange = noop
       } = option;
-      const { minlength = 0, maxlength, noInput = false, unitRender, onInput = noop, onFocus = noop, onClick = noop, onDblClick = noop } = options;
+      const { minlength = 0, maxlength, noInput, toUpper, unitRender, onInput = noop, onFocus = noop, onClick = noop, onDblClick = noop } = options;
       const isSearchHelper = !!Object.keys(searchHelper).length;
+      // 搜索帮助关闭带值事件
+      const shCloseHandle = (visible, data, alias) => {
+        const aliasKeys = Object.keys(alias);
+        if (isObject(data) && aliasKeys.length) {
+          for (let key in alias) {
+            if (key !== 'extra' && !key.endsWith('__desc')) {
+              form[key] = data[alias[key]];
+            }
+            if (key === 'extra') {
+              this.desc[fieldName] = data[alias[key]];
+            }
+            if (key.endsWith('__desc')) {
+              this.desc[key.slice(0, -6)] = data[alias[key]];
+            }
+          }
+          if (aliasKeys.includes(fieldName)) {
+            shChangeHandle(form[fieldName]);
+          }
+        }
+        const { closed = noop } = searchHelper;
+        closed(data);
+        this.visible[fieldName] = visible;
+      };
+      // 搜索帮助 change 事件
+      const shChangeHandle = val => {
+        const others = {};
+        this[`${fieldName}ExtraKeys`].forEach(key => (others[key] = form[key]));
+        // 忘记了之前为啥加 $nextTick
+        onChange(val, Object.keys(others).length ? others : null);
+      };
+      // 设置搜做帮助组件表单数据
+      const setShFilterValues = val => {
+        const { filterAliasMap = noop } = searchHelper;
+        const alias = Object.assign([], filterAliasMap());
+        const inputParams = { [fieldName]: val };
+        alias.forEach(x => (inputParams[x] = val));
+        return inputParams;
+      };
+      // 执行搜索帮助接口，获取数据
+      const getShTableData = val => {
+        const { table, initialValue = {}, beforeFetch = k => k } = searchHelper;
+        return new Promise(async (resolve, reject) => {
+          if (process.env.MOCK_DATA === 'true') {
+            await sleep(500);
+            const { data } = cloneDeep(require('@/mock/tableData').default);
+            return resolve(data.items);
+          } else {
+            const params = merge({}, table.fetch?.params, beforeFetch(initialValue), setShFilterValues(val), { currentPage: 1, pageSize: 500 });
+            try {
+              const res = await table.fetch.api(params);
+              if (res.code === 200) {
+                const list = get(res.data, table.fetch.dataKey) ?? (Array.isArray(res.data) ? res.data : []);
+                return resolve(list);
+              }
+            } catch (err) {}
+            reject();
+          }
+        });
+      };
+      // 打开搜索帮助面板
+      const openShPanel = () => {
+        const { open = () => true } = searchHelper;
+        if (!open(this.form)) return;
+        this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+      };
+      // 创建 field alias 别名
+      const createFieldAlias = async () => {
+        const { name, fieldsDefine, getServerConfig, fieldAliasMap = noop } = searchHelper;
+        let alias = {}; // 别名映射
+        // tds
+        if (name && fieldsDefine && getServerConfig) {
+          const DEFINE = ['valueName', 'displayName', 'descriptionName'];
+          const target = {};
+          try {
+            const res = await getServerConfig({ name });
+            if (res?.code === 200) {
+              for (let key in fieldsDefine) {
+                if (!DEFINE.includes(key)) continue;
+                target[fieldsDefine[key]] = res.data[key];
+              }
+            }
+          } catch (err) {}
+          alias = Object.assign({}, target);
+        } else {
+          alias = Object.assign({}, fieldAliasMap());
+        }
+        return alias;
+      };
+      // 设置搜索帮助的值
+      const resetSearchHelperValue = async (list = [], val) => {
+        const alias = await createFieldAlias();
+        const records = list.filter(data => data[alias[fieldName]]?.toString().includes(val));
+        if (records.length === 1) {
+          return shCloseHandle(false, records[0], alias);
+        }
+        // 打开面板
+        openShPanel();
+        clearSearchHelperValue();
+        // 设置搜索帮助查询参数
+        this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(setShFilterValues(val)));
+      };
+      // 清空搜索帮助
+      const clearSearchHelperValue = () => {
+        if (Array.isArray(this[`${fieldName}ExtraKeys`])) {
+          this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
+        }
+        if (Array.isArray(this[`${fieldName}DescKeys`])) {
+          this[`${fieldName}DescKeys`].forEach(key => (this.desc[key] = ''));
+        }
+        form[fieldName] = '';
+        shChangeHandle('');
+      };
       const dialogProps = isSearchHelper
         ? {
             props: {
@@ -272,41 +385,15 @@ export default {
         : null;
       const shProps = isSearchHelper
         ? {
+            ref: `INPUT-SH-${fieldName}`,
             props: {
               ...searchHelper
             },
             on: {
-              close: (visible, data, alias) => {
-                const aliasKeys = Object.keys(alias);
-                if (isObject(data) && aliasKeys.length) {
-                  for (let key in alias) {
-                    if (key !== 'extra' && !key.endsWith('__desc')) {
-                      form[key] = data[alias[key]];
-                    }
-                    if (key === 'extra') {
-                      this.desc[fieldName] = data[alias[key]];
-                    }
-                    if (key.endsWith('__desc')) {
-                      this.desc[key.slice(0, -6)] = data[alias[key]];
-                    }
-                  }
-                  if (aliasKeys.includes(fieldName)) {
-                    shChangeHandle(form[fieldName]);
-                  }
-                }
-                const { closed = noop } = searchHelper;
-                closed(data);
-                this.visible[fieldName] = visible;
-              }
+              close: shCloseHandle
             }
           }
         : null;
-      // 搜索帮助 change 事件
-      const shChangeHandle = val => {
-        const others = {};
-        this[`${fieldName}ExtraKeys`].forEach(key => (others[key] = form[key]));
-        this.$nextTick(() => onChange(val, Object.keys(others).length ? others : null));
-      };
       if (isSearchHelper) {
         let fieldKeys = [...Object.keys(searchHelper.fieldAliasMap?.() ?? {}), ...Object.values(searchHelper.fieldsDefine ?? {})];
         // 其他表单项的 fieldName
@@ -333,8 +420,8 @@ export default {
             value={form[fieldName]}
             onInput={val => {
               // 搜索帮助，不允许输入
-              if (isSearchHelper || noInput) return;
-              form[fieldName] = val;
+              if (noInput) return;
+              form[fieldName] = !toUpper ? val : val.toUpperCase();
               onInput(val);
             }}
             title={form[fieldName]}
@@ -346,17 +433,24 @@ export default {
             disabled={disabled}
             style={{ ...style }}
             onChange={val => {
-              form[fieldName] = val.trim();
-              // 搜索帮助
-              if (!val && (isSearchHelper || noInput)) {
-                if (Array.isArray(this[`${fieldName}ExtraKeys`])) {
-                  this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
+              val = val.trim();
+              form[fieldName] = val;
+              if (isSearchHelper) {
+                if (!val) {
+                  clearSearchHelperValue();
                 }
-                if (Array.isArray(this[`${fieldName}DescKeys`])) {
-                  this[`${fieldName}DescKeys`].forEach(key => (this.desc[key] = ''));
+                if (val && searchHelper.table.fetch?.api) {
+                  if (searchHelper.closeServerMatch) {
+                    shChangeHandle(form[fieldName]);
+                  } else {
+                    getShTableData(val)
+                      .then(list => resetSearchHelperValue(list, val))
+                      .catch(() => clearSearchHelperValue());
+                  }
                 }
+              } else {
+                onChange(form[fieldName], null);
               }
-              isSearchHelper ? shChangeHandle(form[fieldName]) : onChange(form[fieldName], null);
             }}
             onFocus={onFocus}
             nativeOnclick={ev => {
@@ -378,9 +472,7 @@ export default {
                   style={disabled && { cursor: 'not-allowed' }}
                   onClick={ev => {
                     if (disabled) return;
-                    const { open = () => true } = searchHelper;
-                    if (!open(this.form)) return;
-                    this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+                    openShPanel();
                   }}
                 />
               </template>
@@ -1156,7 +1248,9 @@ export default {
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
-          <el-checkbox v-model={form[fieldName]} disabled={disabled} style={{ ...style }} trueLabel={trueValue} falseLabel={falseValue} onChange={onChange} />
+          <div style={{ display: 'inline-flex', ...style }}>
+            <el-checkbox v-model={form[fieldName]} disabled={disabled} trueLabel={trueValue} falseLabel={falseValue} onChange={onChange} />
+          </div>
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>
       );
@@ -1248,7 +1342,7 @@ export default {
         clearable = !0,
         onChange = noop
       } = option;
-      const { filterable = true, limit } = options;
+      const { filterable = !0, openPyt = !0, limit } = options;
       const { fetchApi, params = {} } = request;
       let itemList = options.itemList || [];
       if (!options.itemList && fetchApi) {
@@ -1291,7 +1385,7 @@ export default {
             on-visible-change={visible => {
               if (filterable && !visible) {
                 setTimeout(() => {
-                  this.filterMethodHandle(fieldName);
+                  this.filterMethodHandle(fieldName, '');
                 }, 300);
               }
             }}
@@ -1308,7 +1402,7 @@ export default {
             }}
             filterMethod={queryString => {
               if (!filterable) return;
-              const res = this.filterMethodHandle(fieldName, queryString);
+              const res = this.filterMethodHandle(fieldName, queryString, openPyt);
               if (!multiple && res.length === 1) {
                 this.form[fieldName] = res[0].value;
                 this.$refs[`SELECT-${fieldName}`].blur();
@@ -1325,14 +1419,14 @@ export default {
       );
     },
     // 下拉框的筛选方法
-    filterMethodHandle(fieldName, queryString = '') {
+    filterMethodHandle(fieldName, queryString = '', isPyt) {
       const target = this.formItemList.find(x => x.fieldName === fieldName);
       const { options = {} } = target;
       const itemList = options.itemList || this[`${fieldName}ItemList`] || [];
       if (!this[`${fieldName}OriginItemList`] || !itemList.__filtered__) {
         this[`${fieldName}OriginItemList`] = itemList;
       }
-      const res = queryString ? this[`${fieldName}OriginItemList`].filter(this.createSearchHelpFilter(queryString)) : [...this[`${fieldName}OriginItemList`]];
+      const res = queryString ? this[`${fieldName}OriginItemList`].filter(this.createSearchHelpFilter(queryString, isPyt)) : [...this[`${fieldName}OriginItemList`]];
       res.__filtered__ = true;
       if (!this[`${fieldName}ItemList`]) {
         set(target, 'options.itemList', res);
@@ -1387,12 +1481,12 @@ export default {
       const res = queryString ? itemList.filter(this.createSearchHelpFilter(queryString)) : itemList;
       cb(res);
     },
-    createSearchHelpFilter(queryString) {
+    createSearchHelpFilter(queryString, isPyt = true) {
       return state => {
         const pyt = pinyin(state.text, { style: STYLE_FIRST_LETTER })
           .flat()
           .join('');
-        const str = `${state.text}|${pyt}`;
+        const str = isPyt ? `${state.text}|${pyt}` : state.text;
         return str.toLowerCase().includes(queryString.toLowerCase());
       };
     },

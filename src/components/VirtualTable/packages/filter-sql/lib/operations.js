@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-11 13:39:54
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-27 16:20:14
+ * @Last Modified time: 2020-12-17 20:17:25
  */
 // 模糊搜索中需要转义的特殊字符
 const SPAN_CHAR_REG = /(\^|\.|\[|\$|\(|\)|\||\*|\+|\?|\{|\\)/g;
@@ -25,7 +25,8 @@ export const matchWhere = (value, expression, condition) => {
   let res = true;
   switch (expression) {
     case 'like':
-      const keyword = new RegExp(escapeKeyword(condition), 'i');
+      // 把 ^ 还原为 空格
+      const keyword = new RegExp(escapeKeyword(condition.replace(/\^/g, ' ')), 'i');
       res = !!(value ?? '').toString().match(keyword);
       break;
     case 'in':

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 10:14:46
+ * @Last Modified time: 2020-12-21 14:42:06
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import dayjs from 'dayjs';
@@ -83,6 +83,7 @@ export default {
         uniqueKey,
         closeOnPrinted
       } = this;
+      const { defaultDistance } = config;
       const { left, right, top, bottom } = setting.distance;
 
       // 初始化
@@ -105,12 +106,7 @@ export default {
       // 完打印后，关闭预览窗口
       LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);
 
-      // 针式打印机，连续打印
-      if (printerType === 'stylus') {
-        LODOP.SET_PRINT_PAGESIZE(3, pageSize[0] * 10, config.defaultDistance * 100 * 2, '');
-      }
-
-      // 激光打印机
+      // 激光打印机，分页
       if (printerType === 'laser') {
         // 纵向
         if (setting.direction === 'vertical') {
@@ -123,12 +119,17 @@ export default {
         }
       }
 
+      // 针式打印机，连续打印
+      if (printerType === 'stylus') {
+        LODOP.SET_PRINT_PAGESIZE(3, pageSize[0] * 10, bottom * 100 * 2, '');
+      }
+
       // 设置边距 增加表格项
       LODOP.ADD_PRINT_TABLE(
-        `${(top - config.defaultDistance) * 10}mm`,
-        `${(left - config.defaultDistance) * 10}mm`,
-        `RightMargin: ${(right - config.defaultDistance) * 10}mm`,
-        `BottomMargin: ${(bottom - config.defaultDistance) * 10}mm`,
+        `${(top - defaultDistance) * 10}mm`,
+        `${(left - defaultDistance) * 10}mm`,
+        `RightMargin: ${(right - defaultDistance) * 10}mm`,
+        `BottomMargin: ${printerType !== 'stylus' ? (bottom - defaultDistance) * 10 : 0}mm`,
         this.createStyle() + __html__
       );
 

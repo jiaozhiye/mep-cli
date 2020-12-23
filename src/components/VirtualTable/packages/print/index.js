@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-06 13:54:04
+ * @Last Modified time: 2020-12-23 17:10:17
  */
 import { convertToRows, deepFindColumn, filterTableColumns, downloadFile, getCellValue } from '../utils';
 import config from '../config';
@@ -203,7 +203,20 @@ export default {
         ].join('');
       }
       if (tableFullData.length) {
-        html += `<tbody>${tableFullData.map(row => `<tr>${flatColumns.map((column, index) => `<td>${this.renderCell(row, row.index, column, index)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+        html += `<tbody>${tableFullData
+          .map(
+            row =>
+              `<tr>${flatColumns
+                .map((column, index) => {
+                  const { rowspan, colspan } = this.$$table.$$tableBody.getSpan(row, column, row.index, index);
+                  if (!rowspan || !colspan) {
+                    return null;
+                  }
+                  return `<td rowspan="${rowspan}" colspan="${colspan}">${this.renderCell(row, row.index, column, index)}</td>`;
+                })
+                .join('')}</tr>`
+          )
+          .join('')}</tbody>`;
       }
       if (this.showFooter || this.showSign) {
         html += [
