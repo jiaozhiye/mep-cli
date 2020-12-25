@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-16 13:34:25
+ * @Last Modified time: 2020-12-24 13:59:26
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -44,6 +44,7 @@ export default {
     // tds
     this.DEFINE = ['valueName', 'displayName', 'descriptionName'];
     return {
+      showTable: false,
       result: null,
       topFilters: this.createTopFilters(),
       height: 300,
@@ -51,7 +52,7 @@ export default {
       tableList: [],
       fetch: {
         api: fetch.api,
-        params: cloneDeep(Object.assign({}, fetch.params, this.initialValue)),
+        params: cloneDeep(Object.assign({}, fetch.params, this.formatParams(this.initialValue))),
         dataKey: fetch.dataKey,
         xhrAbort: fetch.xhrAbort || false
       },
@@ -77,6 +78,10 @@ export default {
   },
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
+    this.$nextTick(() => {
+      this.fetch.params = Object.assign({}, this.fetch.params, this.formatParams(this.$topFilter.form));
+      this.showTable = true;
+    });
     setTimeout(() => this.calcTableHeight());
   },
   destroyed() {
@@ -182,16 +187,18 @@ export default {
         })
       ];
     },
-    filterChangeHandle(val) {
-      let params = this.table.fetch?.params ?? {};
-      // 处理查询参数
-      if (isFunction(this.beforeFetch)) {
-        val = this.beforeFetch(val);
-      }
+    formatParams(val) {
+      const { name, getServerConfig, beforeFetch = k => k } = this;
+      val = beforeFetch(val);
       // tds 搜索条件的参数规范
-      if (isFunction(this.getServerConfig)) {
-        val = { name: this.name, condition: val };
+      if (name && isFunction(getServerConfig)) {
+        val = { name, condition: val };
       }
+      return val;
+    },
+    filterChangeHandle(val) {
+      const params = this.table.fetch?.params ?? {};
+      val = this.formatParams(val);
       this.fetch.xhrAbort = !1;
       this.fetch.params = merge({}, params, val);
       // 内存分页，获取数据
@@ -270,25 +277,27 @@ export default {
     }
   },
   render() {
-    const { loading, initialValue, topFilters, showFilterCollapse, height, columns, tableList, fetch, webPagination, disabled } = this;
+    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, tableList, fetch, webPagination, disabled } = this;
     const tableProps = { props: !webPagination ? { fetch } : { dataSource: tableList, webPagination: !0 } };
     return (
       <div>
         <Spin spinning={loading} tip="Loading...">
           <TopFilter ref="topFilter" initialValue={initialValue} list={topFilters} isCollapse={showFilterCollapse} onChange={this.filterChangeHandle} onCollapseChange={this.collapseHandle} />
-          <VirtualTable
-            ref="vTable"
-            height={height}
-            columns={columns}
-            {...tableProps}
-            rowKey={this.table.rowKey}
-            rowSelection={{
-              type: 'radio',
-              onChange: this.selectedRowChange
-            }}
-            columnsChange={columns => (this.columns = columns)}
-            onRowDblclick={this.dbClickHandle}
-          />
+          {showTable ? (
+            <VirtualTable
+              ref="vTable"
+              height={height}
+              columns={columns}
+              {...tableProps}
+              rowKey={this.table.rowKey}
+              rowSelection={{
+                type: 'radio',
+                onChange: this.selectedRowChange
+              }}
+              columnsChange={columns => (this.columns = columns)}
+              onRowDblclick={this.dbClickHandle}
+            />
+          ) : null}
         </Spin>
         <div
           style={{

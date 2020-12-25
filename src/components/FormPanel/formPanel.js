@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-23 11:57:02
+ * @Last Modified time: 2020-12-24 15:57:09
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -358,7 +358,7 @@ export default {
             const { data } = cloneDeep(require('@/mock/tableData').default);
             return resolve(data.items);
           } else {
-            const params = merge({}, table.fetch?.params, beforeFetch(initialValue), setShFilterValues(val), { currentPage: 1, pageSize: 500 });
+            const params = merge({}, table.fetch?.params, beforeFetch({ ...initialValue, ...setShFilterValues(val) }), { currentPage: 1, pageSize: 500 });
             try {
               const res = await table.fetch.api(params);
               if (res.code === 200) {
@@ -525,9 +525,12 @@ export default {
               if (!open(this.form)) return;
               this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
             }}
-            nativeOnKeydown={e => {
-              if (e.keyCode !== 13) return;
-              onEnter(e.target.value);
+            nativeOnKeydown={ev => {
+              if (ev.keyCode !== 13) return;
+              if (isSearchHelper) {
+                return this.$refs[`INPUT-${fieldName}`].blur();
+              }
+              onEnter(ev.target.value);
               this.doFormItemValidate(fieldName);
             }}
           >

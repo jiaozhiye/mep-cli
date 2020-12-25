@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-23 17:09:41
+ * @Last Modified time: 2020-12-24 14:00:47
  */
 import dayjs from 'dayjs';
 import { get, isFunction } from 'lodash';
@@ -221,7 +221,7 @@ export default {
     ];
     return (
       <span class={cls} title={this.t('table.export.text')}>
-        {exportFetch || exportFileType === 'xls' ? (
+        {exportFetch || (this.$$table.spanMethod && exportFileType === 'xls') ? (
           <i class="iconfont icon-export-excel" onClick={() => (exportFetch ? this.exportHandle(exportFileName) : this.localExportHandle(exportFileName))} />
         ) : (
           <JsonToExcel type="text" {...wrapProps} />

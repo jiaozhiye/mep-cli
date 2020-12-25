@@ -2,12 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 10:17:38
+ * @Last Modified time: 2020-12-24 15:58:26
  */
-import { isEqual, isFunction, isObject } from 'lodash';
+import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 import Locale from '../locale/mixin';
-import { getCellValue, setCellValue, deepFindColumn } from '../utils';
+import { getCellValue, setCellValue, deepFindColumn, sleep } from '../utils';
 
 import Checkbox from '../checkbox';
 import InputText from './InputText';
@@ -25,7 +25,8 @@ export default {
   inject: ['$$table', '$$body'],
   data() {
     return {
-      shVisible: false
+      shVisible: false, // 是否显示搜索帮助面板
+      shMatching: false // 是否正在匹配数据回显
     };
   },
   computed: {
@@ -58,7 +59,7 @@ export default {
       return this.store.state.validate.find(({ x, y }) => x === this.rowKey && y === this.columnKey)?.text;
     },
     isEditing() {
-      return this.editable || !this.passValidate;
+      return this.editable || !this.passValidate || this.shVisible || this.shMatching;
     }
   },
   watch: {
@@ -265,7 +266,13 @@ export default {
     [`search-helperHandle`](row, column) {
       const { dataIndex, precision } = column;
       const { extra = {}, helper, rules = [], onClick = noop, onChange = noop } = this.options;
-      // 设置搜索帮助的值
+      const createFieldAliasMap = () => {
+        if (!isFunction(helper.fieldAliasMap)) {
+          console.error('[Table]: 单元格的搜索帮助 `fieldAliasMap` 配置不正确');
+        }
+        const { fieldAliasMap = noop } = helper;
+        return Object.assign({}, fieldAliasMap());
+      };
       const setHelperValues = (val = '', others) => {
         // 对其他单元格赋值 & 校验
         if (isObject(others) && Object.keys(others).length) {
@@ -285,6 +292,79 @@ export default {
         onChange({ [this.dataKey]: val }, row);
         this.$$table.dataChangeHandle();
       };
+      const closeHelperHandle = (visible, data) => {
+        if (isObject(data)) {
+          const alias = createFieldAliasMap();
+          // 其他字段的集合
+          const others = {};
+          for (let key in alias) {
+            const dataKey = alias[key];
+            if (key === dataIndex) continue;
+            others[key] = data[dataKey];
+          }
+          const current = alias[dataIndex] ? data[alias[dataIndex]] : '';
+          // 关闭的前置钩子
+          const beforeClose = helper.beforeClose ?? helper.close ?? trueNoop;
+          if (!beforeClose(data, { [this.dataKey]: prevValue }, row, column)) return;
+          // 对表格单元格赋值
+          setHelperValues(current, others);
+        }
+        this.shVisible = visible;
+      };
+      const setHelperFilterValues = val => {
+        const { filterAliasMap = noop } = helper;
+        const alias = Object.assign([], filterAliasMap());
+        const inputParams = { [dataIndex]: val };
+        alias.forEach(x => (inputParams[x] = val));
+        return inputParams;
+      };
+      const getHelperData = val => {
+        const { table, initialValue = {}, beforeFetch = k => k } = helper;
+        return new Promise(async (resolve, reject) => {
+          this.shMatching = !0;
+          if (process.env.MOCK_DATA === 'true') {
+            await sleep(500);
+            const { data } = cloneDeep(require('@/mock/tableData').default);
+            resolve(data.items);
+          } else {
+            const params = merge({}, table.fetch?.params, beforeFetch({ ...initialValue, ...setHelperFilterValues(val) }), { currentPage: 1, pageSize: 500 });
+            try {
+              const res = await table.fetch.api(params);
+              if (res.code === 200) {
+                const list = get(res.data, table.fetch.dataKey) ?? (Array.isArray(res.data) ? res.data : []);
+                resolve(list);
+              } else {
+                reject();
+              }
+            } catch (err) {
+              reject();
+            }
+          }
+          this.shMatching = !1;
+        });
+      };
+      const resetHelperValue = (list = [], val) => {
+        const alias = createFieldAliasMap();
+        const records = list.filter(data => {
+          return getCellValue(data, alias[dataIndex])
+            .toString()
+            .includes(val);
+        });
+        if (records.length === 1) {
+          return closeHelperHandle(false, records[0]);
+        }
+        openHelperPanel();
+        setHelperValues('');
+        this.$nextTick(() => {
+          this.$refs[`sh-panel-${this.dataKey}`]?.$refs[`topFilter`]?.SET_FORM_VALUES(setHelperFilterValues(val));
+        });
+      };
+      const openHelperPanel = () => {
+        // 打开的前置钩子
+        const beforeOpen = helper.beforeOpen ?? helper.open ?? trueNoop;
+        if (!beforeOpen({ [this.dataKey]: prevValue }, row, column)) return;
+        this.shVisible = !0;
+      };
       const dialogProps = {
         props: {
           visible: this.shVisible,
@@ -303,35 +383,16 @@ export default {
         }
       };
       const shProps = {
+        ref: `sh-panel-${this.dataKey}`,
         props: {
           ...helper
         },
         on: {
-          close: (visible, data) => {
-            if (isObject(data)) {
-              if (!isFunction(helper.fieldAliasMap)) {
-                console.error('[Table]: 单元格的搜索帮助 `fieldAliasMap` 配置不正确');
-              }
-              // 字段映射
-              const alias = helper.fieldAliasMap();
-              const result = {};
-              for (let key in alias) {
-                const dataKey = alias[key];
-                if (key === dataIndex) continue;
-                result[key] = data[dataKey];
-              }
-              const current = alias[dataIndex] ? data[alias[dataIndex]] : '';
-              // 关闭的前置钩子
-              const beforeClose = helper.beforeClose ?? helper.close ?? trueNoop;
-              if (!beforeClose(data, { [this.dataKey]: prevValue }, row, column)) return;
-              // 对表格单元格赋值
-              setHelperValues(current, result);
-            }
-            this.shVisible = visible;
-          }
+          close: closeHelperHandle
         }
       };
       const prevValue = getCellValue(row, dataIndex);
+      const remoteMatch = helper && (helper.remoteMatch ?? !0);
       return (
         <div class="search-helper">
           <InputText
@@ -342,11 +403,24 @@ export default {
               setCellValue(row, dataIndex, val);
             }}
             maxlength={extra.maxlength}
-            readonly={extra.readonly ?? !0}
+            readonly={extra.readonly}
             clearable={extra.clearable ?? !0}
             disabled={extra.disabled}
             onChange={val => {
+              if (val && remoteMatch) {
+                return getHelperData(val)
+                  .then(list => resetHelperValue(list, val))
+                  .catch(() => setHelperValues(''));
+              }
               setHelperValues(val);
+            }}
+            nativeOnDblclick={ev => {
+              isObject(helper) && openHelperPanel();
+            }}
+            nativeOnKeydown={ev => {
+              if (ev.keyCode === 13) {
+                this.$refs[`search-helper-${this.dataKey}`].blur();
+              }
             }}
           >
             <el-button
@@ -354,14 +428,7 @@ export default {
               slot="append"
               icon="el-icon-search"
               onClick={ev => {
-                if (isObject(helper)) {
-                  // 打开的前置钩子
-                  const beforeOpen = helper.beforeOpen ?? helper.open ?? trueNoop;
-                  if (!beforeOpen({ [this.dataKey]: prevValue }, row, column)) return;
-                  this.shVisible = !0;
-                } else {
-                  onClick({ [this.dataKey]: prevValue }, row, column, setHelperValues, ev);
-                }
+                isObject(helper) ? openHelperPanel() : onClick({ [this.dataKey]: prevValue }, row, column, setHelperValues, ev);
               }}
             />
           </InputText>

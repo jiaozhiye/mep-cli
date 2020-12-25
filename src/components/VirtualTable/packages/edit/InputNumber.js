@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-25 17:19:31
+ * @Last Modified time: 2020-12-24 12:39:29
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -107,6 +107,7 @@ export default {
           value={currentValue}
           onInput={val => {
             let isPassed = (!Number.isNaN(val) && regExp.test(val)) || val === '' || val === '-';
+            // 数值类型校验
             if (!isPassed) return;
             // 不允许是负数
             if (min === 0 && val === '-') return;
@@ -135,6 +136,7 @@ export default {
             this.setValueHandle(val);
             this.emitEventHandle(val);
           }}
+          nativeOnClick={ev => ev.stopPropagation()}
         />
       </div>
     );

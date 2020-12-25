@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-07 20:21:02
+ * @Last Modified time: 2020-12-24 12:55:24
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -46,6 +46,9 @@ export default {
     focus() {
       this.$refs['input']?.focus();
     },
+    blur() {
+      this.$refs['input']?.blur();
+    },
     select() {
       this.$refs['input']?.select();
     }
@@ -70,6 +73,7 @@ export default {
           this.setValueHandle(val);
           this.emitEventHandle(val);
         }}
+        nativeOnClick={ev => ev.stopPropagation()}
       >
         <template slot="append">{$slots[`append`]}</template>
       </el-input>

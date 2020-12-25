@@ -2,18 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:11:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-10 14:30:49
+ * @Last Modified time: 2020-12-23 18:11:05
  */
 %TheadAlignCenter {
   .v-cell--text {
     justify-content: center !important;
-  }
-  &:not(.v-column-has-sorter):not(.v-column-has-filter) {
-    .v-cell--text {
-      .v-cell {
-        padding-right: $v-module-distance;
-      }
-    }
   }
 }
 
@@ -56,6 +49,11 @@
   }
   &.col--right {
     @extend %TheadAlignRight;
+  }
+  &:not(.v-column-has-sorter):not(.v-column-has-filter) {
+    .v-cell--text .v-cell {
+      padding-right: $v-module-distance;
+    }
   }
   &.v-column--required {
     .v-cell {

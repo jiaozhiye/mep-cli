@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-12 16:26:19
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-15 17:25:58
+ * @Last Modified time: 2020-12-23 18:13:27
  */
 import localforage from 'localforage';
 import { isBracketBalance } from '../filter-sql';
@@ -171,8 +171,9 @@ export default {
           dataIndex: 'condition',
           width: 160,
           editRender: row => {
-            let filterType = this.filterColumns.find(x => x.dataIndex === row[`fieldName`])?.filter.type;
-            let dictItems = this.filterColumns.find(x => x.dataIndex === row[`fieldName`])?.dictItems ?? [];
+            let column = this.filterColumns.find(x => x.dataIndex === row[`fieldName`]);
+            let filterType = column?.filter.type;
+            let dictItems = column?.filter?.items ?? column?.dictItems ?? [];
             return {
               type: this.getConditionType(filterType, this.isMultipleSelect(row[`expression`])),
               editable: true,
