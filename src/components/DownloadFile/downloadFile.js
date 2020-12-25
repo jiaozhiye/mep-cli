@@ -2,11 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-10 09:40:39
+ * @Last Modified time: 2020-12-25 09:51:25
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
 import Locale from '../_utils/mixins/locale';
+import { download } from '../_utils/tool';
 
 export default {
   name: 'DownloadFile',
@@ -54,21 +55,11 @@ export default {
     },
     // 执行下载动作
     async downloadFile(url, params) {
-      const { headers, data } = await this.downLoadByUrl(url, params);
+      const { headers, data: blob } = await this.downLoadByUrl(url, params);
       const contentDisposition = headers['content-disposition'];
       // 获取文件名
       const fileName = this.fileName ? this.fileName : contentDisposition ? contentDisposition.split(';')[1].split('filename=')[1] : url.slice(url.lastIndexOf('/') + 1);
-      // ie10+
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(data, decodeURI(fileName));
-      } else {
-        const downloadUrl = window.URL.createObjectURL(data);
-        let a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = decodeURI(fileName);
-        a.click();
-        a = null;
-      }
+      download(blob, fileName);
     }
   },
   render() {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 14:00:47
+ * @Last Modified time: 2020-12-25 10:41:55
  */
 import dayjs from 'dayjs';
 import { get, isFunction } from 'lodash';
@@ -10,6 +10,7 @@ import { get, isFunction } from 'lodash';
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
 import ExcellentExport from './tableToExcel';
+import { download } from '../../../_utils/tool';
 
 import config from '../config';
 import Locale from '../locale/mixin';
@@ -114,7 +115,7 @@ export default {
           pageSize: undefined
         });
         if (res.data) {
-          this.downloadFile(res.data, fileName);
+          download(res.data, fileName);
         }
       } catch (err) {}
       this.exporting = !1;
@@ -122,7 +123,7 @@ export default {
     localExportHandle(fileName) {
       const tableHTML = this._toTable(convertToRows(this.headColumns), this.flatColumns);
       const blob = ExcellentExport.excel(tableHTML);
-      this.downloadFile(blob, fileName);
+      download(blob, fileName);
     },
     _toTable(columnRows, flatColumns) {
       const { tableFullData, showHeader, showFooter, $refs } = this.$$table;
@@ -182,20 +183,6 @@ export default {
         return render(text, row, column, rowIndex, columnIndex);
       }
       return this.$$table.$$tableBody.renderText(text, column, row);
-    },
-    // 执行下载动作
-    downloadFile(blob, fileName) {
-      // ie10+
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(blob, decodeURI(fileName));
-      } else {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = decodeURI(fileName);
-        a.click();
-        a = null;
-      }
     }
   },
   render() {

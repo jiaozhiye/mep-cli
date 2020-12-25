@@ -2,13 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-23 17:10:17
+ * @Last Modified time: 2020-12-25 10:42:26
  */
-import { convertToRows, deepFindColumn, filterTableColumns, downloadFile, getCellValue } from '../utils';
+import _ from 'lodash';
+import Cookies from 'js-cookie';
+import { convertToRows, deepFindColumn, filterTableColumns, getCellValue } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
-import Cookies from 'js-cookie';
-import _ from 'lodash';
+import { download } from '../../../_utils/tool';
 
 export default {
   name: 'PrintTable',
@@ -143,8 +144,8 @@ export default {
       return res;
     },
     printHandle() {
-      const opts = { filename: 'print', type: 'html', download: false };
-      downloadFile(opts, this.toHtml()).then(({ content, blob }) => {
+      const opts = { filename: 'print', type: 'html', isDownload: false };
+      this.downloadFile(opts, this.toHtml()).then(({ content, blob }) => {
         let printFrame = document.createElement('iframe');
         printFrame.setAttribute('frameborder', '0');
         printFrame.setAttribute('width', '100%');
@@ -253,6 +254,17 @@ export default {
           </tr>
         </table>
       `;
+    },
+    downloadFile(opts, content) {
+      const { filename, type, isDownload } = opts;
+      const name = `${filename}.${type}`;
+      if (window.Blob) {
+        const blob = new Blob([content], { type: `text/${type}` });
+        if (!isDownload) {
+          return Promise.resolve({ type, content, blob });
+        }
+        download(blob, name);
+      }
     },
     renderCell(row, rowIndex, column, columnIndex) {
       const { dataIndex, render, extraRender } = column;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 10:58:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 10:21:49
+ * @Last Modified time: 2020-12-25 09:33:20
  */
 /**
  * @description 判断浏览器是否 IE11
@@ -128,4 +128,24 @@ export const getParentNode = (el, parElCls) => {
     node = node.parentNode;
   }
   return null;
+};
+
+/**
+ * @description 文件下载
+ * @param {Blob} blob 对象
+ * @param {string} fileName 文件名
+ * @returns
+ */
+export const download = (blob, fileName) => {
+  // ie10+
+  if (navigator.msSaveBlob) {
+    navigator.msSaveBlob(blob, decodeURI(fileName));
+  } else {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = decodeURI(fileName);
+    a.click();
+    a = null;
+  }
 };

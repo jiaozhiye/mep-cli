@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-16 10:53:39
+ * @Last Modified time: 2020-12-25 10:26:43
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -10,6 +10,7 @@ import canvasCompress from './compress';
 import CropperPanel from './CropperPanel';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
+import { download } from '../_utils/tool';
 
 export default {
   name: 'UploadCropper',
@@ -177,18 +178,12 @@ export default {
     // 执行下载动作
     async downloadFile({ url, name }, params) {
       const blob = await this.downLoadByUrl(url, params);
-      const fileName = !name ? url.slice(url.lastIndexOf('/') + 1) : name;
-      // ie10+
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(blob, decodeURI(fileName));
-      } else {
-        const downloadUrl = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = decodeURI(fileName);
-        a.click();
-        a = null;
+      let fileName = url.slice(url.lastIndexOf('/') + 1);
+      if (name) {
+        let extendName = url.slice(url.lastIndexOf('.') + 1);
+        fileName = `${name.slice(0, name.lastIndexOf('.') !== -1 ? name.lastIndexOf('.') : undefined)}.${extendName}`;
       }
+      download(blob, fileName);
     }
   },
   render() {
