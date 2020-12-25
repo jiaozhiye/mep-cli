@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 15:57:09
+ * @Last Modified time: 2020-12-25 18:38:47
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -1566,6 +1566,7 @@ export default {
             style={{ ...style }}
             fixedSize={upload.fixedSize}
             isCalcHeight={upload.isCalcHeight}
+            fileSize={upload.fileSize}
             limit={upload.limit || 1}
             params={upload.params}
             titles={upload.titles}

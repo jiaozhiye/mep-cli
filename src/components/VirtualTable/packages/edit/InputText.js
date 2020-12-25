@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 12:55:24
+ * @Last Modified time: 2020-12-25 17:25:31
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -73,7 +73,11 @@ export default {
           this.setValueHandle(val);
           this.emitEventHandle(val);
         }}
-        nativeOnClick={ev => ev.stopPropagation()}
+        nativeOnClick={ev => {
+          if (Array.from(ev.target.classList).includes('el-input__clear')) {
+            ev.stopPropagation();
+          }
+        }}
       >
         <template slot="append">{$slots[`append`]}</template>
       </el-input>

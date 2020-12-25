@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 10:26:43
+ * @Last Modified time: 2020-12-25 18:19:25
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -36,6 +36,7 @@ export default {
     fixedSize: PropTypes.array.def([1.5, 1]),
     titles: PropTypes.array.def([]),
     limit: PropTypes.number.def(1),
+    fileSize: PropTypes.number,
     params: PropTypes.object.def({}),
     fileTypes: PropTypes.array.def(['jpg', 'png', 'bmp']),
     disabled: PropTypes.bool.def(false)
@@ -100,11 +101,15 @@ export default {
       if (this.uid === file.uid) return;
       this.uid = file.uid;
       this.file = file;
-      this.cropperVisible = true;
+      if (!this.fileSize) {
+        this.cropperVisible = true;
+      } else {
+        this.doUpload();
+      }
     },
     uploadHandler(data) {
       this.fileData = data;
-      this.$refs.upload.submit();
+      this.doUpload();
     },
     closeHandler() {
       this.clearFiles();
@@ -112,17 +117,34 @@ export default {
     clearFiles() {
       this.$refs.upload.clearFiles();
     },
-    async upload() {
+    doUpload() {
+      this.$refs.upload.submit();
+    },
+    beforeUpload(file) {
+      if (!this.fileSize) {
+        return true;
+      }
+      const isLt5M = file.size / 1024 / 1024 < this.fileSize;
+      if (!isLt5M) {
+        this.$message.warning(this.t('uploadFile.sizeLimit', { size: this.fileSize }));
+      }
+      return isLt5M;
+    },
+    async upload(options) {
       const { params, headers } = this.$props;
       const formData = new FormData();
-      const base64 = await canvasCompress({
-        img: this.fileData,
-        type: 'jpg',
-        fillColor: '#fff',
-        width: 1200
-      });
+      let blob = this.file.raw;
+      if (this.fileData) {
+        let base64 = await canvasCompress({
+          img: this.fileData,
+          type: 'jpg',
+          fillColor: '#fff',
+          width: 1200
+        });
+        blob = this.dataURItoBlob(base64.img);
+      }
       // 有的后台需要传文件名，不然会报错
-      formData.append('file', this.dataURItoBlob(base64.img), this.file.name);
+      formData.append('file', blob, this.file.name);
       // 处理请求的额外参数
       for (let key in params) {
         formData.append(key, params[key]);
@@ -134,6 +156,7 @@ export default {
           this.$emit('success', res.data);
         }
       } catch (err) {
+        this.clearFiles();
         this.$emit('error', err);
         this.$message.error(this.t('uploadCropper.uploadError'));
       }
@@ -204,6 +227,7 @@ export default {
         showFileList: false,
         disabled,
         httpRequest: this.upload,
+        beforeUpload: this.beforeUpload,
         onChange: this.changeHandler
       }
     };
