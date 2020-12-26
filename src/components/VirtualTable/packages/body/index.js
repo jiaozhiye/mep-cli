@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-16 15:04:25
+ * @Last Modified time: 2020-12-26 11:24:33
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
@@ -340,7 +340,8 @@ export default {
     setTreeSelectionKeys(key, arr) {
       // on(选中)  off(取消)
       const state = !arr.includes(key) ? 'on' : 'off';
-      this.$$table.selectionKeys = this.createTreeSelectionKeys(key, arr, state);
+      const selectedKeys = this.createTreeSelectionKeys(key, arr, state);
+      this.setSelectionKeys(selectedKeys);
     },
     createTreeSelectionKeys(key, arr, state) {
       const { deriveRowKeys, getAllChildRowKeys, findParentRowKeys } = this.$$table;

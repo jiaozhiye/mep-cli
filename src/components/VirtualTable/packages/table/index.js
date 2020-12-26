@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-23 17:07:24
+ * @Last Modified time: 2020-12-26 11:26:36
  */
 import baseProps from './props';
 import Store from '../store';
@@ -55,6 +55,8 @@ export default {
     this.tableOriginData = [];
     // 内存分页，每页显示的数据
     this.pageTableData = [];
+    // 选中的行记录
+    this.selectionRows = [];
     // 高级检索的条件
     this.superFilters = [];
     // 列汇总条件
@@ -309,8 +311,8 @@ export default {
     selectionKeys(next, prev) {
       if (!this.rowSelection || isEqual(next, prev)) return;
       const { onChange = noop } = this.rowSelection;
-      const selectedRows = tableDataFlatMap(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
-      onChange(next, selectedRows);
+      this.createSelectionRows(next);
+      onChange(next, this.selectionRows);
     },
     [`rowSelection.selectedRowKeys`](next) {
       this.$$tableBody.setClickedValues([next[0], 'index']);

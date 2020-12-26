@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-18 11:36:45
+ * @Last Modified time: 2020-12-26 11:24:58
  */
-import { deepFindRowKey, isArrayContain } from '../utils';
+import { uniqWith } from 'lodash';
+import { deepFindRowKey, tableDataFlatMap, isArrayContain } from '../utils';
 import config from '../config';
 
 const selectionMixin = {
@@ -45,6 +46,11 @@ const selectionMixin = {
       });
       return arr;
     },
+    createSelectionRows(selectedKeys) {
+      const { tableFullData, selectionRows, getRowKey } = this;
+      const uniqRecords = uniqWith([...selectionRows, ...tableFullData], (a, b) => getRowKey(a, a.index) === getRowKey(b, b.index));
+      this.selectionRows = tableDataFlatMap(uniqRecords).filter(row => selectedKeys.includes(getRowKey(row, row.index)));
+    },
     // 选择列已选中 keys
     createSelectionKeys(keys) {
       const { rowSelection, selectionKeys, isTreeTable } = this;
@@ -56,7 +62,9 @@ const selectionMixin = {
           result.push(...this.createTreeSelectionKeys(x, rowSelectionKeys));
         });
       }
-      return type === 'radio' ? rowSelectionKeys.slice(0, 1) : [...new Set([...rowSelectionKeys, ...result])];
+      const selectedKeys = type === 'radio' ? rowSelectionKeys.slice(0, 1) : [...new Set([...rowSelectionKeys, ...result])];
+      this.createSelectionRows(selectedKeys);
+      return selectedKeys;
     }
   }
 };
