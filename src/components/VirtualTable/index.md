@@ -75,6 +75,7 @@
 | width        | 列宽度/最小宽度                                | number                                                            | -      |
 | fixed        | 列固定（IE 下无效）                            | left \| right                                                     | -      |
 | align        | 设置列的对齐方式                               | left \| center \| right                                           | left   |
+| theadAlign   | 设置表头的对齐方式                             | left \| center \| right                                           | left   |
 | hidden       | 是否隐藏列                                     | boolean                                                           | false  |
 | ellipsis     | 超过宽度将自动省略                             | boolean                                                           | false  |
 | className    | 列样式类名                                     | string                                                            | -      |

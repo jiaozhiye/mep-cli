@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 16:37:37
+ * @Last Modified time: 2020-12-30 13:14:55
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -99,7 +99,9 @@ export default {
         sorter,
         isIE
       } = this.$$table;
-      const { dataIndex, colSpan, rowSpan, fixed, align, sorter: isSorter, filter, required, lastFixedLeft, firstFixedRight } = column;
+      const { dataIndex, colSpan, rowSpan, fixed, align: tbodyAlign, theadAlign, sorter: isSorter, filter, required, lastFixedLeft, firstFixedRight } = column;
+      // 表头对齐方式
+      const align = theadAlign || tbodyAlign;
       const cls = [
         `v-header--column`,
         `col--ellipsis`,
