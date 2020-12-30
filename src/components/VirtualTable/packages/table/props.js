@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-16 14:28:22
+ * @Last Modified time: 2020-12-30 09:10:57
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -114,6 +114,7 @@ export default {
   fetch: PropTypes.shape({
     api: PropTypes.func.isRequired, // api 接口
     params: PropTypes.object.isRequired, // 接口参数
+    beforeFetch: PropTypes.func, // 接口前置钩子
     xhrAbort: PropTypes.bool, // 是否取消请求
     stopToFirst: PropTypes.bool, // 是否返回第一页
     dataKey: PropTypes.string // 数据路径

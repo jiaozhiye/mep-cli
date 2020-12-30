@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 13:59:26
+ * @Last Modified time: 2020-12-30 09:08:31
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -17,6 +17,7 @@ import Locale from '../_utils/mixins/locale';
 import Size from '../_utils/mixins/size';
 
 const noop = () => {};
+const trueNoop = () => !0;
 
 export default {
   name: 'SearchHelper',
@@ -52,9 +53,10 @@ export default {
       tableList: [],
       fetch: {
         api: fetch.api,
-        params: cloneDeep(Object.assign({}, fetch.params, this.formatParams(this.initialValue))),
-        dataKey: fetch.dataKey,
-        xhrAbort: fetch.xhrAbort || false
+        params: merge({}, fetch.params, this.formatParams(this.initialValue)),
+        beforeFetch: fetch.beforeFetch || trueNoop,
+        xhrAbort: fetch.xhrAbort || !1,
+        dataKey: fetch.dataKey
       },
       webPagination: webPagination || false,
       loading: false,
@@ -79,7 +81,7 @@ export default {
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
     this.$nextTick(() => {
-      this.fetch.params = Object.assign({}, this.fetch.params, this.formatParams(this.$topFilter.form));
+      this.fetch.params = merge({}, this.fetch.params, this.formatParams(this.$topFilter.form));
       this.showTable = true;
     });
     setTimeout(() => this.calcTableHeight());
@@ -205,8 +207,8 @@ export default {
       this.getTableData();
     },
     async getTableData() {
-      if (!this.webPagination) return;
-      if (!this.fetch.api || this.fetch.xhrAbort) return;
+      if (!this.webPagination || !this.fetch.api) return;
+      if (!this.fetch.beforeFetch(this.fetch.params) || this.fetch.xhrAbort) return;
       // console.log(`ajax 请求参数：`, this.fetch.params);
       this.loading = true;
       if (process.env.MOCK_DATA === 'true') {

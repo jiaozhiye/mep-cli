@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 12:46:01
+ * @Last Modified time: 2020-12-30 09:10:24
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -50,7 +50,9 @@ export default {
   // ajax 获取数据
   async getTableData() {
     const { fetch, fetchParams } = this;
-    if (!fetch || fetch.xhrAbort) return;
+    if (!fetch) return;
+    const { beforeFetch = () => !0, xhrAbort = !1 } = fetch;
+    if (!beforeFetch(fetchParams) || xhrAbort) return;
     // console.log(`ajax 请求参数：`, fetchParams);
     this.showLoading = true;
     if (process.env.MOCK_DATA === 'true') {

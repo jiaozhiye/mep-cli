@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 15:57:56
+ * @Last Modified time: 2020-12-29 15:34:53
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -103,7 +103,7 @@ export default {
           delete this.form[x];
         } else {
           let item = this.formItemList.find(k => k.fieldName === x);
-          this.$set(this.form, x, this.getInitialValue(item, this.initialValue[x]));
+          this.$set(this.form, x, this.getInitialValue(item, this.form[x] ?? this.initialValue[x]));
         }
       });
     },

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 18:38:47
+ * @Last Modified time: 2020-12-29 15:34:36
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -123,7 +123,7 @@ export default {
           if (this.formType === 'onlyShow') {
             item.disabled = true;
           }
-          this.$set(this.form, x, this.getInitialValue(item, this.initialValue[x]));
+          this.$set(this.form, x, this.getInitialValue(item, this.form[x] ?? this.initialValue[x]));
         }
       });
     },

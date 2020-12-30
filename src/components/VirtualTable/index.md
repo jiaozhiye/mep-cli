@@ -93,13 +93,14 @@
 
 ### fetch
 
-| 参数        | 说明                                | 类型    | 默认值 |
-| ----------- | ----------------------------------- | ------- | ------ |
-| api         | ajax 接口，必要参数                 | func    | -      |
-| params      | 接口参数，必要参数                  | object  | -      |
-| xhrAbort    | 是否取消请求                        | boolean | false  |
-| stopToFirst | 是否阻止返回第一页                  | boolean | false  |
-| dataKey     | 数据的 key，支持 `a.b.c` 的路径写法 | string  | items  |
+| 参数        | 说明                                                     | 类型                  | 默认值 |
+| ----------- | -------------------------------------------------------- | --------------------- | ------ |
+| api         | ajax 接口，必要参数                                      | func                  | -      |
+| params      | 接口参数，必要参数                                       | object                | -      |
+| xhrAbort    | 是否取消请求                                             | boolean               | false  |
+| stopToFirst | 是否阻止返回第一页                                       | boolean               | false  |
+| beforeFetch | 执行查询接口的前置钩子，返回 true 执行查询、false 不执行 | Function(params):bool | -      |
+| dataKey     | 数据的 key，支持 `a.b.c` 的路径写法                      | string                | items  |
 
 ### filter
 
