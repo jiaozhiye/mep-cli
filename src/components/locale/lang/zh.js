@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-09 11:55:04
+ * @Last Modified time: 2020-12-31 12:30:06
  */
 import tableZhLocale from '../../VirtualTable/packages/locale/lang/zh';
 
@@ -67,7 +67,8 @@ export default {
     sizeLimit: '大小不能超过 {size}M',
     uploadError: '文件上传失败！',
     downError: '文件下载失败！',
-    text: '点击上传'
+    text: '点击上传',
+    dragableText: '拖放文件，或'
   },
   webPrint: {
     noData: 'pdf 文件未载入，无法打印！',

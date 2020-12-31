@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 18:19:25
+ * @Last Modified time: 2020-12-31 13:23:36
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -45,8 +45,7 @@ export default {
     this.uploadWrap = null;
     this.fileData = null; // 文件裁剪之后的 blob
     this.uid = ''; // 文件的 uid
-    this.width = 148;
-    this.height = 148;
+    this.width = 146;
     this.dialogImageUrl = ''; // 预览图片地址
     return {
       file: null, // 当前被选择的图片文件
@@ -55,6 +54,11 @@ export default {
       cropperVisible: false,
       isLoading: false
     };
+  },
+  computed: {
+    calcHeight() {
+      return this.isCalcHeight && this.fixedSize.length === 2 ? Number.parseInt((this.width * this.fixedSize[1]) / this.fixedSize[0]) : this.width;
+    }
   },
   watch: {
     initialValue(val) {
@@ -164,9 +168,7 @@ export default {
       this.isLoading = false;
     },
     setUploadWrapHeight() {
-      const iHeight = this.isCalcHeight && this.fixedSize.length === 2 ? Number.parseInt((this.width * this.fixedSize[1]) / this.fixedSize[0]) : this.height;
-      this.uploadWrap.style.height = `${iHeight}px`;
-      this.uploadWrap.style.lineHeight = `${iHeight - 2}px`;
+      this.uploadWrap.style.height = `${this.calcHeight}px`;
     },
     // base64 转成 bolb 对象
     dataURItoBlob(base64Data) {
@@ -210,7 +212,7 @@ export default {
     }
   },
   render() {
-    const { limit, disabled, file, fixedSize, fileList, titles, fileTypes, dialogImageUrl } = this;
+    const { limit, disabled, file, fixedSize, calcHeight, fileList, titles, fileTypes, dialogImageUrl } = this;
     const prefixCls = this.getPrefixCls('cropper--wrapper');
     const previewCls = this.getPrefixCls('cropper--preview');
     const cls = {
@@ -222,6 +224,7 @@ export default {
         listType: 'picture-card',
         accept: 'image/jpg, image/jpeg, image/png, image/bmp',
         limit,
+        drag: true,
         multiple: false,
         autoUpload: false,
         showFileList: false,
@@ -229,6 +232,9 @@ export default {
         httpRequest: this.upload,
         beforeUpload: this.beforeUpload,
         onChange: this.changeHandler
+      },
+      style: {
+        display: fileList.length !== limit ? 'block' : 'none'
       }
     };
     const previewDialogProps = {
@@ -266,32 +272,36 @@ export default {
     };
     return (
       <div class={cls}>
-        <el-upload ref="upload" {...uploadProps}>
+        <ul class="el-upload-list el-upload-list--picture-card">
           {fileList.map((item, index) => (
-            <div key={index} class="el-upload-list__item" onClick={ev => ev.stopPropagation()}>
-              <img class="img" src={item.url} alt />
-              {titles[index] && <h5 class="title">{titles[index]}</h5>}
-              <span class="el-upload-list__item-actions">
-                <span class="el-upload-list__item-dot">
-                  <i class="el-icon-zoom-in" onClick={() => this.handlePreview(index)} />
-                </span>
-                {!disabled && (
+            <li key={index} class="el-upload-list__item" style={{ height: `${calcHeight}px` }} onClick={ev => ev.stopPropagation()}>
+              <div>
+                <img class="el-upload-list__item-thumbnail" src={item.url} alt />
+                {titles[index] && <h5 class="title">{titles[index]}</h5>}
+                <span class="el-upload-list__item-actions">
                   <span class="el-upload-list__item-dot">
-                    <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
+                    <i class="el-icon-zoom-in" onClick={() => this.handlePreview(index)} />
                   </span>
-                )}
-                <span class="el-upload-list__item-dot">
-                  <i class="el-icon-download" onClick={() => this.downloadHandle(index)} />
+                  {!disabled && (
+                    <span class="el-upload-list__item-dot">
+                      <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
+                    </span>
+                  )}
+                  <span class="el-upload-list__item-dot">
+                    <i class="el-icon-download" onClick={() => this.downloadHandle(index)} />
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
+            </li>
           ))}
-          {fileList.length !== limit && (
-            <div slot="default" class="upload-icon-plus el-upload-list__item">
-              <i class="el-icon-plus" />
-              <span>{titles[fileList.length]}</span>
+        </ul>
+        <el-upload ref="upload" class="upload--wrapper" {...uploadProps}>
+          <template slot="trigger">
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">
+              {this.t('uploadFile.dragableText')} <em>{this.t('uploadFile.text')}</em>
             </div>
-          )}
+          </template>
           <div slot="tip" class="el-upload__tip">
             {this.t('uploadCropper.tooltip', { type: fileTypes.join(',') })}
           </div>
