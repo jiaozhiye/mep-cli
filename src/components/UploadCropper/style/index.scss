@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-31 13:22:28
+ * @Last Modified time: 2021-01-02 09:02:15
  */
 @import '../../style/index.scss';
 
@@ -15,9 +15,19 @@ $prefix-cls: '#{$v-prefix}-cropper';
   flex-wrap: wrap;
   .el-upload-list {
     display: flex;
-    .el-upload-list__item {
+    &__item {
       border-radius: $border-radius-base;
       border: 1px dashed #c0c0c0;
+      &-title {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 4px 5px;
+        line-height: 1.2;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.55);
+      }
     }
   }
   .el-upload--picture-card {
@@ -43,7 +53,7 @@ $prefix-cls: '#{$v-prefix}-cropper';
     }
     .el-upload__text {
       font-size: 12px;
-      line-height: 20px;
+      line-height: 1.5;
     }
   }
 }

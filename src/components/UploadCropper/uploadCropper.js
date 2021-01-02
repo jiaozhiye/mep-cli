@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-31 13:23:36
+ * @Last Modified time: 2021-01-02 08:46:33
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -209,10 +209,38 @@ export default {
         fileName = `${name.slice(0, name.lastIndexOf('.') !== -1 ? name.lastIndexOf('.') : undefined)}.${extendName}`;
       }
       download(blob, fileName);
+    },
+    renderPictureCard() {
+      const { disabled, calcHeight, fileList, titles } = this;
+      return (
+        <ul class="el-upload-list el-upload-list--picture-card">
+          {fileList.map((item, index) => (
+            <li key={index} class="el-upload-list__item" style={{ height: `${calcHeight}px` }} onClick={ev => ev.stopPropagation()}>
+              <div>
+                <img class="el-upload-list__item-thumbnail" src={item.url} alt />
+                {titles[index] && <h5 class="el-upload-list__item-title">{titles[index]}</h5>}
+                <span class="el-upload-list__item-actions">
+                  <span class="el-upload-list__item-dot">
+                    <i class="el-icon-zoom-in" onClick={() => this.handlePreview(index)} />
+                  </span>
+                  {!disabled && (
+                    <span class="el-upload-list__item-dot">
+                      <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
+                    </span>
+                  )}
+                  <span class="el-upload-list__item-dot">
+                    <i class="el-icon-download" onClick={() => this.downloadHandle(index)} />
+                  </span>
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      );
     }
   },
   render() {
-    const { limit, disabled, file, fixedSize, calcHeight, fileList, titles, fileTypes, dialogImageUrl } = this;
+    const { limit, disabled, file, fixedSize, fileList, fileTypes, dialogImageUrl } = this;
     const prefixCls = this.getPrefixCls('cropper--wrapper');
     const previewCls = this.getPrefixCls('cropper--preview');
     const cls = {
@@ -272,29 +300,7 @@ export default {
     };
     return (
       <div class={cls}>
-        <ul class="el-upload-list el-upload-list--picture-card">
-          {fileList.map((item, index) => (
-            <li key={index} class="el-upload-list__item" style={{ height: `${calcHeight}px` }} onClick={ev => ev.stopPropagation()}>
-              <div>
-                <img class="el-upload-list__item-thumbnail" src={item.url} alt />
-                {titles[index] && <h5 class="title">{titles[index]}</h5>}
-                <span class="el-upload-list__item-actions">
-                  <span class="el-upload-list__item-dot">
-                    <i class="el-icon-zoom-in" onClick={() => this.handlePreview(index)} />
-                  </span>
-                  {!disabled && (
-                    <span class="el-upload-list__item-dot">
-                      <i class="el-icon-delete" onClick={() => this.handleRemove(index)} />
-                    </span>
-                  )}
-                  <span class="el-upload-list__item-dot">
-                    <i class="el-icon-download" onClick={() => this.downloadHandle(index)} />
-                  </span>
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        {this.renderPictureCard()}
         <el-upload ref="upload" class="upload--wrapper" {...uploadProps}>
           <template slot="trigger">
             <i class="el-icon-upload" />
