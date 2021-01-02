@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-26 11:26:36
+ * @Last Modified time: 2021-01-02 09:31:38
  */
 import baseProps from './props';
 import Store from '../store';
@@ -311,6 +311,7 @@ export default {
     selectionKeys(next, prev) {
       if (!this.rowSelection || isEqual(next, prev)) return;
       const { onChange = noop } = this.rowSelection;
+      // 设置选中的行数据
       this.createSelectionRows(next);
       onChange(next, this.selectionRows);
     },
@@ -371,13 +372,14 @@ export default {
       this.doLayout();
     });
   },
-  activated() {
-    this.scrollYLoad && this.loadScrollYData(0);
-  },
   mounted() {
     this.doLayout();
     this.bindEvents();
     this.createResizeState();
+  },
+  activated() {
+    this.scrollYLoad && this.loadScrollYData(0);
+    this.calcTableHeight();
   },
   destroyed() {
     this.destroy();
