@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-30 09:08:31
+ * @Last Modified time: 2021-01-08 15:16:53
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -51,6 +51,11 @@ export default {
       height: 300,
       columns: this.createTableColumns(),
       tableList: [],
+      selection: {
+        type: 'radio',
+        selectedRowKeys: [],
+        onChange: this.selectedRowChange
+      },
       fetch: {
         api: fetch.api,
         params: merge({}, fetch.params, this.formatParams(this.initialValue)),
@@ -233,6 +238,15 @@ export default {
       this.result = row;
       this.confirmHandle();
     },
+    rowEnterHandle(row) {
+      if (!row) return;
+      this.dbClickHandle(row);
+    },
+    dataChangeHandle(list) {
+      if (!list.length) return;
+      const { getRowKey } = this.$vTable;
+      this.selection.selectedRowKeys = [getRowKey(list[0], list[0].index)];
+    },
     confirmHandle() {
       const tableData = this.createTableData();
       if (this.callback) {
@@ -279,12 +293,20 @@ export default {
     }
   },
   render() {
-    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, tableList, fetch, webPagination, disabled } = this;
+    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, selection, tableList, fetch, webPagination, disabled } = this;
     const tableProps = { props: !webPagination ? { fetch } : { dataSource: tableList, webPagination: !0 } };
     return (
       <div>
         <Spin spinning={loading} tip="Loading...">
-          <TopFilter ref="topFilter" initialValue={initialValue} list={topFilters} isCollapse={showFilterCollapse} onChange={this.filterChangeHandle} onCollapseChange={this.collapseHandle} />
+          <TopFilter
+            ref="topFilter"
+            initialValue={initialValue}
+            list={topFilters}
+            isAutoFocus={false}
+            isCollapse={showFilterCollapse}
+            onChange={this.filterChangeHandle}
+            onCollapseChange={this.collapseHandle}
+          />
           {showTable ? (
             <VirtualTable
               ref="vTable"
@@ -292,12 +314,11 @@ export default {
               columns={columns}
               {...tableProps}
               rowKey={this.table.rowKey}
-              rowSelection={{
-                type: 'radio',
-                onChange: this.selectedRowChange
-              }}
+              rowSelection={selection}
               columnsChange={columns => (this.columns = columns)}
+              onRowEnter={this.rowEnterHandle}
               onRowDblclick={this.dbClickHandle}
+              onDataChange={this.dataChangeHandle}
             />
           ) : null}
         </Spin>

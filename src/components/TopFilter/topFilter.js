@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 08:31:18
+ * @Last Modified time: 2021-01-08 14:58:29
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -40,6 +40,7 @@ export default {
     cols: PropTypes.number,
     labelWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(80),
     showLabelErrorColor: PropTypes.bool,
+    isAutoFocus: PropTypes.bool.def(true),
     isCollapse: PropTypes.bool.def(true),
     isDisabled: PropTypes.bool.def(false),
     isSubmitBtn: PropTypes.bool.def(true),
@@ -170,8 +171,9 @@ export default {
       return Object.assign({}, this.initialValue, target);
     },
     createInputFocus() {
+      if (!this.isAutoFocus) return;
       const { type, fieldName } = this.list.filter(x => x.fieldName && !x.hidden)[0] ?? {};
-      if (type === 'INPUT' && fieldName) {
+      if ((type === 'INPUT' || type === 'INPUT_NUMBER') && fieldName) {
         this.$refs[`${type}-${fieldName}`].focus();
       }
     },

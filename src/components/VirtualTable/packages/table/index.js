@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-02 09:31:38
+ * @Last Modified time: 2021-01-08 14:59:09
  */
 import baseProps from './props';
 import Store from '../store';
@@ -316,18 +316,18 @@ export default {
       onChange(next, this.selectionRows);
     },
     [`rowSelection.selectedRowKeys`](next) {
-      this.$$tableBody.setClickedValues([next[0], 'index']);
+      if (this.rowSelection.type === 'radio') {
+        this.$$tableBody.setClickedValues([next[0], '__selection__']);
+      }
       this.selectionKeys = this.createSelectionKeys(next);
       if (this.isTreeTable) {
         this.rowExpandedKeys = this.createRowExpandedKeys();
       }
     },
-    [`expandable.expandedRowKeys`](next) {
-      this.$$tableBody.setClickedValues([next[0], 'index']);
+    [`expandable.expandedRowKeys`]() {
       this.rowExpandedKeys = this.createRowExpandedKeys();
     },
-    [`treeStructure.expandedRowKeys`](next) {
-      this.$$tableBody.setClickedValues([next[0], 'index']);
+    [`treeStructure.expandedRowKeys`]() {
       this.rowExpandedKeys = this.createRowExpandedKeys();
     },
     rowExpandedKeys(next, prev) {
