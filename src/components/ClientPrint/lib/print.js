@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-21 14:42:06
+ * @Last Modified time: 2021-01-06 19:59:12
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import dayjs from 'dayjs';
@@ -101,7 +101,14 @@ export default {
       LODOP.SET_PRINT_COPIES(copies);
 
       // 双面打印
-      LODOP.SET_PRINT_MODE('DOUBLE_SIDED_PRINT', !!setting.doubleSide);
+      if (setting.doubleSide) {
+        if (setting.doubleSideType === 'auto') {
+          LODOP.SET_PRINT_MODE('PRINT_DUPLEX', 2);
+          LODOP.SET_PRINT_MODE('PRINT_DEFAULTSOURCE', 1);
+        } else {
+          LODOP.SET_PRINT_MODE('DOUBLE_SIDED_PRINT', 1);
+        }
+      }
 
       // 完打印后，关闭预览窗口
       LODOP.SET_PRINT_MODE('AUTO_CLOSE_PREWINDOW', 1);

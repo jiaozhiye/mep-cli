@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 16:53:13
+ * @Last Modified time: 2021-01-07 19:05:21
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -73,6 +73,9 @@ export default {
     },
     focus() {
       this.$refs['input']?.focus();
+    },
+    blur() {
+      this.$refs['input']?.blur();
     },
     select() {
       this.$refs['input']?.select();

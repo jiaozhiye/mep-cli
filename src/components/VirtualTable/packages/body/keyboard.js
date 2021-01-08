@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-27 08:05:59
+ * @Last Modified time: 2021-01-07 19:06:18
  */
 import { isUndefined } from 'lodash';
 
@@ -101,6 +101,26 @@ const keyboardMixin = {
       const v = isUndefined(index) ? allRowKeys.findIndex(x => x === rowKey) : index;
       if (v < 0) return;
       this.$el.scrollTop = v * scrollYStore.rowHeight;
+    },
+    createInputFocus() {
+      const { tableFullData, getRowKey } = this.$$table;
+      if (!this.editableColumns.length || !tableFullData.length) return;
+      const firstRecord = tableFullData[0];
+      const firstInputColumn = this.editableColumns.find(column => {
+        let options = column.editRender(firstRecord, column);
+        return ['text', 'number', 'search-helper'].includes(options.type);
+      });
+      if (!firstInputColumn) return;
+      const rowKey = getRowKey(firstRecord, firstRecord.index);
+      const { dataIndex, editRender } = firstInputColumn;
+      const { type } = editRender(firstRecord, firstInputColumn);
+      const $$cellEdit = this.$refs[`${rowKey}-${dataIndex}`];
+      if (!$$cellEdit) return;
+      // 正处于编辑状态的单元格
+      const { isEditing } = $$cellEdit;
+      if (!isEditing) return;
+      this.setClickedValues([rowKey, dataIndex]);
+      $$cellEdit.$refs[`${type}-${rowKey}|${dataIndex}`]?.select();
     }
   }
 };

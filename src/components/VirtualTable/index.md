@@ -52,19 +52,19 @@
 
 ### 方法
 
-| 方法名称         | 说明                                           | 参数                                       | 返回值 |
-| ---------------- | ---------------------------------------------- | ------------------------------------------ | ------ |
-| CALCULATE_HEIGHT | 计算表格高度                                   | -                                          | -      |
-| DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | Function(callback)                         | -      |
-| GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                          | object |
-| GET_FETCH_PARAMS | 获取表格的查询参数                             | -                                          | object |
-| CLEAR_TABLE_DATA | 清空表格数据                                   | -                                          | -      |
-| CLEAR_LOG        | 清空表格操作记录                               | -                                          | -      |
-| SCROLL_TO_RECORD | 滚动到指定数据行                               | Function(rowKey)                           | -      |
-| SCROLL_TO_COLUMN | 滚动到指定表格列                               | Function(dataIndex)                        | -      |
-| INSERT_RECORDS   | 插入表格行数据                                 | Function(rows \| row, bottom(默认) \| top) | -      |
-| REMOVE_RECORDS   | 移除表格数据                                   | Function(rowKeys \| rows \| row )          | -      |
-| FORM_VALIDATE    | 表格中的表单校验                               | -                                          | object |
+| 方法名称         | 说明                                           | 参数                              | 返回值 |
+| ---------------- | ---------------------------------------------- | --------------------------------- | ------ |
+| CALCULATE_HEIGHT | 计算表格高度                                   | -                                 | -      |
+| DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | Function(callback)                | -      |
+| GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                 | object |
+| GET_FETCH_PARAMS | 获取表格的查询参数                             | -                                 | object |
+| CLEAR_TABLE_DATA | 清空表格数据                                   | -                                 | -      |
+| CLEAR_LOG        | 清空表格操作记录                               | -                                 | -      |
+| SCROLL_TO_RECORD | 滚动到指定数据行                               | Function(rowKey)                  | -      |
+| SCROLL_TO_COLUMN | 滚动到指定表格列                               | Function(dataIndex)               | -      |
+| INSERT_RECORDS   | 插入表格行数据                                 | Function(rows \| row)             | -      |
+| REMOVE_RECORDS   | 移除表格数据                                   | Function(rowKeys \| rows \| row ) | -      |
+| FORM_VALIDATE    | 表格中的表单校验                               | -                                 | object |
 
 ### column
 

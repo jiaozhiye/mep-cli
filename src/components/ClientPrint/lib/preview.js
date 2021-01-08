@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-15 19:03:11
+ * @Last Modified time: 2021-01-06 19:54:01
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
-import { isObject } from 'lodash';
+import { merge, isObject } from 'lodash';
 import Size from '../../_utils/mixins/size';
 import Locale from '../../_utils/mixins/locale';
 import PrefixCls from '../../_utils/mixins/prefix-cls';
@@ -45,6 +45,7 @@ export default {
           pageSize: '210*297',
           direction: this.defaultConfig?.direction || 'vertical',
           doubleSide: 0,
+          doubleSideType: 'auto',
           fixedLogo: 0
         }
       },
@@ -104,7 +105,7 @@ export default {
         }
       }
       if (isObject(res) && Object.keys(res).length) {
-        this.form = Object.assign({}, this.form, {
+        this.form = merge({}, this.form, {
           ...res,
           printerName: this.printerItems.find(x => x.text === res.printerName)?.value ?? -1
         });
@@ -113,7 +114,7 @@ export default {
   },
   methods: {
     settingChange(val) {
-      this.form.setting = Object.assign({}, val);
+      this.form.setting = val;
     },
     printerTypeChange(val) {
       this.form.setting.pageSize = val === 'stylus' ? '241*280' : '210*297';

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 08:04:15
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-08-06 11:09:17
+ * @Last Modified time: 2021-01-06 20:28:55
  */
 import Locale from '../../_utils/mixins/locale';
 import config from './config';
@@ -33,6 +33,7 @@ export default {
           pageSize: setting.pageSize,
           direction: setting.direction,
           doubleSide: setting.doubleSide,
+          doubleSideType: setting.doubleSideType,
           fixedLogo: setting.fixedLogo
         }
       );
@@ -72,9 +73,23 @@ export default {
           type: 'CHECKBOX',
           label: '双面打印',
           fieldName: 'doubleSide',
+          labelOptions: {
+            type: 'SELECT',
+            fieldName: 'doubleSideType',
+            options: {
+              itemList: [
+                { text: '自动双面打印', value: 'auto' },
+                { text: '手动双面打印', value: 'manual' }
+              ]
+            },
+            disabled: !this.setting.doubleSide
+          },
           options: {
             trueValue: 1,
             falseValue: 0
+          },
+          onChange: val => {
+            this.formList.find(x => x.fieldName === 'doubleSide').labelOptions.disabled = !val;
           }
         },
         {
@@ -164,6 +179,7 @@ export default {
         pageSize: data.pageSize,
         direction: data.direction,
         doubleSide: data.doubleSide,
+        doubleSideType: data.doubleSideType,
         fixedLogo: data.fixedLogo
       });
       this.cancelHandle();
@@ -176,7 +192,7 @@ export default {
     const { initialValue, formList } = this;
     return (
       <div>
-        <FormPanel ref="formPanel" initialValue={initialValue} list={formList} cols={2} />
+        <FormPanel ref="formPanel" initialValue={initialValue} list={formList} cols={2} labelWidth={115} />
         <div
           style={{
             position: 'absolute',

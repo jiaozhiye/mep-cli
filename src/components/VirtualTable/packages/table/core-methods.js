@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-30 09:10:24
+ * @Last Modified time: 2021-01-07 19:04:00
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -37,6 +37,8 @@ export default {
     this.selectionKeys = this.createSelectionKeys();
     // 设置展开行
     this.rowExpandedKeys = this.createRowExpandedKeys();
+    // 自动获得可编辑单元格焦点
+    this.$nextTick(() => this.$$tableBody.createInputFocus());
   },
   // 服务端合计
   createServerSummation(data) {

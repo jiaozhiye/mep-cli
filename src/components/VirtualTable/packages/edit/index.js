@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-24 15:58:26
+ * @Last Modified time: 2021-01-07 19:05:01
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -103,7 +103,8 @@ export default {
           }}
           nativeOnKeydown={ev => {
             if (ev.keyCode === 13) {
-              onEnter({ [this.dataKey]: ev.target.value }, row);
+              this.$refs[`text-${this.dataKey}`].blur();
+              setTimeout(() => onEnter({ [this.dataKey]: ev.target.value }, row));
             }
           }}
           disabled={extra.disabled}
@@ -135,6 +136,7 @@ export default {
           }}
           nativeOnKeydown={ev => {
             if (ev.keyCode === 13) {
+              this.$refs[`number-${this.dataKey}`].blur();
               setTimeout(() => onEnter({ [this.dataKey]: ev.target.value }, row));
             }
           }}

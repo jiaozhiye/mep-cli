@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-23 19:19:59
+ * @Last Modified time: 2021-01-05 10:36:57
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -82,29 +82,34 @@ export default {
     this.$$tableBody.scrollXToColumn(dataIndex);
   },
   // 表格数据插入
-  INSERT_RECORDS(records, dir = 'bottom') {
+  INSERT_RECORDS(records) {
     const rows = (Array.isArray(records) ? records : [records]).filter(x => isObject(x));
-    rows.forEach(row => {
+    const lastIndex = this.tableOriginData[this.tableOriginData.length - 1]?.index ?? -1;
+    rows.forEach((row, index) => {
+      const curIndex = lastIndex + index + 1;
       // 初始化数据
       this.flattenColumns.forEach(column => {
         const { dataIndex } = column;
         if (['__expandable__', '__selection__', config.operationColumn].includes(dataIndex)) return;
         setCellValue(row, dataIndex, getCellValue(row, dataIndex));
       });
+      // 数据索引
+      this.$set(row, 'index', curIndex);
+      // 分页索引
+      row.pageIndex = (this.pagination.currentPage - 1) * this.pagination.pageSize + curIndex;
       // 添加表格操作记录
       this.store.addToInserted(row);
     });
-    // 处理插入数据
-    const tableData = dir === 'bottom' ? [...this.tableOriginData, ...rows] : [...rows, ...this.tableOriginData];
     // 清空表头筛选和排序
     this.clearTableSorter();
     this.clearTableFilter();
-    // 重新创建表格数据
-    this.createTableData(tableData);
+    // 处理插入数据
+    this.tableFullData.push(...rows);
+    this.tableOriginData.push(...rows);
     // 滚动条定位
     if (rows.length > 0) {
-      let current = dir === 'bottom' ? rows[rows.length - 1] : rows[0];
-      this.$nextTick(() => this.$$tableBody.scrollYToRecord(this.getRowKey(current, current.index)));
+      const lastRowKey = this.getRowKey(rows[rows.length - 1], rows[rows.length - 1].index);
+      this.$nextTick(() => this.$$tableBody.scrollYToRecord(lastRowKey));
     }
   },
   // 删除数据
@@ -141,11 +146,12 @@ export default {
           this.removeExpandableKey(rowKey);
         }
         // 移除数据
-        this.tableFullData.splice(i--, 1);
+        this.tableFullData.splice(i, 1);
+        this.tableOriginData.splice(i, 1);
+        // 移动下标
+        i = i - 1;
       }
     }
-    // 重新创建表格数据
-    this.createTableData(this.tableFullData);
   },
   // 表单校验
   FORM_VALIDATE() {

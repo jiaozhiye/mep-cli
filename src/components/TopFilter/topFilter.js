@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-29 15:34:53
+ * @Last Modified time: 2021-01-08 08:31:18
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -825,6 +825,7 @@ export default {
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
           <el-autocomplete
+            ref={`SEARCH_HELPER-${fieldName}`}
             v-model={form[fieldName]}
             popper-class="search-helper-popper"
             placeholder={!disabled ? placeholder : ''}
@@ -851,7 +852,11 @@ export default {
               setTimeout(() => this[`__${fieldName}__cb`]?.([]), 300);
             }}
             onChange={onChange}
-            nativeOnKeydown={this.enterEventHandle}
+            nativeOnKeydown={ev => {
+              if (ev.keyCode !== 13) return;
+              this.$refs[`SEARCH_HELPER-${fieldName}`].$children[0]?.blur();
+              setTimeout(() => this.enterEventHandle(ev));
+            }}
             fetchSuggestions={(queryString, cb) => {
               !this[`__${fieldName}__cb`] && (this[`__${fieldName}__cb`] = cb);
               this.querySearchAsync(request, fieldName, columns, queryString, cb);
@@ -891,7 +896,6 @@ export default {
             disabled={disabled}
             style={{ ...style }}
             onChange={onChange}
-            nativeOnKeydown={this.enterEventHandle}
             fetchSuggestions={(queryString, cb) => this.querySearchHandle(fieldName, itemList, queryString, cb)}
             scopedSlots={{
               default: ({ item }) => {
