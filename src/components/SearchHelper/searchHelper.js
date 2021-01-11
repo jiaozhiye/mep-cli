@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 15:16:53
+ * @Last Modified time: 2021-01-09 10:54:20
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -53,7 +53,7 @@ export default {
       tableList: [],
       selection: {
         type: 'radio',
-        selectedRowKeys: [],
+        defaultSelectFirstRow: !0,
         onChange: this.selectedRowChange
       },
       fetch: {
@@ -242,11 +242,6 @@ export default {
       if (!row) return;
       this.dbClickHandle(row);
     },
-    dataChangeHandle(list) {
-      if (!list.length) return;
-      const { getRowKey } = this.$vTable;
-      this.selection.selectedRowKeys = [getRowKey(list[0], list[0].index)];
-    },
     confirmHandle() {
       const tableData = this.createTableData();
       if (this.callback) {
@@ -318,7 +313,6 @@ export default {
               columnsChange={columns => (this.columns = columns)}
               onRowEnter={this.rowEnterHandle}
               onRowDblclick={this.dbClickHandle}
-              onDataChange={this.dataChangeHandle}
             />
           ) : null}
         </Spin>

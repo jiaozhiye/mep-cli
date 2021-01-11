@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 14:59:09
+ * @Last Modified time: 2021-01-09 16:05:34
  */
 import baseProps from './props';
 import Store from '../store';
@@ -302,6 +302,9 @@ export default {
     fetchParams(next, prev) {
       if (!this.isFetch) return;
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
+      if (!isOnlyPageChange) {
+        debounce(this.clearRowSelection)();
+      }
       if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch.stopToFirst) {
         this.toFirstPage();
       } else {

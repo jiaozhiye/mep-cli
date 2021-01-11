@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-07 16:16:23
+ * @Last Modified time: 2021-01-08 17:07:40
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -163,12 +163,16 @@ export default {
                 value={this.filterValues[dataKey]?.[`>`]}
                 onInput={val => {
                   if (!validateNumber(val)) return;
-                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`>`]: val !== '' ? Number(val) : '' });
+                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`>`]: val });
                 }}
                 placeholder={this.t('table.filter.gtPlaceholder')}
                 style={{ width: '120px' }}
+                onChange={val => {
+                  this.filterValues[dataKey]['>'] = Number(val);
+                }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
+                    this.filterValues[dataKey]['>'] = Number(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -181,12 +185,16 @@ export default {
                 value={this.filterValues[dataKey]?.[`<`]}
                 onInput={val => {
                   if (!validateNumber(val)) return;
-                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`<`]: val !== '' ? Number(val) : '' });
+                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`<`]: val });
                 }}
                 placeholder={this.t('table.filter.ltPlaceholder')}
                 style={{ width: '120px' }}
+                onChange={val => {
+                  this.filterValues[dataKey]['<'] = Number(val);
+                }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
+                    this.filterValues[dataKey]['<'] = Number(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -199,12 +207,16 @@ export default {
                 value={this.filterValues[dataKey]?.[`==`]}
                 onInput={val => {
                   if (!validateNumber(val)) return;
-                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`==`]: val !== '' ? Number(val) : '' });
+                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`==`]: val });
                 }}
                 placeholder={this.t('table.filter.eqPlaceholder')}
                 style={{ width: '120px' }}
+                onChange={val => {
+                  this.filterValues[dataKey]['=='] = Number(val);
+                }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
+                    this.filterValues[dataKey]['=='] = Number(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -217,12 +229,16 @@ export default {
                 value={this.filterValues[dataKey]?.[`!=`]}
                 onInput={val => {
                   if (!validateNumber(val)) return;
-                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`!=`]: val !== '' ? Number(val) : '' });
+                  this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`!=`]: val });
                 }}
                 placeholder={this.t('table.filter.neqPlaceholder')}
                 style={{ width: '120px' }}
+                onChange={val => {
+                  this.filterValues[dataKey]['!='] = Number(val);
+                }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
+                    this.filterValues[dataKey]['!='] = Number(ev.target.value);
                     this.doFinish();
                   }
                 }}

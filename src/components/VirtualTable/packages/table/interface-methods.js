@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-05 10:36:57
+ * @Last Modified time: 2021-01-09 10:27:41
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -73,6 +73,10 @@ export default {
   CLEAR_LOG() {
     this.clearTableLog();
   },
+  // 选中首行数据
+  SELECT_FIRST_RECORD() {
+    this.selectFirstRow(true);
+  },
   // 滚动到指定数据行
   SCROLL_TO_RECORD(rowKey) {
     this.$$tableBody.scrollYToRecord(rowKey);
@@ -100,9 +104,6 @@ export default {
       // 添加表格操作记录
       this.store.addToInserted(row);
     });
-    // 清空表头筛选和排序
-    this.clearTableSorter();
-    this.clearTableFilter();
     // 处理插入数据
     this.tableFullData.push(...rows);
     this.tableOriginData.push(...rows);

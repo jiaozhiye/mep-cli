@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-30 13:14:13
+ * @Last Modified time: 2021-01-09 10:47:56
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -153,6 +153,7 @@ export default {
     type: PropTypes.oneOf(['checkbox', 'radio']).isRequired, // 选择类型
     selectedRowKeys: PropTypes.array, // 选中项的 key 数组，支持动态赋值
     checkStrictly: PropTypes.bool.def(true), // true -> 节点选择完全受控（父子数据选中状态不再关联）
+    defaultSelectFirstRow: PropTypes.bool.def(false), // 是否默认选中第一行（单选时生效）
     disabled: PropTypes.func, // 是否允许行选择，参数：row，返回值 bool
     onChange: PropTypes.func // 选中项发生变化时触发
   }),
@@ -217,6 +218,7 @@ export default {
  * 事件：
  * change: 分页、排序、筛选变化时触发，参数：pagination, filters, sorter, { currentDataSource: tableData, allDataSource: allTableData }
  * dataChange: 表格数据变化时触发，参数 tableData
+ * dataLoaded: 表格数据加载之后触发，参数 tableData
  * rowClick: 行单击事件，参数 row, column, event
  * rowDblclick: 行双击事件，参数 row, column, event
  * rowEnter: 行选中(单选) 或 行高亮 回车时触发，参数 row, event

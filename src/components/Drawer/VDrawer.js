@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-30 10:17:10
+ * @Last Modified time: 2021-01-09 17:10:04
  **/
+import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
 import { isIE } from '../_utils/tool';
@@ -11,6 +12,9 @@ import Spin from '../Spin';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
+
+// element-ui -> zIndex
+import { PopupManager } from 'element-ui/lib/utils/popup';
 
 export default {
   name: 'VDrawer',
@@ -24,6 +28,7 @@ export default {
     position: PropTypes.string.def('right'),
     lockScroll: PropTypes.bool.def(true),
     maskClosable: PropTypes.bool,
+    closeOnPressEscape: PropTypes.bool.def(true),
     showFullScreen: PropTypes.bool.def(true),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('75%'),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('300px'),
@@ -68,7 +73,8 @@ export default {
         transform: 'translate3d(100%, 0, 0)'
       }
     };
-    this.transitionFlag = true;
+    // 状态变量
+    this.transitionState = 'ready';
     return {
       isVisible: this.visible,
       loading: this.visible,
@@ -77,7 +83,7 @@ export default {
   },
   computed: {
     $$drawerPanel() {
-      return this.$refs.panel;
+      return this.$refs[`drawer-panel`];
     },
     realzIndex() {
       return Number(this.zIndex) + Number(this.level);
@@ -115,29 +121,21 @@ export default {
         if (this.destroyOnClose || !this.isVisible) {
           this.loading = val;
         }
-        // 取消全屏
         this.fullscreen = false;
-        setTimeout(() => {
-          this.isVisible = val;
-          this.loading = !val;
-        }, this.delayTime);
       }
-      this.transitionFlag = true;
-      if (val) {
-        this.$emit('open');
-      } else {
-        this.$emit('close', this.doReload);
-      }
+      this.transitionState = 'ready';
+      val ? this.$emit('open') : this.$emit('close', this.doReload);
+      document.addEventListener('keydown', this.escapeCloseHandle, false);
       if (this.lockScroll) {
         document.body.style.overflow = val ? 'hidden' : '';
       }
     }
   },
   mounted() {
-    this.$$drawerPanel.addEventListener('transitionend', this.transitionendHandle, false);
+    this.event1 = addEventListener(this.$$drawerPanel, 'transitionend', this.transitionendHandle);
   },
   destroyed() {
-    this.$$drawerPanel.removeEventListener('transitionend', this.transitionendHandle);
+    this.event1?.remove();
   },
   deactivated() {
     this.close();
@@ -158,15 +156,29 @@ export default {
       let size = Number(val) > 0 ? `${val}px` : val;
       return `calc(${size} - ${(Number(this.level) - 1) * 60}px)`;
     },
-    transitionendHandle(ev) {
-      if (ev.target !== ev.currentTarget || !this.transitionFlag) return;
-      this.transitionFlag = false;
-      if (!this.visible && this.destroyOnClose) {
-        this.isVisible = false;
-        // 重置 doReload 值
-        this.doReload = undefined;
+    escapeCloseHandle(ev) {
+      if (!this.closeOnPressEscape || ev.keyCode !== 27) return;
+      const topPopup = this.getTopPopup();
+      if (!topPopup) {
+        this.close();
       }
+    },
+    transitionendHandle() {
+      if (this.transitionState !== 'ready') return;
+      this.transitionState = 'stop';
+      this.loading = false;
+      this.isVisible = this.destroyOnClose ? this.visible : true;
+      this.doReload = undefined;
       this.$emit('afterVisibleChange', this.visible);
+      !this.visible && document.removeEventListener('keydown', this.escapeCloseHandle);
+    },
+    getTopPopup() {
+      if (PopupManager.modalStack.length > 0) {
+        const topPopup = PopupManager.modalStack[PopupManager.modalStack.length - 1];
+        if (!topPopup) return;
+        const instance = PopupManager.getInstance(topPopup.id);
+        return instance;
+      }
     }
   },
   render() {
@@ -187,7 +199,7 @@ export default {
     return (
       <div class={cls}>
         <div class={maskCls} style={{ ...maskStyle, zIndex: realzIndex }} onClick={() => this.close('mask')} />
-        <div ref="panel" class="drawer-container" style={{ ...containerPosition, ...containerShowStyle, ...containerStyle, ...fullScrennStyle, zIndex: realzIndex + 1 }}>
+        <div ref="drawer-panel" class="drawer-container" style={{ ...containerPosition, ...containerShowStyle, ...containerStyle, ...fullScrennStyle, zIndex: realzIndex + 1 }}>
           <div class="header">
             <div class="title">{$slots[`title`] || title}</div>
             {showFullScreen && (

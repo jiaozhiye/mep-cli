@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-07 13:10:53
+ * @Last Modified time: 2021-01-09 08:14:51
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -35,6 +35,7 @@ export default {
     lockScroll: PropTypes.bool.def(true),
     customClass: PropTypes.string,
     maskClosable: PropTypes.bool,
+    closeOnPressEscape: PropTypes.bool.def(true),
     containerStyle: PropTypes.object.def({})
   },
   data() {
@@ -117,7 +118,25 @@ export default {
     }
   },
   render() {
-    const { isShowDialog, showFullScreen, fullscreen, width, height, disTop, dragable, closable, fullCls, maskToClose, stopEventBubble, containerStyle, $props, $attrs, $listeners, $slots } = this;
+    const {
+      isShowDialog,
+      showFullScreen,
+      fullscreen,
+      width,
+      height,
+      disTop,
+      dragable,
+      closable,
+      fullCls,
+      maskToClose,
+      closeOnPressEscape,
+      stopEventBubble,
+      containerStyle,
+      $props,
+      $attrs,
+      $listeners,
+      $slots
+    } = this;
     const prefixCls = this.getPrefixCls('dialog--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -134,7 +153,7 @@ export default {
         showClose: closable,
         fullscreen,
         closeOnClickModal: maskToClose,
-        closeOnPressEscape: maskToClose,
+        closeOnPressEscape,
         destroyOnClose: false,
         beforeClose: this.close
       },

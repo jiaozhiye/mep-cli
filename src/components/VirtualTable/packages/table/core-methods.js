@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-07 19:04:00
+ * @Last Modified time: 2021-01-09 10:42:16
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -37,8 +37,12 @@ export default {
     this.selectionKeys = this.createSelectionKeys();
     // 设置展开行
     this.rowExpandedKeys = this.createRowExpandedKeys();
-    // 自动获得可编辑单元格焦点
-    this.$nextTick(() => this.$$tableBody.createInputFocus());
+    // 行选中 & 自动获得焦点
+    this.$nextTick(() => {
+      this.selectFirstRow();
+      this.dataLoadedHandle();
+      this.$$tableBody.createInputFocus();
+    });
   },
   // 服务端合计
   createServerSummation(data) {
@@ -253,6 +257,10 @@ export default {
   fetchChangeHandle(data) {
     this.$emit('fetchChange', data);
   },
+  // 数据加载事件
+  dataLoadedHandle() {
+    this.$emit('dataLoaded', [...this.tableFullData]);
+  },
   // 数据变化事件
   dataChangeHandle() {
     this.$emit('dataChange', [...this.tableFullData]);
@@ -288,6 +296,15 @@ export default {
   onlyPaginationChange(next, prev) {
     const diff = Object.keys(difference(next, prev));
     return diff.length === 1 && (diff.includes('currentPage') || diff.includes('pageSize'));
+  },
+  // 默认选中首行数据
+  selectFirstRow(bool = false) {
+    const { rowSelection, tableFullData } = this;
+    const { type, defaultSelectFirstRow = bool } = rowSelection || {};
+    if (type !== 'radio' || !defaultSelectFirstRow || !tableFullData.length) return;
+    const rowKey = this.getRowKey(tableFullData[0], tableFullData[0].index);
+    this.$$tableBody.setClickedValues([rowKey, '__selection__']);
+    this.selectionKeys = [rowKey];
   },
   // 返回到第一页
   toFirstPage() {

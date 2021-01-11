@@ -46,25 +46,27 @@
 | ----------- | ------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | change      | 分页、排序、筛选变化时触发     | Function(pagination, filters, sorter, { currentDataSource: tableData, allDataSource: allTableData }) |
 | dataChange  | 表格数据变化时触发             | Function(tableData)                                                                                  |
+| dataLoaded  | 表格数据加载之后触发           | Function(tableData)                                                                                  |
 | rowClick    | 行单击事件                     | Function(row, column, event)                                                                         |
 | rowDblclick | 行双击事件                     | Function(row, column, event)                                                                         |
 | rowEnter    | 行选中(单选)或行高亮的回车事件 | Function(row, event)                                                                                 |
 
 ### 方法
 
-| 方法名称         | 说明                                           | 参数                              | 返回值 |
-| ---------------- | ---------------------------------------------- | --------------------------------- | ------ |
-| CALCULATE_HEIGHT | 计算表格高度                                   | -                                 | -      |
-| DO_REFRESH       | 刷新表格数据，同时会清空列选中状态             | Function(callback)                | -      |
-| GET_LOG          | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                 | object |
-| GET_FETCH_PARAMS | 获取表格的查询参数                             | -                                 | object |
-| CLEAR_TABLE_DATA | 清空表格数据                                   | -                                 | -      |
-| CLEAR_LOG        | 清空表格操作记录                               | -                                 | -      |
-| SCROLL_TO_RECORD | 滚动到指定数据行                               | Function(rowKey)                  | -      |
-| SCROLL_TO_COLUMN | 滚动到指定表格列                               | Function(dataIndex)               | -      |
-| INSERT_RECORDS   | 插入表格行数据                                 | Function(rows \| row)             | -      |
-| REMOVE_RECORDS   | 移除表格数据                                   | Function(rowKeys \| rows \| row ) | -      |
-| FORM_VALIDATE    | 表格中的表单校验                               | -                                 | object |
+| 方法名称            | 说明                                           | 参数                              | 返回值 |
+| ------------------- | ---------------------------------------------- | --------------------------------- | ------ |
+| CALCULATE_HEIGHT    | 计算表格高度                                   | -                                 | -      |
+| DO_REFRESH          | 刷新表格数据，同时会清空列选中状态             | Function(callback)                | -      |
+| GET_LOG             | 获取操作记录，非空校验、格式校验、数据操作记录 | -                                 | object |
+| GET_FETCH_PARAMS    | 获取表格的查询参数                             | -                                 | object |
+| CLEAR_TABLE_DATA    | 清空表格数据                                   | -                                 | -      |
+| CLEAR_LOG           | 清空表格操作记录                               | -                                 | -      |
+| SCROLL_TO_RECORD    | 滚动到指定数据行                               | Function(rowKey)                  | -      |
+| SCROLL_TO_COLUMN    | 滚动到指定表格列                               | Function(dataIndex)               | -      |
+| SELECT_FIRST_RECORD | 选中表格首行，只针对单选类型有效               | -                                 | -      |
+| INSERT_RECORDS      | 插入表格行数据                                 | Function(rows \| row)             | -      |
+| REMOVE_RECORDS      | 移除表格数据                                   | Function(rowKeys \| rows \| row ) | -      |
+| FORM_VALIDATE       | 表格中的表单校验                               | -                                 | object |
 
 ### column
 
@@ -230,13 +232,14 @@
 
 ### rowSelection
 
-| 参数            | 说明                                       | 类型                                   | 默认值 |
-| --------------- | ------------------------------------------ | -------------------------------------- | ------ |
-| type            | 选择类型，必要参数                         | checkbox \| radio                      | -      |
-| selectedRowKeys | 选中项的 rowKey 数组                       | array                                  | -      |
-| checkStrictly   | 选择列完全受控（父子数据选中状态不再关联） | boolean                                | true   |
-| disabled        | 是否允许行选择                             | Function(row) => boolean               | -      |
-| onChange        | 选中项发生变化时触发                       | Function(selectionKeys, selectionRows) | -      |
+| 参数                  | 说明                                       | 类型                                   | 默认值 |
+| --------------------- | ------------------------------------------ | -------------------------------------- | ------ |
+| type                  | 选择类型，必要参数                         | checkbox \| radio                      | -      |
+| selectedRowKeys       | 选中项的 rowKey 数组                       | array                                  | -      |
+| checkStrictly         | 选择列完全受控（父子数据选中状态不再关联） | boolean                                | true   |
+| defaultSelectFirstRow | 是否默认选中第一行（单选时生效）           | boolean                                | false  |
+| disabled              | 是否允许行选择                             | Function(row) => boolean               | -      |
+| onChange              | 选中项发生变化时触发                       | Function(selectionKeys, selectionRows) | -      |
 
 ### rowHighlight
 
