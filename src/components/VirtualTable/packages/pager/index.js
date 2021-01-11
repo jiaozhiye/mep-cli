@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-19 13:45:50
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-02 09:55:56
+ * @Last Modified time: 2021-01-11 12:24:02
  */
 import PropTypes from '../../../_utils/vue-types';
 import config from '../config';
@@ -14,6 +14,8 @@ export default {
   props: {
     // 尺寸
     size: PropTypes.string,
+    // 是否为简单分页
+    simple: PropTypes.bool.def(false),
     // 自定义布局
     layouts: PropTypes.array.def(['PrevPage', 'JumpNumber', 'NextPage', 'FullJump', 'Sizes', 'Total']),
     // 当前页
@@ -25,7 +27,7 @@ export default {
     // 显示页码按钮的数量
     pagerCount: PropTypes.number.def(7),
     // 每页大小选项列表
-    pageSizes: PropTypes.array.def(config.pagination.sizes),
+    pageSizeOptions: PropTypes.array.def(config.pagination.sizes),
     // 列对其方式
     align: PropTypes.string.def('right'),
     // 带背景颜色
@@ -67,8 +69,8 @@ export default {
     ];
     return (
       <div class={cls}>
-        {typeof extraRender === 'function' && extraRender()}
-        <div class="v-pager--wrapper">{this.layouts.map(name => this[`render${name}`](h))}</div>
+        {typeof extraRender === 'function' && extraRender(h)}
+        <div class="v-pager--wrapper">{this.layouts.map(name => this[`render${name}`]?.(h))}</div>
       </div>
     );
   },
@@ -225,7 +227,7 @@ export default {
             this.pageSizeEvent(val);
           }}
         >
-          {this.pageSizes.map(x => (
+          {this.pageSizeOptions.map(x => (
             <el-option key={x} label={`${x}${this.t('table.pagination.pagesize')}`} value={x} />
           ))}
         </el-select>

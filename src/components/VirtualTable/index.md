@@ -28,6 +28,7 @@
 | expandable       | 展开行配置项，[配置项](#expandable)                           | object                                                 | -      |
 | treeStructure    | 树结构选项，[配置项](#treeStructure)                          | object                                                 | -      |
 | multipleSort     | 是否为多列排序模式                                            | boolean                                                | true   |
+| paginationConfig | 分页参数的详细配置，[配置项](#pagination)                     | object                                                 | -      |
 | webPagination    | 是否为前端内存分页                                            | boolean                                                | false  |
 | showAlert        | 是否显示表格信息                                              | boolean                                                | true   |
 | alertPosition    | 表格顶部信息放置的位置                                        | top \| bottom                                          | top    |
@@ -259,6 +260,16 @@
 | expandedRowRender    | 额外的展开行渲染方法，必要参数 | Function(row, index) => JSX Node     | -      |
 | onExpand             | 点击展开图标时触发             | Function(expanded, row)              | -      |
 | onChange             | 展开的行变化时触发             | Function(expandedKeys, expandedRows) | -      |
+
+### pagination
+
+| 参数            | 说明                 | 类型   | 默认值                                                               |
+| --------------- | -------------------- | ------ | -------------------------------------------------------------------- |
+| layouts         | 分页组件的布局       | array  | ['PrevPage', 'JumpNumber', 'NextPage', 'FullJump', 'Sizes', 'Total'] |
+| currentPage     | 当前页数             | number | 1                                                                    |
+| pageSize        | 每页显示条目个数     | number | 20                                                                   |
+| pagerCount      | 页码按钮的数量       | number | 7                                                                    |
+| pageSizeOptions | 个数选择器的选项列表 | array  | [10, 20, 30, 40, 50]                                                 |
 
 ### treeStructure
 

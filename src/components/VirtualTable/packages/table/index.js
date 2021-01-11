@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-09 16:05:34
+ * @Last Modified time: 2021-01-11 12:38:56
  */
 import baseProps from './props';
 import Store from '../store';
@@ -74,8 +74,8 @@ export default {
       sorter: {},
       // 分页
       pagination: {
-        currentPage: config.pagination.currentPage,
-        pageSize: config.pagination.pageSize
+        currentPage: this.paginationConfig?.currentPage || config.pagination.currentPage,
+        pageSize: this.paginationConfig?.pageSize || config.pagination.pageSize
       },
       // 自适应的表格高度
       autoHeight: 0,
@@ -433,6 +433,7 @@ export default {
       fetch,
       fetchParams,
       pagination,
+      paginationConfig,
       total,
       selectionKeys,
       showAlert,
@@ -527,13 +528,13 @@ export default {
       : null;
     const pagerProps = {
       ref: 'pager',
-      props: {
+      props: Object.assign({}, paginationConfig, {
         size: tableSize,
+        total,
         currentPage: pagination.currentPage,
         pageSize: pagination.pageSize,
-        total,
         extraRender: () => (showAlert && alertPosition === 'bottom' ? <Alert {...alertProps} /> : null)
-      },
+      }),
       on: {
         change: this.pagerChangeHandle
       }

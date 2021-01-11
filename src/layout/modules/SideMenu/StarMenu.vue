@@ -7,7 +7,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-02 08:02:23
+ * @Last Modified time: 2021-01-11 10:45:28
  **/
 import { mapState, mapActions } from 'vuex';
 import MenuTree from './menuTree';
@@ -32,14 +32,12 @@ export default {
     navList() {
       return [
         {
-          id: 'app-used',
           title: this.$t('sidebar.usedNav'),
           key: null,
           icon: 'icon-flag-fill',
           children: this.commonMenuList
         },
         {
-          id: 'app-star',
           title: this.$t('sidebar.starNav'),
           key: null,
           icon: 'icon-star-fill',

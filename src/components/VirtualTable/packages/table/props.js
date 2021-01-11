@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-09 10:47:56
+ * @Last Modified time: 2021-01-11 12:35:50
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -116,7 +116,7 @@ export default {
     api: PropTypes.func.isRequired, // api 接口
     params: PropTypes.object.isRequired, // 接口参数
     beforeFetch: PropTypes.func, // 接口前置钩子
-    xhrAbort: PropTypes.bool, // 是否取消请求
+    xhrAbort: PropTypes.bool, // 是否取消请求 - 未来可取消此参数
     stopToFirst: PropTypes.bool, // 是否返回第一页
     dataKey: PropTypes.string // 数据路径
   }),
@@ -164,23 +164,31 @@ export default {
     onChange: PropTypes.func // 高亮行发生变化时触发
   }),
   // 展开行配置项
-  expandable: {
+  expandable: PropTypes.shape({
     defaultExpandAllRows: PropTypes.bool, // 默认展开所有行
     expandedRowKeys: PropTypes.array, // 展开行的 key 数组，支持动态赋值
     rowExpandable: PropTypes.func, // 是否允许行展开，参数：row，返回值 bool
     expandedRowRender: PropTypes.func.isRequired, // 额外的展开行渲染方法
     onExpand: PropTypes.func, // 点击展开图标时触发
     onChange: PropTypes.func // 展开的行变化时触发
-  },
+  }),
   // 树结构配置项
-  treeStructure: {
+  treeStructure: PropTypes.shape({
     defaultExpandAllRows: PropTypes.bool, // 默认展开所有行
     expandedRowKeys: PropTypes.array // 展开行的 key 数组，支持动态赋值
-  },
+  }),
   // 多列排序
   multipleSort: PropTypes.bool.def(true),
   // 是否为前端内存分页
   webPagination: PropTypes.bool.def(false),
+  // 分页配置参数
+  paginationConfig: PropTypes.shape({
+    layouts: PropTypes.array, // 分页组件布局
+    currentPage: PropTypes.number, // 当前页数
+    pageSize: PropTypes.number, // 每页显示条目个数
+    pagerCount: PropTypes.number, // 页码按钮的数量
+    pageSizeOptions: PropTypes.array // 个数选择器的选项设置
+  }),
   // 是否显示表格顶部信息
   showAlert: PropTypes.bool.def(true),
   // 表格顶部信息放置的位置
