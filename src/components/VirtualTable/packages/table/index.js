@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 12:38:56
+ * @Last Modified time: 2021-01-12 13:12:50
  */
 import baseProps from './props';
 import Store from '../store';
@@ -208,7 +208,7 @@ export default {
       const query = createWhereSQL(this.filters, config.showFilterType) || createWhereSQL(this.superFilters, config.showFilterType);
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
-      // 去掉单引号，兼容 MEP
+      // 去掉 where 参数单引号，为了兼容 MEP
       const filter = query ? { [config.filterFieldName]: query.replace(/'/g, '') } : null;
       const summary = this.columnSummaryQuery ? { [config.groupSummary.summaryFieldName]: this.columnSummaryQuery, usedJH: 1 } : null;
       return {
@@ -300,15 +300,14 @@ export default {
       this.clearSuperSearch();
     },
     fetchParams(next, prev) {
-      if (!this.isFetch) return;
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
       if (!isOnlyPageChange) {
-        debounce(this.clearRowSelection)();
+        this.isFetch && debounce(this.clearRowSelection)();
       }
-      if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch.stopToFirst) {
+      if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch?.stopToFirst) {
         this.toFirstPage();
       } else {
-        debounce(this.getTableData)();
+        this.isFetch && debounce(this.getTableData)();
       }
     },
     selectionKeys(next, prev) {

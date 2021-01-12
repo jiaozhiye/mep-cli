@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 12:32:29
+ * @Last Modified time: 2021-01-12 12:39:17
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -25,7 +25,7 @@ export default {
         // 数据索引
         this.$set(record, 'index', index);
         // 分页索引
-        record.pageIndex = (currentPage - 1) * pageSize + index;
+        record.pageIndex = this.createPageIndex(index);
         return record;
       });
     };
@@ -120,6 +120,10 @@ export default {
   createScrollYLoad() {
     let dataList = !this.webPagination ? this.tableFullData : this.pageTableData;
     return dataList.length > config.virtualScrollY;
+  },
+  // 创建分页索引
+  createPageIndex(index) {
+    return !this.isFetch ? index : (this.pagination.currentPage - 1) * this.pagination.pageSize + index;
   },
   // 设置数据总数
   setRecordsTotal(total) {
@@ -303,7 +307,7 @@ export default {
   },
   // 返回到第一页
   toFirstPage() {
-    this.pagination.currentPage = 1;
+    this.pagerChangeHandle({ ...this.pagination, currentPage: 1 });
   },
   // 清空列选中
   clearRowSelection() {

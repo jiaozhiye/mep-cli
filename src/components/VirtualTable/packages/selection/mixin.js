@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-26 11:21:41
+ * @Last Modified time: 2021-01-11 18:01:26
  */
 import { uniqWith } from 'lodash';
 import { deepFindRowKey, tableDataFlatMap, isArrayContain } from '../utils';
@@ -47,8 +47,8 @@ const selectionMixin = {
       return arr;
     },
     createSelectionRows(selectedKeys) {
-      const { tableFullData, selectionRows, getRowKey } = this;
-      const uniqRecords = uniqWith([...selectionRows, ...tableFullData], (a, b) => getRowKey(a, a.index) === getRowKey(b, b.index));
+      const { tableFullData, selectionRows, getRowKey, isFetch } = this;
+      const uniqRecords = isFetch ? uniqWith([...selectionRows, ...tableFullData], (a, b) => getRowKey(a, a.index) === getRowKey(b, b.index)) : tableFullData;
       this.selectionRows = tableDataFlatMap(uniqRecords).filter(row => selectedKeys.includes(getRowKey(row, row.index)));
     },
     // 选择列已选中 keys

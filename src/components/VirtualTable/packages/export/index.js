@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 10:41:55
+ * @Last Modified time: 2021-01-11 18:02:23
  */
 import dayjs from 'dayjs';
-import { get, isFunction } from 'lodash';
+import { isFunction } from 'lodash';
 
 import PropTypes from '../../../_utils/vue-types';
 import JsonToExcel from '../../../JsonToExcel';
@@ -59,7 +59,7 @@ export default {
         let item = { ...x, index: i, pageIndex: i };
         this.flatColumns.forEach((column, index) => {
           const { dataIndex, dictItems, render, extraRender } = column;
-          const val = get(item, dataIndex);
+          const val = getCellValue(item, dataIndex);
           const dicts = dictItems || [];
           const target = dicts.find(x => x.value == val);
           let res = target?.text ?? val;
