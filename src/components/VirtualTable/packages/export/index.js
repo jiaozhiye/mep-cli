@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 18:02:23
+ * @Last Modified time: 2021-01-12 16:09:44
  */
 import dayjs from 'dayjs';
 import { isFunction } from 'lodash';
@@ -22,7 +22,6 @@ export default {
   props: {
     tableColumns: PropTypes.array,
     flattenColumns: PropTypes.array,
-    data: PropTypes.array.def([]),
     fileName: PropTypes.string,
     fetch: PropTypes.object
   },
@@ -186,12 +185,12 @@ export default {
     }
   },
   render() {
-    const { data, fields, fileName, fetch, exportFetch, disabledState } = this;
+    const { fields, fileName, fetch, exportFetch, disabledState } = this;
     const exportFileName = fileName ?? `${dayjs().format('YYYYMMDDHHmmss')}.xlsx`;
     const exportFileType = exportFileName.slice(exportFileName.lastIndexOf('.') + 1).toLowerCase();
     const wrapProps = {
       props: {
-        initialValue: data,
+        initialValue: this.$$table.tableFullData,
         fields,
         fileType: exportFileType,
         fileName: exportFileName,

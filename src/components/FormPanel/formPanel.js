@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 14:57:22
+ * @Last Modified time: 2021-01-12 16:07:50
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -532,7 +532,7 @@ export default {
               if (isSearchHelper) {
                 return this.$refs[`INPUT-${fieldName}`].blur();
               }
-              onEnter(ev.target.value);
+              onEnter(ev.target.value.trim());
               this.doFormItemValidate(fieldName);
             }}
           >
@@ -575,7 +575,7 @@ export default {
         disabled,
         onChange = noop
       } = option;
-      const { maxlength, min = 0, max, step, precision, controls = !1 } = options;
+      const { maxlength, min = 0, max, step, precision, controls = !1, onEnter = noop } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -595,6 +595,13 @@ export default {
             disabled={disabled}
             style={{ ...style }}
             onChange={onChange}
+            nativeOnKeydown={ev => {
+              if (ev.keyCode !== 13) return;
+              setTimeout(() => {
+                onEnter(form[fieldName] ?? '');
+                this.doFormItemValidate(fieldName);
+              });
+            }}
           />
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>

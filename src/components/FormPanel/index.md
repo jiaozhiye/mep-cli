@@ -137,7 +137,7 @@
 | onInput       | 输入框 input 事件的回调 - INPUT                                  | func                                 | -        |
 | onClick       | 输入框单击事件的回调 - INPUT/TEXT_AREA                           | func                                 | -        |
 | onDblClick    | 输入框双击事件的回调 - INPUT/TEXT_AREA                           | func                                 | -        |
-| onEnter       | 输入框回车事件的回调 - INPUT                                     | func                                 | -        |
+| onEnter       | 输入框回车事件的回调 - INPUT/INPUT_NUMBER                        | func                                 | -        |
 | onFocus       | 输入框获得焦点事件的回调 - INPUT                                 | func                                 | -        |
 | onBlur        | 输入框失去焦点事件的回调 - INPUT                                 | func                                 | -        |
 | unitRender    | 输入框后置内容的渲染方法 - INPUT                                 | func                                 | JSX Node |

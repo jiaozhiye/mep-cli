@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 13:12:50
+ * @Last Modified time: 2021-01-12 16:10:57
  */
 import baseProps from './props';
 import Store from '../store';
@@ -404,7 +404,6 @@ export default {
     const {
       isFullScreen,
       tableData,
-      tableFullData,
       columns,
       tableColumns,
       flattenColumns,
@@ -512,7 +511,6 @@ export default {
           props: {
             tableColumns,
             flattenColumns,
-            data: tableFullData,
             fileName: exportExcel.fileName,
             fetch: !!fetch
               ? {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 14:44:14
+ * @Last Modified time: 2021-01-12 16:08:47
  */
 import { isUndefined } from 'lodash';
 
@@ -22,9 +22,9 @@ const keyboardMixin = {
       if (keyCode === 13) {
         ev.preventDefault();
         if (rowSelection?.type === 'radio' || rowHighlight) {
-          const { tableFullData, getRowKey, selectionKeys, highlightKey } = this.$$table;
+          const { tableData, getRowKey, selectionKeys, highlightKey } = this.$$table;
           const rowKey = selectionKeys[0] ?? highlightKey ?? null;
-          const row = tableFullData.find(record => getRowKey(record, record.index) === rowKey) || null;
+          const row = tableData.find(record => getRowKey(record, record.index) === rowKey) ?? null;
           this.$$table.$emit('rowEnter', row, ev);
         }
       }

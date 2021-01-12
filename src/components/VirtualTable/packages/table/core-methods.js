@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 12:39:17
+ * @Last Modified time: 2021-01-12 16:23:36
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -16,7 +16,6 @@ const throttleScrollYDuration = $browse['msie'] ? 20 : 10;
 export default {
   // 创建表格数据
   createTableData(list) {
-    const { currentPage, pageSize } = this.pagination;
     const resetRowData = arr => {
       return arr.map((record, index) => {
         if (Array.isArray(record.children) && record.children.length) {
