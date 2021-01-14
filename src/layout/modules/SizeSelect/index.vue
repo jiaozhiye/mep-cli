@@ -17,7 +17,6 @@
  * @Last Modified time: 2020-09-12 16:06:30
  */
 import { mapState, mapActions } from 'vuex';
-import Vue from 'vue';
 
 export default {
   name: 'SizeSelect',
@@ -35,8 +34,6 @@ export default {
       // 重新加载路由页面
       this.clearKeepAliveCache();
       this.refreshView({ path: this.$route.path });
-      // 可能需要重新获取基础信息
-      // ...
     }
   }
 };
