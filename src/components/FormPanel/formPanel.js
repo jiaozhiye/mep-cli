@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 16:07:50
+ * @Last Modified time: 2021-01-14 16:36:46
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -1717,9 +1717,8 @@ export default {
             style={{ ...style }}
             on-visible-change={visible => {
               if (filterable && !visible) {
-                setTimeout(() => {
-                  this.filterMethodHandle(fieldName, '');
-                }, 300);
+                this.$refs[`SELECT-${fieldName}`].blur();
+                setTimeout(() => this.filterMethodHandle(fieldName, ''), 300);
               }
             }}
             onChange={val => {

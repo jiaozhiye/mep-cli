@@ -1402,9 +1402,8 @@ export default {
             nativeOnKeydown={this.enterEventHandle}
             on-visible-change={visible => {
               if (filterable && !visible) {
-                setTimeout(() => {
-                  this.filterMethodHandle(fieldName, '');
-                }, 300);
+                this.$refs[`SELECT-${fieldName}`].blur();
+                setTimeout(() => this.filterMethodHandle(fieldName, ''), 300);
               }
             }}
             onChange={val => {

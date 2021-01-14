@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 12:35:50
+ * @Last Modified time: 2021-01-14 15:21:06
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -245,6 +245,8 @@ export default {
  * CLEAR_TABLE_DATA: 清空表格数据
  * SCROLL_TO_RECORD: 滚动到指定数据行，参数 rowKey
  * SCROLL_TO_COLUMN: 滚动到指定表格列，参数 dataIndex
+ * SELECT_FIRST_RECORD: 选中表格首行，只针对单选类型有效
+ * CLEAR_TABLE_FOCUS: 清空表格焦点
  */
 
 // 清空高级检索: 1. fetch.params 变化  2. headFilters 变化  3. 点击清空按钮

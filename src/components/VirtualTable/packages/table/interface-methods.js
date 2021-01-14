@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 19:24:58
+ * @Last Modified time: 2021-01-14 15:21:30
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -76,6 +76,10 @@ export default {
   // 选中首行数据
   SELECT_FIRST_RECORD() {
     this.selectFirstRow(true);
+  },
+  // 清空表格焦点
+  CLEAR_TABLE_FOCUS() {
+    this.$$tableBody.setClickedValues([]);
   },
   // 滚动到指定数据行
   SCROLL_TO_RECORD(rowKey) {

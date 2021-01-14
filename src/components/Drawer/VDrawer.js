@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-09 17:10:04
+ * @Last Modified time: 2021-01-14 19:35:50
  **/
 import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
@@ -163,7 +163,8 @@ export default {
         this.close();
       }
     },
-    transitionendHandle() {
+    transitionendHandle(ev) {
+      if (ev.target !== ev.currentTarget) return;
       if (this.transitionState !== 'ready') return;
       this.transitionState = 'stop';
       this.loading = false;
