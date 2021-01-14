@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-07 19:05:01
+ * @Last Modified time: 2021-01-13 09:48:29
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -371,6 +371,8 @@ export default {
         props: {
           visible: this.shVisible,
           title: this.t('table.editable.searchHelper'),
+          width: helper?.width ?? '60%',
+          height: helper?.height,
           showFullScreen: false,
           destroyOnClose: true,
           stopEventBubble: true,
@@ -417,6 +419,7 @@ export default {
               setHelperValues(val);
             }}
             nativeOnDblclick={ev => {
+              if (extra.disabled) return;
               isObject(helper) && openHelperPanel();
             }}
             nativeOnKeydown={ev => {

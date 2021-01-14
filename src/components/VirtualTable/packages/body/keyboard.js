@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 16:08:47
+ * @Last Modified time: 2021-01-13 22:34:58
  */
 import { isUndefined } from 'lodash';
 
@@ -25,7 +25,7 @@ const keyboardMixin = {
           const { tableData, getRowKey, selectionKeys, highlightKey } = this.$$table;
           const rowKey = selectionKeys[0] ?? highlightKey ?? null;
           const row = tableData.find(record => getRowKey(record, record.index) === rowKey) ?? null;
-          this.$$table.$emit('rowEnter', row, ev);
+          row && this.$$table.$emit('rowEnter', row, ev);
         }
       }
       // 上  下

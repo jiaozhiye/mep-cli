@@ -2,14 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 16:10:57
+ * @Last Modified time: 2021-01-13 22:41:24
  */
 import baseProps from './props';
 import Store from '../store';
 import config from '../config';
 import { isEqual } from 'lodash';
 
-import { columnsFlatMap, getAllColumns, getAllRowKeys, tableDataFlatMap, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, debounce, browse } from '../utils';
+import { columnsFlatMap, getAllColumns, getAllRowKeys, tableDataFlatMap, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
@@ -317,9 +317,10 @@ export default {
       this.createSelectionRows(next);
       onChange(next, this.selectionRows);
     },
-    [`rowSelection.selectedRowKeys`](next) {
+    [`rowSelection.selectedRowKeys`](next, prev) {
+      if (isEqual(next, prev)) return;
       if (this.rowSelection.type === 'radio') {
-        this.$$tableBody.setClickedValues([next[0], '__selection__']);
+        this.$$tableBody.setClickedValues(next.length ? [next[0], '__selection__'] : []);
       }
       this.selectionKeys = this.createSelectionKeys(next);
       if (this.isTreeTable) {
@@ -345,7 +346,7 @@ export default {
       onChange(next, currentRow || null);
     },
     [`rowHighlight.currentRowKey`](next) {
-      this.$$tableBody.setClickedValues([next, 'index']);
+      this.$$tableBody.setClickedValues(!isEmpty(next) ? [next, 'index'] : []);
       this.highlightKey = this.rowHighlight?.currentRowKey ?? this.highlightKey;
     },
     [`layout.viewportHeight`](next) {

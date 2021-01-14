@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 14:58:29
+ * @Last Modified time: 2021-01-13 23:09:16
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -176,6 +176,12 @@ export default {
       if ((type === 'INPUT' || type === 'INPUT_NUMBER') && fieldName) {
         this.$refs[`${type}-${fieldName}`].focus();
       }
+    },
+    clearAllFocus() {
+      this.formItemList.forEach(x => {
+        if (x.hidden || !x.type) return;
+        this.$refs[`${x.type}-${x.fieldName}`]?.blur?.();
+      });
     },
     createDescription() {
       const target = {};
@@ -1609,6 +1615,7 @@ export default {
       });
     },
     emitFormChange() {
+      this.clearAllFocus();
       this.$emit('change', this.formatFormValue(this.form));
     },
     emitFormReset() {
