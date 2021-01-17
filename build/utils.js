@@ -2,14 +2,37 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-04-23 22:58:59
+ * @Last Modified time: 2021-01-17 18:49:30
  */
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 const config = require('../config');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const mapDir = (d, reg) => {
+  const result = [];
+
+  // 获得当前文件夹下的所有的文件夹和文件
+  const [dirs, files] = _(fs.readdirSync(d)).partition(p => fs.statSync(path.join(d, p)).isDirectory());
+
+  dirs.forEach(dir => {
+    result.push.apply(result, mapDir(path.join(d, dir), reg));
+  });
+
+  files.forEach(file => {
+    if (reg.test(file)) {
+      result.push(require(path.join(d, file)));
+    }
+  });
+
+  return result;
+};
+
+exports.deepRequire = mapDir;
 
 exports.assetsPath = function(_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production' ? config.build.assetsSubDirectory : config.dev.assetsSubDirectory;

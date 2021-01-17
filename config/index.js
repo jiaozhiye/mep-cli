@@ -2,10 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-13 15:04:27
+ * @Last Modified time: 2021-01-17 18:50:16
  */
 'use strict';
 const path = require('path');
+
+// 配置常量
+const HOST = 'localhost';
+const PORT = 8080;
 
 module.exports = {
   dev: {
@@ -35,8 +39,8 @@ module.exports = {
     // 请求代理配置 END
 
     // Various Dev Server settings
-    host: 'localhost',
-    port: 8080,
+    host: HOST,
+    port: PORT,
     autoOpenBrowser: true,
 
     // Use Eslint

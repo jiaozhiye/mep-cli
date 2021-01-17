@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-25 10:16:51
+ * @Last Modified time: 2021-01-17 18:47:15
  */
 'use strict';
 
@@ -47,8 +47,7 @@ module.exports = {
       vue$: 'vue/dist/vue.esm.js',
       '@': utils.resolve('src'),
       '@test': utils.resolve('src/modules/test'),
-      '@common': utils.resolve('src/modules/common'),
-      '@system': utils.resolve('src/modules/system')
+      '@common': utils.resolve('src/modules/common')
     }
   },
   module: {

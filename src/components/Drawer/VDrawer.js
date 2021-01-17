@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-14 19:35:50
+ * @Last Modified time: 2021-01-15 08:25:38
  **/
 import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
@@ -13,7 +13,6 @@ import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
 
-// element-ui -> zIndex
 import { PopupManager } from 'element-ui/lib/utils/popup';
 
 export default {
