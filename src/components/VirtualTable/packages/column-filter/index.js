@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:29:47
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-25 10:28:49
+ * @Last Modified time: 2021-01-18 10:29:24
  */
 import Popper from '../popper';
 import Draggable from '../draggable';
@@ -70,7 +70,7 @@ export default {
       const cls = [`iconfont`, `icon-menu`, `v-handle`, [`${type}-handle`]];
       return (
         <li key={column.dataIndex} class="item">
-          <Checkbox value={!column.hidden} onInput={val => (column.hidden = !val)} onChange={this.changeHandle} />
+          <Checkbox value={!column.hidden} disabled={column.required} onInput={val => (column.hidden = !val)} onChange={this.changeHandle} />
           <i class={cls} title={this.t('table.columnFilter.draggable')} />
           <span title={column.title}>{column.title}</span>
           {type === 'main' ? (

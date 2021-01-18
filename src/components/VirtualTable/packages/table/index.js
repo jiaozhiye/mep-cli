@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-13 22:41:24
+ * @Last Modified time: 2021-01-18 15:49:35
  */
 import baseProps from './props';
 import Store from '../store';
@@ -317,8 +317,7 @@ export default {
       this.createSelectionRows(next);
       onChange(next, this.selectionRows);
     },
-    [`rowSelection.selectedRowKeys`](next, prev) {
-      if (isEqual(next, prev)) return;
+    [`rowSelection.selectedRowKeys`](next) {
       if (this.rowSelection.type === 'radio') {
         this.$$tableBody.setClickedValues(next.length ? [next[0], '__selection__'] : []);
       }
