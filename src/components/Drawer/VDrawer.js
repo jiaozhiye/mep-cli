@@ -2,9 +2,8 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-15 08:25:38
+ * @Last Modified time: 2021-01-19 14:25:23
  **/
-import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
 import { isIE } from '../_utils/tool';
@@ -73,11 +72,12 @@ export default {
       }
     };
     // 状态变量
-    this.transitionState = 'ready';
+    this.transitionState = '';
     return {
       isVisible: this.visible,
       loading: this.visible,
-      fullscreen: false
+      fullscreen: false,
+      containerShowStyle: {}
     };
   },
   computed: {
@@ -96,20 +96,9 @@ export default {
     containerPosition() {
       return this.STYLE[this.position];
     },
-    containerShowStyle() {
-      const style = {
-        visibility: 'visible',
-        transform: `translate3d(0, 0, 0)`
-      };
-      return this.visible ? style : null;
-    },
     fullScrennStyle() {
       if (this.position === 'right' || this.position === 'left') {
-        return this.fullscreen
-          ? {
-              width: this.calcPanelSize('100%')
-            }
-          : null;
+        return this.fullscreen ? { width: this.calcPanelSize('100%') } : null;
       }
       return null;
     }
@@ -122,6 +111,12 @@ export default {
         }
         this.fullscreen = false;
       }
+      if (this.transitionState !== '') {
+        this.containerShowStyle = this.createShowStyle();
+      } else {
+        // 首次加载，延迟展开动画，解决 transitionend 不触发问题
+        setTimeout(() => (this.containerShowStyle = this.createShowStyle()), 10);
+      }
       this.transitionState = 'ready';
       val ? this.$emit('open') : this.$emit('close', this.doReload);
       document.addEventListener('keydown', this.escapeCloseHandle, false);
@@ -129,12 +124,6 @@ export default {
         document.body.style.overflow = val ? 'hidden' : '';
       }
     }
-  },
-  mounted() {
-    this.event1 = addEventListener(this.$$drawerPanel, 'transitionend', this.transitionendHandle);
-  },
-  destroyed() {
-    this.event1?.remove();
   },
   deactivated() {
     this.close();
@@ -150,6 +139,9 @@ export default {
     handleClick() {
       this.fullscreen = !this.fullscreen;
       this.$emit('viewportChange', this.fullscreen ? 'fullscreen' : 'default');
+    },
+    createShowStyle() {
+      return this.visible ? { visibility: 'visible', transform: `translate3d(0, 0, 0)` } : null;
     },
     calcPanelSize(val) {
       let size = Number(val) > 0 ? `${val}px` : val;
@@ -199,7 +191,12 @@ export default {
     return (
       <div class={cls}>
         <div class={maskCls} style={{ ...maskStyle, zIndex: realzIndex }} onClick={() => this.close('mask')} />
-        <div ref="drawer-panel" class="drawer-container" style={{ ...containerPosition, ...containerShowStyle, ...containerStyle, ...fullScrennStyle, zIndex: realzIndex + 1 }}>
+        <div
+          ref="drawer-panel"
+          class="drawer-container"
+          style={{ ...containerPosition, ...containerShowStyle, ...containerStyle, ...fullScrennStyle, zIndex: realzIndex + 1 }}
+          onTransitionend={this.transitionendHandle}
+        >
           <div class="header">
             <div class="title">{$slots[`title`] || title}</div>
             {showFullScreen && (
