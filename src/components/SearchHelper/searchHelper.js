@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-09 10:54:20
+ * @Last Modified time: 2021-01-22 15:58:41
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -31,6 +31,7 @@ export default {
       columns: PropTypes.array.def([]),
       rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).def('uid'),
       fetch: PropTypes.object.isRequired,
+      showAlert: PropTypes.bool.def(true),
       webPagination: PropTypes.bool.def(false)
     }),
     fieldAliasMap: PropTypes.func.def(noop),
@@ -41,7 +42,7 @@ export default {
     getServerConfig: PropTypes.func // tds
   },
   data() {
-    const { fetch, webPagination } = this.table;
+    const { fetch, showAlert = !0, webPagination = !1 } = this.table;
     // tds
     this.DEFINE = ['valueName', 'displayName', 'descriptionName'];
     return {
@@ -63,7 +64,8 @@ export default {
         xhrAbort: fetch.xhrAbort || !1,
         dataKey: fetch.dataKey
       },
-      webPagination: webPagination || false,
+      showAlert,
+      webPagination,
       loading: false,
       alias: this.fieldAliasMap() || {}
     };
@@ -288,7 +290,7 @@ export default {
     }
   },
   render() {
-    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, selection, tableList, fetch, webPagination, disabled } = this;
+    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, selection, tableList, fetch, showAlert, webPagination, disabled } = this;
     const tableProps = { props: !webPagination ? { fetch } : { dataSource: tableList, webPagination: !0 } };
     return (
       <div>
@@ -310,6 +312,7 @@ export default {
               {...tableProps}
               rowKey={this.table.rowKey}
               rowSelection={selection}
+              showAlert={showAlert}
               columnsChange={columns => (this.columns = columns)}
               onRowEnter={this.rowEnterHandle}
               onRowDblclick={this.dbClickHandle}

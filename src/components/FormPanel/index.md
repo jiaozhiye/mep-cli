@@ -131,7 +131,7 @@
 | stepTime      | 时间变化的步长 - TIME_SELECT                                     | string                               | 00:15    |
 | titles        | 级联选择器的标题，数组元素为字符串类型 - INPUT_CASCADER          | array                                | -        |
 | mustCheckLast | 级联选择器只能选择最后一级 - INPUT_CASCADER                      | bool                                 | false    |
-| onlySelect    | 只能选择，不支持输入                                             | bool                                 | true     |
+| onlySelect    | 只能选择，不支持输入 - SEARCH_HELPER                             | bool                                 | true     |
 | fieldAliasMap | 表单字段与回传数据字段的映射 - SEARCH_HELPER                     | func                                 | -        |
 | columns       | 配置搜索帮助下拉面板的显示列 - SEARCH_HELPER                     | array                                | -        |
 | onInput       | 输入框 input 事件的回调 - INPUT                                  | func                                 | -        |

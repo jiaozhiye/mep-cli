@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-14 16:36:46
+ * @Last Modified time: 2021-01-22 14:10:09
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -51,7 +51,7 @@ export default {
     defultValueOnClear: PropTypes.bool.def(false)
   },
   data() {
-    this.arrayTypes = ['RANGE_DATE', 'RANGE_TIME', 'RANGE_TIME_SELECT', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX', 'UPLOAD_IMG', 'UPLOAD_FILE'];
+    this.arrayTypes = ['RANGE_DATE', 'EP_RANGE_DATE', 'RANGE_TIME', 'RANGE_TIME_SELECT', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX', 'UPLOAD_IMG', 'UPLOAD_FILE'];
     return {
       form: {}, // 表单的值
       desc: {}, // 描述信息
@@ -1315,6 +1315,94 @@ export default {
         </el-form-item>
       );
     },
+    EP_RANGE_DATE(option) {
+      const { form } = this;
+      const conf = {
+        daterange: {
+          placeholder: this.t('form.daterangePlaceholder'),
+          valueFormat: 'yyyy-MM-dd HH:mm:ss'
+        },
+        datetimerange: {
+          placeholder: this.t('form.datetimerangePlaceholder'),
+          valueFormat: 'yyyy-MM-dd HH:mm:ss'
+        },
+        exactdaterange: {
+          placeholder: this.t('form.daterangePlaceholder'),
+          valueFormat: 'yyyy-MM-dd'
+        },
+        monthrange: {
+          placeholder: this.t('form.monthrangePlaceholder'),
+          valueFormat: 'yyyy-MM'
+        },
+        yearrange: {
+          placeholder: this.t('form.yearrangePlaceholder'),
+          valueFormat: 'yyyy'
+        }
+      };
+      const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, clearable = !0, readonly, disabled, onChange = noop } = option;
+      const { dateType = 'daterange', minDateTime, maxDateTime, shortCuts = !0, unlinkPanels = !0 } = options;
+      // 日期区间快捷键方法
+      const createPicker = (picker, days) => {
+        const end = new Date();
+        const start = new Date();
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * Number(days));
+        picker.$emit('pick', [start, end]);
+      };
+      const pickers = [
+        {
+          text: this.t('form.dateRangePickers')[0],
+          onClick(picker) {
+            createPicker(picker, 7);
+          }
+        },
+        {
+          text: this.t('form.dateRangePickers')[1],
+          onClick(picker) {
+            createPicker(picker, 30);
+          }
+        },
+        {
+          text: this.t('form.dateRangePickers')[2],
+          onClick(picker) {
+            createPicker(picker, 90);
+          }
+        },
+        {
+          text: this.t('form.dateRangePickers')[3],
+          onClick(picker) {
+            createPicker(picker, 180);
+          }
+        }
+      ];
+      return (
+        <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
+          {labelOptions && this.createFormItemLabel(labelOptions)}
+          <el-date-picker
+            type={dateType.replace('exact', '')}
+            value={form[fieldName]}
+            onInput={val => {
+              form[fieldName] = this.formatDate(val ?? [], conf[dateType].valueFormat, dateType === 'datetime');
+            }}
+            value-format={conf[dateType].valueFormat}
+            range-separator={`-`}
+            start-placeholder={!disabled ? conf[dateType].placeholder[0] : ''}
+            end-placeholder={!disabled ? conf[dateType].placeholder[1] : ''}
+            unlink-panels={unlinkPanels}
+            clearable={clearable}
+            readonly={readonly}
+            disabled={disabled}
+            style={{ ...style }}
+            picker-options={{
+              disabledDate: time => {
+                return this.setDisabledDate(time, [minDateTime, maxDateTime]);
+              },
+              shortcuts: shortCuts ? pickers : null
+            }}
+            onChange={() => onChange(form[fieldName])}
+          />
+        </el-form-item>
+      );
+    },
     TIME(option) {
       const { form, formType } = this;
       const { label, fieldName, labelWidth, labelOptions, options = {}, style = {}, placeholder = this.t('form.datetimePlaceholder'), clearable = !0, readonly, disabled, onChange = noop } = option;
@@ -1894,7 +1982,7 @@ export default {
     // 处理 from 数据
     excuteFormValue(form) {
       this.formItemList
-        .filter(x => ['RANGE_DATE', 'RANGE_INPUT_NUMBER', 'RANGE_TIME_SELECT'].includes(x.type))
+        .filter(x => ['RANGE_DATE', 'EP_RANGE_DATE', 'RANGE_INPUT_NUMBER', 'RANGE_TIME_SELECT'].includes(x.type))
         .map(x => x.fieldName)
         .forEach(fieldName => {
           if (form[fieldName].length > 0) {

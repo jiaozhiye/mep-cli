@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-26 11:15:39
+ * @Last Modified time: 2021-01-23 08:29:57
  */
 import addEventListener from 'add-dom-event-listener';
 import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
@@ -173,7 +173,7 @@ export default {
     renderColumn(column, columnIndex, row, rowIndex, rowKey, depth) {
       const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, sorter, isIE } = this.$$table;
       const { dataIndex, fixed, align, className } = column;
-      const { rowspan, colspan } = this.getSpan(row, column, rowIndex, columnIndex);
+      const { rowspan, colspan } = this.getSpan(row, column, rowIndex, columnIndex, this.tableData);
       const isEllipsis = ellipsis || column.ellipsis;
       if (!rowspan || !colspan) {
         return null;
@@ -255,7 +255,7 @@ export default {
           .join(',');
       }
       // 处理数值精度
-      if (precision >= 0) {
+      if (precision >= 0 && result !== '') {
         result = Number(result).toFixed(precision);
       }
       // 处理换行符

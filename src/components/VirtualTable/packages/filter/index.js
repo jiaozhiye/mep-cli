@@ -2,12 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-08 17:07:40
+ * @Last Modified time: 2021-01-22 16:54:29
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
 
-import { isEmpty, validateNumber } from '../utils';
+import { isEmpty, validateNumber, stringToNumber } from '../utils';
 import { cloneDeep } from 'lodash';
 import Locale from '../locale/mixin';
 
@@ -168,11 +168,11 @@ export default {
                 placeholder={this.t('table.filter.gtPlaceholder')}
                 style={{ width: '120px' }}
                 onChange={val => {
-                  this.filterValues[dataKey]['>'] = Number(val);
+                  this.filterValues[dataKey]['>'] = stringToNumber(val);
                 }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
-                    this.filterValues[dataKey]['>'] = Number(ev.target.value);
+                    this.filterValues[dataKey]['>'] = stringToNumber(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -190,11 +190,11 @@ export default {
                 placeholder={this.t('table.filter.ltPlaceholder')}
                 style={{ width: '120px' }}
                 onChange={val => {
-                  this.filterValues[dataKey]['<'] = Number(val);
+                  this.filterValues[dataKey]['<'] = stringToNumber(val);
                 }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
-                    this.filterValues[dataKey]['<'] = Number(ev.target.value);
+                    this.filterValues[dataKey]['<'] = stringToNumber(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -212,11 +212,11 @@ export default {
                 placeholder={this.t('table.filter.eqPlaceholder')}
                 style={{ width: '120px' }}
                 onChange={val => {
-                  this.filterValues[dataKey]['=='] = Number(val);
+                  this.filterValues[dataKey]['=='] = stringToNumber(val);
                 }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
-                    this.filterValues[dataKey]['=='] = Number(ev.target.value);
+                    this.filterValues[dataKey]['=='] = stringToNumber(ev.target.value);
                     this.doFinish();
                   }
                 }}
@@ -234,11 +234,11 @@ export default {
                 placeholder={this.t('table.filter.neqPlaceholder')}
                 style={{ width: '120px' }}
                 onChange={val => {
-                  this.filterValues[dataKey]['!='] = Number(val);
+                  this.filterValues[dataKey]['!='] = stringToNumber(val);
                 }}
                 nativeOnKeydown={ev => {
                   if (ev.keyCode === 13) {
-                    this.filterValues[dataKey]['!='] = Number(ev.target.value);
+                    this.filterValues[dataKey]['!='] = stringToNumber(ev.target.value);
                     this.doFinish();
                   }
                 }}

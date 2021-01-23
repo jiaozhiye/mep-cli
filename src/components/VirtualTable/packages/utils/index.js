@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 09:43:57
+ * @Last Modified time: 2021-01-22 16:54:04
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { stringify, array_format } from '../filter-sql';
@@ -414,6 +414,13 @@ export const formatNumber = (value = '') => {
 export const validateNumber = val => {
   const regExp = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
   return (!Number.isNaN(val) && regExp.test(val)) || val === '' || val === '-';
+};
+
+// 字符串转数值类型
+export const stringToNumber = input => {
+  if (!validateNumber(input)) return '';
+  input = input === '-' ? '' : input;
+  return input ? Number(input) : '';
 };
 
 // 生成 uuid key
