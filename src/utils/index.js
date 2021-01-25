@@ -2,11 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2019-11-11 23:01:46
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-11 10:21:39
+ * @Last Modified time: 2021-01-25 13:42:37
  */
 import { MessageBox, Notification, Message } from 'element-ui';
 import CryptoJS from 'crypto-js';
-import { cloneDeep } from 'lodash';
 import config from '@/config';
 import i18n from '@/lang';
 import store from '@/store';
@@ -81,15 +80,6 @@ export const throttle = (fn, delay) => {
       fn.lastTime = nowTime;
     }
   };
-};
-
-/**
- * @description 深度克隆
- * @param {object|array} 目标对象
- * @returns 克隆后的结果
- */
-export const deepClone = target => {
-  return cloneDeep(target);
 };
 
 /**

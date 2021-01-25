@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-05 20:27:09
+ * @Last Modified time: 2021-01-25 13:39:52
  */
 import { uniqWith, isEqual } from 'lodash';
 import * as types from '../types';
@@ -17,11 +17,11 @@ import { getNavList, getAllDict, getStarMenuList, getCommonMenuList, createMenuP
 import client from 'webpack-custom-theme/client';
 import forElementUI from 'webpack-custom-theme/forElementUI';
 
-const deepMapRoutes = (arr, mark) => {
+const deepMapRoute = (arr, mark) => {
   let res = null;
   for (let i = 0; i < arr.length; i++) {
     if (Array.isArray(arr[i].children)) {
-      res = deepMapRoutes(arr[i].children, mark);
+      res = deepMapRoute(arr[i].children, mark);
     }
     if (res) {
       return res;
@@ -33,11 +33,11 @@ const deepMapRoutes = (arr, mark) => {
   return res;
 };
 
-const flattenNavList = list => {
-  const res = [];
+const createMenuList = list => {
+  let res = [];
   list.forEach(x => {
     if (Array.isArray(x.children)) {
-      res.push(...flattenNavList(x.children));
+      res.push(...createMenuList(x.children));
     } else {
       res.push(x);
     }
@@ -45,16 +45,16 @@ const flattenNavList = list => {
   return res;
 };
 
-const formateNavList = (list, routes) => {
+const formatNavData = (list, routes) => {
   list.forEach(x => {
     if (Array.isArray(x.children) && x.children.length) {
       x.children.forEach(sub => (sub.parentKey = x.key));
-      formateNavList(x.children, routes);
+      formatNavData(x.children, routes);
     }
     if (!x.children && !x.key) {
       x.children = [];
     }
-    let target = deepMapRoutes(routes, x.key);
+    let target = deepMapRoute(routes, x.key);
     if (target) {
       target.meta && (target.meta.title = x.title);
       target.hideInMenu && (x.hideInMenu = true);
@@ -132,9 +132,9 @@ const actions = {
         return dispatch('createLogout');
       }
     }
-    formateNavList(data, router.options.routes);
+    formatNavData(data, router.options.routes);
     commit({ type: types.NAVLIST, data });
-    commit({ type: types.MENULIST, data: flattenNavList(data) });
+    commit({ type: types.MENULIST, data: createMenuList(data) });
     return !0;
   },
   clearNavList({ dispatch, commit, state }, params) {

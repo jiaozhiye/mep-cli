@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-22 16:54:29
+ * @Last Modified time: 2021-01-23 11:55:08
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -61,6 +61,15 @@ export default {
       // 非激活状态(此筛选项数据为空) -> 恢复初始值
       if (!this.isActived) {
         this.filterValues = this.initialFilterValue();
+      }
+    },
+    showPopper(val) {
+      if (!val) return;
+      const { type } = this.column.filter;
+      if (type === 'text' || type === 'number') {
+        setTimeout(() => {
+          this.$refs[`${type}-${this.dataKey}`]?.focus();
+        });
       }
     }
   },
@@ -135,6 +144,7 @@ export default {
       return (
         <div style="padding-top: 6px">
           <el-input
+            ref={`text-${dataKey}`}
             size={this.size}
             value={this.filterValues[dataKey]?.[`like`]}
             onInput={val => {
@@ -159,6 +169,7 @@ export default {
             <li>
               <span>&gt;&nbsp;</span>
               <el-input
+                ref={`number-${dataKey}`}
                 size={this.size}
                 value={this.filterValues[dataKey]?.[`>`]}
                 onInput={val => {
