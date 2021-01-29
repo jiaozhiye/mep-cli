@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 16:09:44
+ * @Last Modified time: 2021-01-25 17:30:18
  */
 import dayjs from 'dayjs';
 import { isFunction } from 'lodash';
@@ -57,29 +57,8 @@ export default {
       return list.map((x, i) => {
         let item = { ...x, index: i, pageIndex: i };
         this.flatColumns.forEach((column, index) => {
-          const { dataIndex, dictItems, render, extraRender } = column;
-          const val = getCellValue(item, dataIndex);
-          const dicts = dictItems || [];
-          const target = dicts.find(x => x.value == val);
-          let res = target?.text ?? val;
-          // 数据是数组的情况
-          if (Array.isArray(val)) {
-            res = val
-              .map(x => {
-                let target = dicts.find(k => k.value == x);
-                return target?.text ?? x;
-              })
-              .join(',');
-          }
-          // render 情况
-          if (isFunction(render)) {
-            res = render(val, item, column, item.index, index);
-          }
-          // extraRender 情况
-          if (isFunction(extraRender)) {
-            res = extraRender(val, item, column, item.index, index);
-          }
-          setCellValue(item, dataIndex, res);
+          const { dataIndex } = column;
+          setCellValue(item, dataIndex, this.renderCell(item, item.index, column, index));
         });
         return item;
       });
@@ -173,15 +152,20 @@ export default {
       return html;
     },
     renderCell(row, rowIndex, column, columnIndex) {
-      const { dataIndex, render, extraRender } = column;
+      const { dataIndex, precision, render, extraRender } = column;
       const text = getCellValue(row, dataIndex);
-      if (_.isFunction(extraRender)) {
-        return extraRender(text, row, column, rowIndex, columnIndex);
+      let result = this.$$table.$$tableBody.renderText(text, column, row);
+      if (isFunction(render)) {
+        result = render(text, row, column, rowIndex, columnIndex);
       }
-      if (_.isFunction(render)) {
-        return render(text, row, column, rowIndex, columnIndex);
+      if (isFunction(extraRender)) {
+        result = extraRender(text, row, column, rowIndex, columnIndex);
       }
-      return this.$$table.$$tableBody.renderText(text, column, row);
+      // 处理 number 类型
+      if (precision >= 0 && result !== '') {
+        result = Number(result);
+      }
+      return result;
     }
   },
   render() {

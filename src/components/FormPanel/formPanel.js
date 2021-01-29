@@ -129,7 +129,7 @@ export default {
       });
     },
     rules() {
-      this.$nextTick(() => this.doClearValidate(this.$refs.form));
+      this.$nextTick(() => this.$refs.form.clearValidate());
     },
     descContents(val) {
       val.forEach(x => (this.desc[x.fieldName] = x.content));
@@ -1967,9 +1967,6 @@ export default {
           return VNode;
         });
     },
-    doClearValidate(compRef) {
-      compRef?.clearValidate();
-    },
     doFormItemValidate(fieldName) {
       this.$refs.form.validateField(fieldName);
     },
@@ -2262,6 +2259,10 @@ export default {
     },
     CLEAR_FORM() {
       this.clearForm();
+    },
+    VALIDATE_FIELDS(fieldNames) {
+      const fields = Array.isArray(fieldNames) ? fieldNames : [fieldNames];
+      fields.forEach(fieldName => this.doFormItemValidate(fieldName));
     },
     // 设置表单项的值，参数是表单值得集合 { fieldName: val, ... }
     SET_FIELDS_VALUE(values = {}) {

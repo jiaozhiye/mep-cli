@@ -26,13 +26,15 @@
 
 ### 方法
 
-| 方法名称         | 说明                   | 参数                       | 返回值                                        |
-| ---------------- | ---------------------- | -------------------------- | --------------------------------------------- |
-| SUBMIT_FORM      | 执行表单提交           | -                          | 通过校验，返回表单对象；未通过校验，返回 null |
-| RESET_FORM       | 重置表单控件           | -                          | -                                             |
-| SET_FIELDS_VALUE | 设置表单字段的值       | Function(values:object)    | -                                             |
-| GET_FORM_DATA    | 获取表单数据，异步方法 | -                          | 返回错误前置的数组 [error, formValue]         |
-| GET_FIELD_VALUE  | 获取表单项的值         | Function(fieldName:string) | 返回表单字段值                                |
+| 方法名称         | 说明                         | 参数                              | 返回值                                        |
+| ---------------- | ---------------------------- | --------------------------------- | --------------------------------------------- |
+| SUBMIT_FORM      | 执行表单提交                 | -                                 | 通过校验，返回表单对象；未通过校验，返回 null |
+| RESET_FORM       | 重置表单控件                 | -                                 | -                                             |
+| SET_FIELDS_VALUE | 设置表单字段的值             | Function(values:object)           | -                                             |
+| SET_FORM_VALUES  | 可以设置除了表单字段的额外值 | Function(values:object)           | -                                             |
+| GET_FORM_DATA    | 获取表单数据，异步方法       | -                                 | 返回错误前置的数组 [error, formValue]         |
+| GET_FIELD_VALUE  | 获取表单项的值               | Function(fieldName:string)        | 返回表单字段值                                |
+| VALIDATE_FIELDS  | 对表单字段进行校验           | Function(fieldNames \| fieldName) | -                                             |
 
 ### formType
 
@@ -80,7 +82,7 @@
 | descOptions  | 描述信息的自定义渲染，[配置项](#descOption)                   | object              | -        |
 | searchHelper | 搜索帮助配置，参考 SearchHelper 组件，[配置项](#searchHelper) | object              | -        |
 | render       | 表单元素的渲染方法                                            | func                | JSX Node |
-| onChange     | 表单元素值变化的回调                                          | func                | -        |
+| onChange     | 表单元素值变化的回调                                          | Function(value)     | -        |
 
 ### options
 
@@ -115,10 +117,10 @@
 | onlySelect    | 只能选择，不支持输入 - SEARCH_HELPER                             | bool             | true     |
 | fieldAliasMap | 表单字段与回传数据字段的映射 - SEARCH_HELPER                     | func             | -        |
 | columns       | 配置搜索帮助下拉面板的显示列 - SEARCH_HELPER                     | array            | -        |
-| onInput       | 输入框 input 事件的回调 - INPUT                                  | func             | -        |
+| onInput       | 输入框 input 事件的回调 - INPUT                                  | Function(value)  | -        |
 | onFocus       | 输入框获得焦点事件的回调 - INPUT                                 | func             | -        |
-| onClick       | 输入框单击事件的回调 - INPUT/TEXT_AREA                           | func             | -        |
-| onDblClick    | 输入框双击事件的回调 - INPUT/TEXT_AREA                           | func             | -        |
+| onClick       | 输入框单击事件的回调 - INPUT/TEXT_AREA                           | Function(value)  | -        |
+| onDblClick    | 输入框双击事件的回调 - INPUT/TEXT_AREA                           | Function(value)  | -        |
 | unitRender    | 输入框后置内容的渲染方法 - INPUT                                 | func             | JSX Node |
 
 ### dateType

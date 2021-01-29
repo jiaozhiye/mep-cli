@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-13 23:09:16
+ * @Last Modified time: 2021-01-28 08:45:02
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -109,7 +109,7 @@ export default {
       });
     },
     rules() {
-      this.$nextTick(() => this.doClearValidate(this.$refs.form));
+      this.$nextTick(() => this.$refs.form.clearValidate());
     },
     descContents(val) {
       val.forEach(x => (this.desc[x.fieldName] = x.content));
@@ -1646,9 +1646,6 @@ export default {
       }
       return true;
     },
-    doClearValidate(compRef) {
-      compRef?.clearValidate();
-    },
     doFormItemValidate(fieldName) {
       this.$refs.form.validateField(fieldName);
     },
@@ -1883,6 +1880,10 @@ export default {
     },
     RESET_FORM() {
       this.resetForm();
+    },
+    VALIDATE_FIELDS(fieldNames) {
+      const fields = Array.isArray(fieldNames) ? fieldNames : [fieldNames];
+      fields.forEach(fieldName => this.doFormItemValidate(fieldName));
     },
     // 设置表单项的值，参数是表单值得集合 { fieldName: val, ... }
     SET_FIELDS_VALUE(values = {}) {

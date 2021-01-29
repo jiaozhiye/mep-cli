@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-18 15:49:35
+ * @Last Modified time: 2021-01-26 13:56:46
  */
 import baseProps from './props';
 import Store from '../store';
@@ -41,6 +41,7 @@ const noop = () => {};
 
 export default {
   name: 'VirtualTable',
+  inheritAttrs: false,
   props: {
     ...baseProps
   },
