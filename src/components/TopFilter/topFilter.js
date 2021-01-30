@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-28 08:45:02
+ * @Last Modified time: 2021-01-30 12:48:10
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -981,6 +981,8 @@ export default {
           }
         }
       ];
+      const dateReg = /^(\d{4})-?(\d{2})-?(\d{2})/;
+      const dateTimeReg = /^(\d{4})-?(\d{2})-?(\d{2}) (\d{2}):?(\d{2}):?(\d{2})/;
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
           {labelOptions && this.createFormItemLabel(labelOptions)}
@@ -1005,30 +1007,43 @@ export default {
               shortcuts: shortCuts ? pickers : null
             }}
             nativeOnInput={ev => {
-              ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
-              this.isDateChange = !0;
+              let val = ev.target.value;
+              if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+                return (ev.target.value = this[`__${fieldName}__pv`] ?? form[fieldName] ?? '');
+              }
+              if (dateType === 'date' || dateType === 'exactdate') {
+                val = val.replace(dateReg, '$1-$2-$3').slice(0, 10);
+              }
+              if (dateType === 'datetime') {
+                val = val
+                  .replace(dateReg, '$1-$2-$3')
+                  .replace(dateTimeReg, '$1-$2-$3 $4:$5:$6')
+                  .slice(0, 19);
+              }
+              ev.target.value = val;
+              this[`__${fieldName}__pv`] = val;
+              this.__dateInputed__ = !0;
             }}
             onBlur={C => {
-              if (!this.isDateChange) return;
-              this.isDateChange = !1;
+              if (!this.__dateInputed__) return;
+              this.__dateInputed__ = !1;
               const currentVal = C.$el.children[0].value;
-              if (!/^[\d-\s\:]+$/.test(currentVal)) return;
               const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
               if (passed) {
-                form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat);
-                onChange(form[fieldName]);
+                form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat, dateType === 'datetime');
               }
+              setTimeout(() => (this[`__${fieldName}__pv`] = C.$el.children[0].value));
             }}
             nativeOnKeydown={ev => {
               if (ev.keyCode === 13) {
-                if (!this.isDateChange) return;
+                if (!this.__dateInputed__) return;
                 const currentVal = ev.target.value;
-                if (!/^[\d-\s\:]+$/.test(currentVal)) return;
                 const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
                 if (passed) {
-                  form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat);
+                  form[fieldName] = this.formatDate(currentVal, conf[dateType].valueFormat, dateType === 'datetime');
                 }
                 this.$refs[`DATE-${fieldName}`].hidePicker();
+                setTimeout(() => (this[`__${fieldName}__pv`] = ev.target.value));
               }
             }}
             onChange={() => onChange(form[fieldName])}
@@ -1097,6 +1112,8 @@ export default {
           }
         }
       ];
+      const dateReg = /^(\d{4})-?(\d{2})-?(\d{2})/;
+      const dateTimeReg = /^(\d{4})-?(\d{2})-?(\d{2}) (\d{2}):?(\d{2}):?(\d{2})/;
       const cls = [`range-date`, { [`disabled`]: disabled }];
       return (
         <el-form-item key={fieldName} ref={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -1123,29 +1140,43 @@ export default {
               readonly={readonly}
               disabled={disabled || startDisabled}
               nativeOnInput={ev => {
-                ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
-                this.isDateChange = !0;
+                let val = ev.target.value;
+                if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+                  return (ev.target.value = this[`__${fieldName}_start__pv`] ?? form[fieldName][0] ?? '');
+                }
+                if (dateType === 'daterange' || dateType === 'exactdaterange') {
+                  val = val.replace(dateReg, '$1-$2-$3').slice(0, 10);
+                }
+                if (dateType === 'datetimerange') {
+                  val = val
+                    .replace(dateReg, '$1-$2-$3')
+                    .replace(dateTimeReg, '$1-$2-$3 $4:$5:$6')
+                    .slice(0, 19);
+                }
+                ev.target.value = val;
+                this[`__${fieldName}_start__pv`] = val;
+                this.__dateInputed__ = !0;
               }}
               onBlur={C => {
-                if (!this.isDateChange) return;
-                this.isDateChange = !1;
+                if (!this.__dateInputed__) return;
+                this.__dateInputed__ = !1;
                 const startVal = C.$el.children[0].value;
-                if (!/^[\d-\s\:]+$/.test(startVal)) return;
                 const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                 if (passed) {
-                  form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat);
+                  form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat, dateType === 'datetimerange');
                 }
+                setTimeout(() => (this[`__${fieldName}_start__pv`] = C.$el.children[0].value));
               }}
               nativeOnKeydown={ev => {
                 if (ev.keyCode === 13) {
-                  if (!this.isDateChange) return;
+                  if (!this.__dateInputed__) return;
                   const startVal = ev.target.value;
-                  if (!/^[\d-\s\:]+$/.test(startVal)) return;
                   const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                   if (passed) {
-                    form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat);
+                    form[fieldName] = this.formatDate([startVal, form[fieldName][1]], conf[dateType].valueFormat, dateType === 'datetimerange');
                   }
                   this.$refs[`RANGE_DATE-${fieldName}-start`].hidePicker();
+                  setTimeout(() => (this[`__${fieldName}_start__pv`] = ev.target.value));
                 }
               }}
               onChange={() => onChange(form[fieldName])}
@@ -1173,29 +1204,43 @@ export default {
               readonly={readonly}
               disabled={disabled || endDisabled}
               nativeOnInput={ev => {
-                ev.target.value = ev.target.value.slice(0, 10).replace(/(\d{4})-?(\d{2})-?(\d{2})/, '$1-$2-$3');
-                this.isDateChange = !0;
+                let val = ev.target.value;
+                if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+                  return (ev.target.value = this[`__${fieldName}_end__pv`] ?? form[fieldName][1] ?? '');
+                }
+                if (dateType === 'daterange' || dateType === 'exactdaterange') {
+                  val = val.replace(dateReg, '$1-$2-$3').slice(0, 10);
+                }
+                if (dateType === 'datetimerange') {
+                  val = val
+                    .replace(dateReg, '$1-$2-$3')
+                    .replace(dateTimeReg, '$1-$2-$3 $4:$5:$6')
+                    .slice(0, 19);
+                }
+                ev.target.value = val;
+                this[`__${fieldName}_end__pv`] = val;
+                this.__dateInputed__ = !0;
               }}
               onBlur={C => {
-                if (!this.isDateChange) return;
-                this.isDateChange = !1;
+                if (!this.__dateInputed__) return;
+                this.__dateInputed__ = !1;
                 const endVal = C.$el.children[0].value;
-                if (!/^[\d-\s\:]+$/.test(endVal)) return;
                 const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                 if (passed) {
-                  form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat);
+                  form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat, dateType === 'datetimerange');
                 }
+                setTimeout(() => (this[`__${fieldName}_end__pv`] = C.$el.children[0].value));
               }}
               nativeOnKeydown={ev => {
                 if (ev.keyCode === 13) {
-                  if (!this.isDateChange) return;
+                  if (!this.__dateInputed__) return;
                   const endVal = ev.target.value;
-                  if (!/^[\d-\s\:]+$/.test(endVal)) return;
                   const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                   if (passed) {
-                    form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat);
+                    form[fieldName] = this.formatDate([form[fieldName][0], endVal], conf[dateType].valueFormat, dateType === 'datetimerange');
                   }
                   this.$refs[`RANGE_DATE-${fieldName}-end`].hidePicker();
+                  setTimeout(() => (this[`__${fieldName}_end__pv`] = ev.target.value));
                 }
               }}
               onChange={() => onChange(form[fieldName])}
