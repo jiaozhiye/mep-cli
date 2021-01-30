@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-29 12:02:36
+ * @Last Modified time: 2021-01-30 14:20:00
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -30,6 +30,7 @@ export default {
     showFullScreen: PropTypes.bool.def(true),
     stopEventBubble: PropTypes.bool.def(false),
     level: PropTypes.number.def(1),
+    beforeClose: PropTypes.func,
     maskClosable: PropTypes.bool,
     closeOnPressEscape: PropTypes.bool.def(true),
     containerStyle: PropTypes.object.def({})
@@ -51,7 +52,7 @@ export default {
       return this.calcContentSize(!this.fullscreen ? size : '100%');
     },
     maskToClose() {
-      return this.maskClosable ?? getConfig('BaseDialog_maskClosable') ?? false;
+      return this.maskClosable ?? getConfig('Drawer_maskClosable') ?? false;
     }
   },
   deactivated() {
@@ -110,6 +111,7 @@ export default {
         direction,
         withHeader: $props.showHeader,
         showClose: $props.closable,
+        beforeClose: $props.beforeClose,
         wrapperClosable: maskToClose,
         closeOnPressEscape,
         appendToBody: true,

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-29 08:00:46
+ * @Last Modified time: 2021-01-30 14:29:29
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -30,6 +30,7 @@ export default {
     destroyOnClose: PropTypes.bool.def(false),
     stopEventBubble: PropTypes.bool.def(false),
     lockScroll: PropTypes.bool.def(true),
+    beforeClose: PropTypes.func,
     maskClosable: PropTypes.bool,
     closeOnPressEscape: PropTypes.bool.def(true),
     containerStyle: PropTypes.object.def({})
@@ -127,12 +128,13 @@ export default {
       ref: 'dialog',
       class: cls,
       props: {
-        ...$props,
-        top: disTop,
+        visible: $props.visible,
         width: this.parseHeight($props.width),
+        top: disTop,
         showClose: $props.closable,
-        closeOnClickModal: maskToClose,
+        beforeClose: $props.beforeClose,
         fullscreen,
+        closeOnClickModal: maskToClose,
         closeOnPressEscape,
         appendToBody: true,
         destroyOnClose: false

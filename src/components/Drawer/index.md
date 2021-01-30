@@ -16,6 +16,7 @@
 | showFullScreen | 是否显示全屏按钮                                | boolean                        | true   |
 | level          | Drawer 组件的层级，通常在嵌套 Drawer 组件时使用 | number                         | 1      |
 | containerStyle | 对话框外层容器的 css 样式                       | object                         | -      |
+| beforeClose    | 关闭前的回调，关闭组件，执行形参 cb 函数的调用  | Function(cb:func)              | -      |
 
 ### 事件
 

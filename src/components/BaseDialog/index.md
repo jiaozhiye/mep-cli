@@ -2,17 +2,18 @@
 
 ### BaseDialog
 
-| 参数           | 说明                               | 类型    | 默认值 |
-| -------------- | ---------------------------------- | ------- | ------ |
-| visible        | 是否显示 Dialog，支持 .sync 修饰符 | boolean | false  |
-| title          | 标题名称                           | string  | -      |
-| width          | Dialog 的宽度，单位是 %            | string  | 60%    |
-| destroyOnClose | 关闭时销毁 Dialog 里的子元素       | boolean | false  |
-| dragable       | 是否可拖拽                         | boolean | true   |
-| closable       | 是否显示右上角的关闭按钮           | boolean | true   |
-| maskClosable   | 是否可以通过点击 modal 关闭 Dialog | boolean | false  |
-| showFullScreen | 是否显示全屏按钮                   | boolean | true   |
-| containerStyle | 对话框外层容器的 css 样式          | object  | -      |
+| 参数           | 说明                                           | 类型              | 默认值 |
+| -------------- | ---------------------------------------------- | ----------------- | ------ |
+| visible        | 是否显示 Dialog，支持 .sync 修饰符             | boolean           | false  |
+| title          | 标题名称                                       | string            | -      |
+| width          | Dialog 的宽度，单位是 %                        | string            | 60%    |
+| destroyOnClose | 关闭时销毁 Dialog 里的子元素                   | boolean           | false  |
+| dragable       | 是否可拖拽                                     | boolean           | true   |
+| closable       | 是否显示右上角的关闭按钮                       | boolean           | true   |
+| maskClosable   | 是否可以通过点击 modal 关闭 Dialog             | boolean           | false  |
+| showFullScreen | 是否显示全屏按钮                               | boolean           | true   |
+| containerStyle | 对话框外层容器的 css 样式                      | object            | -      |
+| beforeClose    | 关闭前的回调，关闭组件，执行形参 cb 函数的调用 | Function(cb:func) | -      |
 
 ### 事件
 
@@ -27,10 +28,9 @@
 
 ### 插槽
 
-| 插槽名称 | 说明                |
-| -------- | ------------------- |
-| default  | Dialog 中的内容     |
-| title    | Dialog 标题区的内容 |
+| 插槽名称 | 说明            |
+| -------- | --------------- |
+| default  | Dialog 中的内容 |
 
 ### 示例
 
