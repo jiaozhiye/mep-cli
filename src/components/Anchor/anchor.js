@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-22 14:48:09
+ * @Last Modified time: 2021-01-29 08:56:36
  **/
 import addEventListener from 'add-dom-event-listener';
 import scrollIntoView from 'scroll-into-view-if-needed';
@@ -125,7 +125,7 @@ export default {
     return (
       <div class={cls}>
         {this.createLabel()}
-        <div class="scroll-wrapper" ref="scroll">
+        <div ref="scroll" class="scroll-wrapper">
           {this.$slots['default']}
         </div>
       </div>

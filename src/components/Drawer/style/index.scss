@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-10-31 09:45:03
+ * @Last Modified time: 2021-01-28 19:50:24
  */
 @import '../../style/index.scss';
 
@@ -10,84 +10,61 @@ $prefix-cls: '#{$v-prefix}-drawer--wrapper';
 
 .#{$prefix-cls} {
   @include reset-component();
-  .drawer-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.45);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.7, 0.3, 0.1, 1);
-    transform-origin: 50% 50% 0;
+  .el-drawer.rtl {
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.25);
   }
-  .mask-show {
-    opacity: 1;
-    visibility: visible;
-  }
-  .drawer-container {
-    position: fixed;
-    visibility: hidden;
-    background-color: #fff;
-    transition: all 0.3s cubic-bezier(0.9, 0, 0.3, 0.7);
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-    & > .header {
+  .el-drawer__header {
+    flex-shrink: 0;
+    height: 48px;
+    margin: 0;
+    padding: 0 10px 0 15px;
+    border-bottom: 1px solid $border-color-base;
+    box-sizing: border-box;
+    .drawer-title {
+      flex: 1;
       display: flex;
       align-items: center;
-      position: relative;
-      height: 48px;
-      padding: 0 15px;
-      box-sizing: border-box;
-      border-bottom: 1px solid $border-color-base;
-      border-radius: $border-radius-base $border-radius-base 0 0;
       .title {
+        flex: 1;
         font-size: 16px;
       }
-      .fullscreen-btn {
-        position: absolute;
-        padding: 2px;
-        right: 35px;
-        top: 12px;
-        color: $text-color-secondary;
+      .fullscreen {
+        padding: 5px;
+        padding-right: 2px;
         line-height: 1;
+        color: $text-color-secondary;
         cursor: pointer;
-        &:hover {
-          color: $primary-color;
-        }
         i {
           font-size: 18px;
           font-weight: 700;
         }
       }
-      .close {
-        position: absolute;
-        padding: 5px;
-        right: 5px;
-        top: 9px;
+    }
+    .el-drawer__close-btn {
+      padding: 5px;
+      font-size: 22px;
+      line-height: 1;
+      outline: none;
+      .el-icon-close {
+        font-weight: 700;
         color: $text-color-secondary;
-        line-height: 1;
-        cursor: pointer;
-        transition: color 0.3s ease;
-        &:hover {
-          color: $primary-color;
-        }
-        i {
-          font-size: 18px;
-        }
       }
     }
-    & > .container {
-      height: calc(100% - 48px);
-      padding: $padding-base 15px;
+  }
+  .el-drawer__body {
+    height: 0;
+    .drawer-container {
+      height: 100%;
+      padding: $padding-base !important;
+      padding-left: 15px !important;
       overflow-y: auto;
-      box-sizing: border-box;
-      .loading {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+      word-break: normal;
+    }
+    .drawer-loading {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   // small

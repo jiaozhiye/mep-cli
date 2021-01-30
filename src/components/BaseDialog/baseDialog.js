@@ -2,12 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-09 08:14:51
+ * @Last Modified time: 2021-01-29 08:00:46
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
-import { isNumber } from 'lodash';
-import { isIE } from '../_utils/tool';
 import Size from '../_utils/mixins/size';
 import Locale from '../_utils/mixins/locale';
 import PrefixCls from '../_utils/mixins/prefix-cls';
@@ -21,19 +19,17 @@ export default {
   },
   props: {
     visible: PropTypes.bool.def(false),
+    title: PropTypes.string.def(''),
     size: PropTypes.oneOf(['small', 'default', 'large']),
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('65%'),
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    top: PropTypes.string.def('10vh'),
+    dragable: PropTypes.bool.def(true),
     closable: PropTypes.bool.def(true),
     showFullScreen: PropTypes.bool.def(true),
     destroyOnClose: PropTypes.bool.def(false),
     stopEventBubble: PropTypes.bool.def(false),
-    title: PropTypes.string.def(''),
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def('65%'),
-    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    dragable: PropTypes.bool.def(true),
-    top: PropTypes.string.def('10vh'),
-    modal: PropTypes.bool.def(true),
     lockScroll: PropTypes.bool.def(true),
-    customClass: PropTypes.string,
     maskClosable: PropTypes.bool,
     closeOnPressEscape: PropTypes.bool.def(true),
     containerStyle: PropTypes.object.def({})
@@ -48,23 +44,17 @@ export default {
     $$dialog() {
       return this.$refs['dialog'].$el.querySelector('.el-dialog');
     },
-    isShowDialog() {
+    showDialog() {
       return this.destroyOnClose ? this.isVisible : true;
     },
     maskToClose() {
       return this.maskClosable ?? getConfig('BaseDialog_maskClosable') ?? false;
-    },
-    fullCls() {
-      return ['iconfont', this.fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];
     },
     disTop() {
       if (this.fullscreen || !this.height) {
         return this.top;
       }
       return `calc((100vh - ${this.parseHeight(this.height)}) / 2)`;
-    },
-    delayTime() {
-      return !isIE() ? 300 : 400;
     }
   },
   watch: {
@@ -72,33 +62,41 @@ export default {
       if (val) {
         this.resetDialogHeight();
         this.resetDialogPosition();
-        this.isVisible = val;
-      } else {
-        setTimeout(() => {
-          this.isVisible = false;
-          this.fullscreen = false;
-        }, this.delayTime);
       }
     },
     fullscreen(val) {
-      // 重置高度
       this.resetDialogHeight();
       // 可拖拽 & 全屏状态 重置 left/top
       if (this.dragable && val) {
         this.resetDialogPosition();
       }
-      this.$emit('viewportChange', val ? 'fullscreen' : 'default');
     }
   },
   deactivated() {
     this.close();
   },
   methods: {
+    open() {
+      this.isVisible = true;
+      this.fullscreen = false;
+      this.$emit('open');
+    },
+    opened() {
+      this.$emit('opened');
+      this.$emit('afterVisibleChange', true);
+    },
     close() {
       this.$emit('update:visible', false);
+      this.$emit('close');
+    },
+    closed() {
+      this.isVisible = false;
+      this.$emit('closed');
+      this.$emit('afterVisibleChange', false);
     },
     handleClick() {
       this.fullscreen = !this.fullscreen;
+      this.$emit('viewportChange', this.fullscreen ? 'fullscreen' : 'default');
     },
     resetDialogHeight() {
       if (!this.$$dialog) return;
@@ -114,29 +112,11 @@ export default {
       this.$$dialog.style.top = 0;
     },
     parseHeight(val) {
-      return isNumber(val) ? `${val}px` : val;
+      return Number(val) > 0 ? `${val}px` : val;
     }
   },
   render() {
-    const {
-      isShowDialog,
-      showFullScreen,
-      fullscreen,
-      width,
-      height,
-      disTop,
-      dragable,
-      closable,
-      fullCls,
-      maskToClose,
-      closeOnPressEscape,
-      stopEventBubble,
-      containerStyle,
-      $props,
-      $attrs,
-      $listeners,
-      $slots
-    } = this;
+    const { showDialog, showFullScreen, fullscreen, title, height, disTop, dragable, maskToClose, stopEventBubble, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
     const prefixCls = this.getPrefixCls('dialog--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -145,20 +125,25 @@ export default {
     };
     const wrapProps = {
       ref: 'dialog',
+      class: cls,
       props: {
         ...$props,
         top: disTop,
-        width: this.parseHeight(width),
-        appendToBody: true,
-        showClose: closable,
-        fullscreen,
+        width: this.parseHeight($props.width),
+        showClose: $props.closable,
         closeOnClickModal: maskToClose,
+        fullscreen,
         closeOnPressEscape,
-        destroyOnClose: false,
-        beforeClose: this.close
+        appendToBody: true,
+        destroyOnClose: false
       },
       attrs: { ...$attrs },
-      on: { ...$listeners },
+      on: {
+        open: this.open,
+        opened: this.opened,
+        close: this.close,
+        closed: this.closed
+      },
       nativeOn: {
         click: ev => {
           if (!stopEventBubble) return;
@@ -169,24 +154,28 @@ export default {
       directives: dragable ? [{ name: 'drag' }] : null
     };
     const isFooterSlot = Object.keys($slots).includes('footer');
+    const fullCls = ['iconfont', fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];
     return (
-      <el-dialog class={cls} {...wrapProps}>
-        {showFullScreen && (
-          <span title={fullscreen ? this.t('baseDialog.cancelFullScreen') : this.t('baseDialog.fullScreen')} class="fullscreen-btn" onClick={this.handleClick}>
-            <i class={fullCls} />
-          </span>
-        )}
+      <el-dialog {...wrapProps}>
+        <div slot="title" class="dialog-title">
+          <span class="title">{title}</span>
+          {showFullScreen && (
+            <span title={fullscreen ? this.t('baseDialog.cancelFullScreen') : this.t('baseDialog.fullScreen')} class="fullscreen" onClick={this.handleClick}>
+              <i class={fullCls} />
+            </span>
+          )}
+        </div>
         <div
-          class="container"
+          class="dialog-container"
           style={{
             maxHeight: !(fullscreen || height) ? `calc(100vh - ${disTop} - ${disTop} - 48px - ${isFooterSlot ? '52px' : '0px'})` : null,
             ...containerStyle,
             height: null
           }}
         >
-          {isShowDialog ? $slots[`default`] : null}
+          {showDialog ? $slots[`default`] : null}
         </div>
-        {isShowDialog && isFooterSlot ? $slots[`footer`] : null}
+        {showDialog && isFooterSlot ? $slots[`footer`] : null}
       </el-dialog>
     );
   }

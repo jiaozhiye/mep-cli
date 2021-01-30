@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-02 13:29:09
+ * @Last Modified time: 2021-01-28 19:51:11
  */
 @import '../../style/index.scss';
 
@@ -16,41 +16,47 @@ $prefix-cls: '#{$v-prefix}-dialog--wrapper';
       display: flex;
       align-items: center;
       height: 48px;
-      padding: 0 15px;
-      box-sizing: border-box;
+      padding: 0 10px 0 15px;
       border-bottom: 1px solid $border-color-base;
-      .el-dialog__title {
-        font-size: 16px;
+      box-sizing: border-box;
+      .dialog-title {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        .title {
+          flex: 1;
+        }
+        .fullscreen {
+          padding: 5px;
+          padding-right: 2px;
+          line-height: 1;
+          color: $text-color-secondary;
+          cursor: pointer;
+          i {
+            font-size: 18px;
+            font-weight: 700;
+          }
+        }
       }
       .el-dialog__headerbtn {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        font-size: 18px;
+        position: static;
+        top: auto;
+        right: auto;
+        padding: 5px;
+        font-size: 22px;
         line-height: 1;
-        transform: scale(1.1);
+        outline: none;
+        .el-icon-close {
+          font-weight: 700;
+          color: $text-color-secondary;
+        }
       }
     }
     .el-dialog__body {
       padding: 0;
       height: calc(100% - 48px);
       word-break: normal;
-      & > .fullscreen-btn {
-        position: absolute;
-        right: 40px;
-        top: 15px;
-        color: #909090;
-        line-height: 1;
-        cursor: pointer;
-        &:hover {
-          color: $primary-color;
-        }
-        i {
-          font-size: 16px;
-          font-weight: 700;
-        }
-      }
-      & > .container {
+      & > .dialog-container {
         min-height: 150px;
         height: 100%;
         padding: $padding-base;
