@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-02 09:25:42
+ * @Last Modified time: 2021-02-02 12:31:23
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -375,8 +375,10 @@ export default {
       // 打开搜索帮助面板
       const openShPanel = val => {
         const { open = () => true } = searchHelper;
-        if (!open(this.form)) return;
+        if (this.visible[fieldName] || !open(this.form)) return;
         this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+        // 清空搜索帮助
+        clearSearchHelperValue();
         // 设置搜索帮助查询参数
         this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(createShFilters(val)));
       };
@@ -410,12 +412,10 @@ export default {
         if (records.length === 1) {
           return shCloseHandle(false, records[0], alias);
         }
-        // 打开面板
         openShPanel(val);
-        clearSearchHelperValue();
       };
       // 清空搜索帮助
-      const clearSearchHelperValue = () => {
+      const clearSearchHelperValue = bool => {
         if (Array.isArray(this[`${fieldName}ExtraKeys`])) {
           this[`${fieldName}ExtraKeys`].forEach(key => (form[key] = ''));
         }
@@ -423,7 +423,7 @@ export default {
           this[`${fieldName}DescKeys`].forEach(key => (this.desc[key] = ''));
         }
         form[fieldName] = '';
-        shChangeHandle('');
+        bool && shChangeHandle('');
       };
       const dialogProps = isSearchHelper
         ? {
@@ -498,7 +498,7 @@ export default {
               form[fieldName] = val;
               if (isSearchHelper) {
                 if (!val) {
-                  clearSearchHelperValue();
+                  clearSearchHelperValue(!0);
                 }
                 if (val && searchHelper.table.fetch?.api) {
                   if (searchHelper.closeServerMatch) {
@@ -506,7 +506,7 @@ export default {
                   } else {
                     getShTableData(val)
                       .then(list => resetSearchHelperValue(list, val))
-                      .catch(() => clearSearchHelperValue());
+                      .catch(() => clearSearchHelperValue(!0));
                   }
                 }
               } else {
