@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-30 12:48:10
+ * @Last Modified time: 2021-02-02 09:24:00
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -294,7 +294,7 @@ export default {
         onChange(val, Object.keys(others).length ? others : null);
       };
       // 设置搜做帮助组件表单数据
-      const setShFilterValues = val => {
+      const createShFilters = val => {
         const { filterAliasMap = noop } = searchHelper;
         const alias = Object.assign([], filterAliasMap());
         const inputParams = { [fieldName]: val };
@@ -310,7 +310,7 @@ export default {
             const { data } = cloneDeep(require('@/mock/tableData').default);
             return resolve(data.items);
           } else {
-            const params = merge({}, table.fetch?.params, beforeFetch({ ...initialValue, ...setShFilterValues(val) }), { currentPage: 1, pageSize: 500 });
+            const params = merge({}, table.fetch?.params, beforeFetch({ ...initialValue, ...createShFilters(val) }), { currentPage: 1, pageSize: 500 });
             try {
               const res = await table.fetch.api(params);
               if (res.code === 200) {
@@ -323,10 +323,12 @@ export default {
         });
       };
       // 打开搜索帮助面板
-      const openShPanel = () => {
+      const openShPanel = val => {
         const { open = () => true } = searchHelper;
         if (!open(this.form)) return;
         this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+        // 设置搜索帮助查询参数
+        this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(createShFilters(val)));
       };
       // 创建 field alias 别名
       const createFieldAlias = async () => {
@@ -359,10 +361,8 @@ export default {
           return shCloseHandle(false, records[0], alias);
         }
         // 打开面板
-        openShPanel();
+        openShPanel(val);
         clearSearchHelperValue();
-        // 设置搜索帮助查询参数
-        this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(setShFilterValues(val)));
       };
       // 清空搜索帮助
       const clearSearchHelperValue = () => {
@@ -467,15 +467,10 @@ export default {
             nativeOnDblclick={ev => {
               onDblClick(form[fieldName]);
               if (!isSearchHelper || disabled) return;
-              const { open = () => true } = searchHelper;
-              if (!open(this.form)) return;
-              this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
+              openShPanel(form[fieldName]);
             }}
             nativeOnKeydown={ev => {
-              if (ev.keyCode !== 13) return;
-              if (isSearchHelper) {
-                return this.$refs[`INPUT-${fieldName}`].blur();
-              }
+              if (isSearchHelper) return;
               this.enterEventHandle(ev);
             }}
           >
@@ -486,7 +481,7 @@ export default {
                   style={disabled && { cursor: 'not-allowed' }}
                   onClick={ev => {
                     if (disabled) return;
-                    openShPanel();
+                    openShPanel(form[fieldName]);
                   }}
                 />
               </template>

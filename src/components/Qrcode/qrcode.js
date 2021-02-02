@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-08 17:57:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-05 11:49:04
+ * @Last Modified time: 2021-02-01 14:31:33
  */
 import PropTypes from '../_utils/vue-types';
 import { toBoolean } from './libs/util.js';
@@ -181,6 +181,6 @@ export default {
     }
   },
   render() {
-    return this.bindElement ? <img id={this.uuid} /> : null;
+    return this.bindElement ? <img id={this.uuid} width={this.size} /> : null;
   }
 };

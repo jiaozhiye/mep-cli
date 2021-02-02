@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-06 19:59:12
+ * @Last Modified time: 2021-02-01 13:51:33
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import dayjs from 'dayjs';
@@ -180,7 +180,11 @@ export default {
 
       if (!LODOP) return;
 
-      const { uniqueKey, closeOnPrinted } = this;
+      const {
+        form: { setting },
+        uniqueKey,
+        closeOnPrinted
+      } = this;
 
       LODOP.PRINT_INIT(
         uniqueKey ??
@@ -199,6 +203,11 @@ export default {
       };
 
       LODOP.ADD_PRINT_TABLE(0, 0, 'RightMargin: 0', 'BottomMargin: 0', this.createStyle() + __html__);
+
+      // 横向打印   1-纵向, 2-横向
+      LODOP.SET_SAVE_MODE('Orientation', setting.direction === 'vertical' ? 1 : 2);
+      // 缩放比例
+      // LODOP.SET_SAVE_MODE('Zoom', 71);
 
       LODOP.SAVE_TO_FILE(`${dayjs().format('YYYYMMDDHHmmss')}.xlsx`);
     }
