@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-12 16:23:36
+ * @Last Modified time: 2021-02-02 13:49:36
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -82,6 +82,7 @@ export default {
             this.createTableData(items);
             this.setRecordsTotal(total);
             this.createServerSummation(res.data);
+            fetch.callback?.(res.data);
           }
         } else {
           this.createTableData([]);

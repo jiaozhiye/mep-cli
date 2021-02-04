@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-02 12:31:23
+ * @Last Modified time: 2021-02-04 08:02:00
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -524,6 +524,8 @@ export default {
               onDblClick(form[fieldName]);
               if (!isSearchHelper || disabled) return;
               openShPanel(form[fieldName]);
+              // 防止二次触发 change 事件
+              this.$refs[`INPUT-${fieldName}`].blur();
             }}
             nativeOnKeydown={ev => {
               if (ev.keyCode !== 13) return;
@@ -2002,7 +2004,7 @@ export default {
           const VNode = !this[item.type] ? null : item.render ? this.RENDER_FORM_ITEM(item) : this[item.type](item);
           VNode['type'] = item.type;
           VNode['fieldName'] = item.fieldName;
-          VNode['cols'] = item.type === 'TINYMCE' ? this.flexCols : item.selfCols;
+          VNode['cols'] = item.selfCols >= 6 || item.type === 'TINYMCE' ? this.flexCols : item.selfCols;
           VNode['offsetLeft'] = item.offsetLeftCols;
           VNode['offsetRight'] = item.offsetRightCols;
           return VNode;

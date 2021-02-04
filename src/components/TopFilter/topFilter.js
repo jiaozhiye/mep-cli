@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-02 12:32:41
+ * @Last Modified time: 2021-02-02 13:19:43
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -468,6 +468,8 @@ export default {
               onDblClick(form[fieldName]);
               if (!isSearchHelper || disabled) return;
               openShPanel(form[fieldName]);
+              // 防止二次触发 change 事件
+              this.$refs[`INPUT-${fieldName}`].blur();
             }}
             nativeOnKeydown={ev => {
               if (isSearchHelper) return;

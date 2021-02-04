@@ -106,6 +106,7 @@
 | stopToFirst | 是否阻止返回第一页                                       | boolean               | false  |
 | beforeFetch | 执行查询接口的前置钩子，返回 true 执行查询、false 不执行 | Function(params):bool | -      |
 | dataKey     | 数据的 key，支持 `a.b.c` 的路径写法                      | string                | items  |
+| callback    | 请求的回调，参数是服务端返回的数据                       | Function(response)    | -      |
 
 ### filter
 

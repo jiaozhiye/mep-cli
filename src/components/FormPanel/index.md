@@ -81,7 +81,7 @@
 | id              | 给分隔符加 id 属性，用于锚点定位，只对 BREAK_SPACE 生效       | string              | -        |
 | clearable       | 是否开启擦除按钮                                              | boolean             | true     |
 | noResetable     | 设置表单项是否会被重置                                        | boolean             | false    |
-| selfCols        | 表单元素自身占据的列数                                        | number              | 1        |
+| selfCols        | 表单元素自身占据的列数，数值 24 表示占据整行                  | number              | 1        |
 | offsetLeftCols  | 表单元素左侧的间隔列数                                        | number              | 1        |
 | offsetRightCols | 表单元素右侧的间隔列数                                        | number              | 1        |
 | options         | 表单元素的外配置，[配置项](#options)                          | object              | -        |

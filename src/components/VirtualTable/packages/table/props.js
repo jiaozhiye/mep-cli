@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-14 15:21:06
+ * @Last Modified time: 2021-02-02 13:49:16
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -118,7 +118,8 @@ export default {
     beforeFetch: PropTypes.func, // 接口前置钩子
     xhrAbort: PropTypes.bool, // 是否取消请求 - 未来可取消此参数
     stopToFirst: PropTypes.bool, // 是否返回第一页
-    dataKey: PropTypes.string // 数据路径
+    dataKey: PropTypes.string, // 数据路径
+    callback: PropTypes.func // 请求的回调
   }),
   // 是否带有纵向边框
   border: PropTypes.bool.def(true),
