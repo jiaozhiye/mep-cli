@@ -2,7 +2,7 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: shen
- * @LastEditTime: 2020-12-05 10:06:29
+ * @LastEditTime: 2021-02-04 15:07:58
  */
 
 import { get, isObject, template, isFunction } from 'lodash';
@@ -154,6 +154,9 @@ export default {
           nativeOnKeydown={e => {
             if (e.keyCode !== 13) return;
             onEnter(e.target.value);
+          }}
+          nativeOnDblclick={e => {
+            this.$emit('open')
           }}
           scopedSlots={{
             default: ({ item }) => {

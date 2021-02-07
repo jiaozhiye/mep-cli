@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-02 13:19:43
+ * @Last Modified time: 2021-02-07 10:50:55
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -295,9 +295,9 @@ export default {
       };
       // 设置搜做帮助组件表单数据
       const createShFilters = val => {
-        const { filterAliasMap = noop } = searchHelper;
+        const { name, fieldsDefine, getServerConfig, filterAliasMap = noop } = searchHelper;
         const alias = Object.assign([], filterAliasMap());
-        const inputParams = { [fieldName]: val };
+        const inputParams = (name && fieldsDefine && getServerConfig) ? {} : { [fieldName]: val };
         alias.forEach(x => (inputParams[x] = val));
         return inputParams;
       };

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-04 08:02:00
+ * @Last Modified time: 2021-02-07 10:50:24
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -345,9 +345,9 @@ export default {
       };
       // 设置搜做帮助组件表单数据
       const createShFilters = val => {
-        const { filterAliasMap = noop } = searchHelper;
+        const { name, fieldsDefine, getServerConfig, filterAliasMap = noop } = searchHelper;
         const alias = Object.assign([], filterAliasMap());
-        const inputParams = { [fieldName]: val };
+        const inputParams = (name && fieldsDefine && getServerConfig) ? {} : { [fieldName]: val };
         alias.forEach(x => (inputParams[x] = val));
         return inputParams;
       };
@@ -2004,7 +2004,7 @@ export default {
           const VNode = !this[item.type] ? null : item.render ? this.RENDER_FORM_ITEM(item) : this[item.type](item);
           VNode['type'] = item.type;
           VNode['fieldName'] = item.fieldName;
-          VNode['cols'] = item.selfCols >= 6 || item.type === 'TINYMCE' ? this.flexCols : item.selfCols;
+          VNode['cols'] = item.selfCols >= 24 || item.type === 'TINYMCE' ? this.flexCols : item.selfCols;
           VNode['offsetLeft'] = item.offsetLeftCols;
           VNode['offsetRight'] = item.offsetRightCols;
           return VNode;
