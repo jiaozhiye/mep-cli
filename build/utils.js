@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-17 18:49:30
+ * @Last Modified time: 2021-02-11 17:37:56
  */
 'use strict';
 
@@ -34,13 +34,13 @@ const mapDir = (d, reg) => {
 
 exports.deepRequire = mapDir;
 
-exports.assetsPath = function(_path) {
+exports.assetsPath = function(dir) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production' ? config.build.assetsSubDirectory : config.dev.assetsSubDirectory;
-  return path.posix.join(assetsSubDirectory, _path);
+  return path.posix.join(assetsSubDirectory, dir);
 };
 
-exports.resolve = function(_path) {
-  return path.join(__dirname, '..', _path);
+exports.resolve = function(dir) {
+  return path.join(__dirname, '..', dir);
 };
 
 exports.cssLoaders = function(options) {
@@ -50,6 +50,8 @@ exports.cssLoaders = function(options) {
   const cssLoader = {
     loader: 'css-loader',
     options: {
+      importLoaders: 1 + 1,
+      esModule: false,
       sourceMap: options.sourceMap
     }
   };
@@ -95,7 +97,7 @@ exports.cssLoaders = function(options) {
     postcss: generateLoaders(),
     less: generateLoaders('less'),
     sass: generateLoaders('sass', { indentedSyntax: true }),
-    scss: generateLoaders('sass', { javascriptEnabled: true }).concat({
+    scss: generateLoaders('sass').concat({
       loader: 'style-resources-loader',
       options: {
         patterns: [path.resolve(__dirname, '../src/assets/css/variables.scss')]
