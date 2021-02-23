@@ -2,7 +2,7 @@
  * @Author: 申庆柱
  * @Date: 2020-07-15 10:51:30
  * @LastEditors: shen
- * @LastEditTime: 2021-02-04 15:07:58
+ * @LastEditTime: 2021-02-07 10:31:56
  */
 
 import { get, isObject, template, isFunction } from 'lodash';
@@ -93,12 +93,14 @@ export default {
     const { option } = this;
     const { options = {}, style = {}, fieldName, placeholder = this.$t('form.inputPlaceholder'), disabled, readonly = false, clearable = !0, searchHelper } = option;
     const { onEnter, searchAppend } = options;
-    const { icon = 'icon-container', onClick } = isObject(searchAppend) ? searchAppend : {}
-    const searchStyle = isObject(searchAppend) ? {
-      position: 'relative',
-      zIndex: 1,
-      paddingRight: '8px'
-    } : {}
+    const { icon = 'icon-container', onClick } = isObject(searchAppend) ? searchAppend : {};
+    const searchStyle = isObject(searchAppend)
+      ? {
+          position: 'relative',
+          zIndex: 1,
+          paddingRight: '8px'
+        }
+      : {};
 
     const dialogProps = {
       props: {
@@ -156,7 +158,10 @@ export default {
             onEnter(e.target.value);
           }}
           nativeOnDblclick={e => {
-            this.$emit('open')
+            if (disabled) {
+              return;
+            }
+            this.$emit('open');
           }}
           scopedSlots={{
             default: ({ item }) => {
@@ -169,17 +174,20 @@ export default {
           }}
         >
           <template slot="append">
-            <el-button disabled={disabled} onClick={() => {this.$emit('open')}} icon="el-icon-search" style={searchStyle} />
-            {
-              isObject(searchAppend) &&
-                  <el-button onClick={() => isFunction(onClick) && onClick()} style="padding-left: 18px;padding-right: 10px">
-                    <i class={`iconfont ${icon}`}></i>
-                  </el-button>
-            }
-            {
-              isObject(searchAppend) &&
-                  <div style="position: absolute;top: 0; bottom: 0; left: 50%; width: 1px; background: #d9d9d9; z-index: 2"></div>
-            }
+            <el-button
+              disabled={disabled}
+              onClick={() => {
+                this.$emit('open');
+              }}
+              icon="el-icon-search"
+              style={searchStyle}
+            />
+            {isObject(searchAppend) && (
+              <el-button onClick={() => isFunction(onClick) && onClick()} style="padding-left: 18px;padding-right: 10px">
+                <i class={`iconfont ${icon}`}></i>
+              </el-button>
+            )}
+            {isObject(searchAppend) && <div style="position: absolute;top: 0; bottom: 0; left: 50%; width: 1px; background: #d9d9d9; z-index: 2"></div>}
           </template>
         </el-autocomplete>
         <BaseDialog {...dialogProps}>
