@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-25 17:30:18
+ * @Last Modified time: 2021-03-12 12:35:24
  */
 import dayjs from 'dayjs';
 import { isFunction } from 'lodash';
@@ -14,6 +14,7 @@ import { download } from '../../../_utils/tool';
 
 import config from '../config';
 import Locale from '../locale/mixin';
+import { getConfig } from '../../../_utils/globle-config';
 import { getCellValue, setCellValue, convertToRows, filterTableColumns } from '../utils';
 
 export default {
@@ -94,6 +95,7 @@ export default {
         });
         if (res.data) {
           download(res.data, fileName);
+          this.recordExportInfo();
         }
       } catch (err) {}
       this.exporting = !1;
@@ -102,6 +104,7 @@ export default {
       const tableHTML = this._toTable(convertToRows(this.headColumns), this.flatColumns);
       const blob = ExcellentExport.excel(tableHTML);
       download(blob, fileName);
+      this.recordExportInfo();
     },
     _toTable(columnRows, flatColumns) {
       const { tableFullData, showHeader, showFooter, $refs } = this.$$table;
@@ -166,6 +169,14 @@ export default {
         result = Number(result);
       }
       return result;
+    },
+    recordExportInfo() {
+      if (process.env.MOCK_DATA === 'true') return;
+      const fetchFn = getConfig('recordExportConfigApi');
+      if (!fetchFn) return;
+      try {
+        fetchFn();
+      } catch (err) {}
     }
   },
   render() {
@@ -179,7 +190,13 @@ export default {
         fileType: exportFileType,
         fileName: exportFileName,
         ...this.createFetchParams(fetch),
+        disabled: disabledState,
         formatHandle: this.createDataList
+      },
+      on: {
+        success: () => {
+          this.recordExportInfo();
+        }
       }
     };
     const cls = [
@@ -192,7 +209,13 @@ export default {
     return (
       <span class={cls} title={this.t('table.export.text')}>
         {exportFetch || (this.$$table.spanMethod && exportFileType === 'xls') ? (
-          <i class="iconfont icon-export-excel" onClick={() => (exportFetch ? this.exportHandle(exportFileName) : this.localExportHandle(exportFileName))} />
+          <i
+            class="iconfont icon-export-excel"
+            onClick={() => {
+              if (disabledState) return;
+              exportFetch ? this.exportHandle(exportFileName) : this.localExportHandle(exportFileName);
+            }}
+          />
         ) : (
           <JsonToExcel type="text" {...wrapProps} />
         )}

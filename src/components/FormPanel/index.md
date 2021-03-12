@@ -213,11 +213,12 @@
 
 `只对 BREAK_SPACE 有效`
 
-| 参数          | 说明                                                             | 类型    | 默认值 |
-| ------------- | ---------------------------------------------------------------- | ------- | ------ |
-| defaultExpand | 默认的展开状态                                                   | boolean | false  |
-| showLimit     | 默认显示表单项的数量                                             | number  | -      |
-| remarkItems   | 指定被隐藏的表单作为摘要显示到分隔符区域，[配置项](#remarkItems) | array   | -      |
+| 参数          | 说明                                                             | 类型                  | 默认值 |
+| ------------- | ---------------------------------------------------------------- | --------------------- | ------ |
+| defaultExpand | 默认的展开状态                                                   | boolean               | false  |
+| showLimit     | 默认显示表单项的数量                                             | number                | -      |
+| remarkItems   | 指定被隐藏的表单作为摘要显示到分隔符区域，[配置项](#remarkItems) | array                 | -      |
+| onCollapse    | 展开/收起 状态改变时的回调事件                                   | Function(state: bool) | -      |
 
 ### remarkItems
 

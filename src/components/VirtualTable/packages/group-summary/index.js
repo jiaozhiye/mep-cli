@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-19 15:58:23
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-24 13:09:14
+ * @Last Modified time: 2021-03-12 12:37:16
  */
 import config from '../config';
 import Locale from '../locale/mixin';
@@ -20,6 +20,11 @@ export default {
       visible: false
     };
   },
+  computed: {
+    disabledState() {
+      return !this.$$table.total;
+    }
+  },
   methods: {
     clickHandle() {
       this.visible = true;
@@ -29,7 +34,7 @@ export default {
     }
   },
   render() {
-    const { visible } = this;
+    const { visible, disabledState } = this;
     const wrapProps = {
       props: {
         visible,
@@ -44,10 +49,23 @@ export default {
       }
     };
     const columns = this.columns.filter(x => !['__expandable__', '__selection__', 'index', 'pageIndex', config.operationColumn].includes(x.dataIndex));
-    const cls = [`v-group-summary--wrapper`, `size--${this.$$table.tableSize}`];
+    const cls = [
+      `v-group-summary--wrapper`,
+      `size--${this.$$table.tableSize}`,
+      {
+        disabled: disabledState
+      }
+    ];
     return (
       <div class={cls}>
-        <span class="summary-button" title={this.t('table.groupSummary.text')} onClick={this.clickHandle}>
+        <span
+          class="summary-button"
+          title={this.t('table.groupSummary.text')}
+          onClick={() => {
+            if (disabledState) return;
+            this.clickHandle();
+          }}
+        >
           <i class="iconfont icon-piechart" />
         </span>
         <BaseDialog {...wrapProps}>

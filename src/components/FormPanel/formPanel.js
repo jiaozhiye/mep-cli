@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-19 08:19:30
+ * @Last Modified time: 2021-02-27 13:36:23
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -1759,7 +1759,7 @@ export default {
     BREAK_SPACE(option) {
       const { label, id, style = {}, options = {}, collapse } = option;
       const { divider = 'default' } = options;
-      const { showLimit, remarkItems = [] } = collapse || {};
+      const { showLimit, remarkItems = [], onCollapse = noop } = collapse || {};
       let result = [];
       if (remarkItems.length) {
         const blockList = this.blockFieldNames.find(arr => arr[0].label === label) ?? [];
@@ -1785,6 +1785,7 @@ export default {
           labelStyle={style}
           onChange={val => {
             this.expand = Object.assign({}, this.expand, val);
+            onCollapse(Object.values(val)[0]);
           }}
         />
       );

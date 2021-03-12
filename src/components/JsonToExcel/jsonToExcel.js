@@ -28,6 +28,8 @@ export default {
     fileName: PropTypes.string,
     // ajax function
     fetch: PropTypes.object.def({}),
+    // disabled
+    disabled: PropTypes.bool,
     // sheet prefix
     workSheet: PropTypes.string.def('sheet'),
     // format data handle
