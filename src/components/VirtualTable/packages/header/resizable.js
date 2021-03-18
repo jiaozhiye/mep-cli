@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-07 19:04:14
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-09-09 09:25:06
+ * @Last Modified time: 2021-03-18 14:26:44
  */
+import { isUndefined, isNull } from 'lodash';
 import { getNodeOffset } from '../utils';
 import config from '../config';
 
@@ -40,9 +41,10 @@ export default {
         let ml = ev.clientX - disX;
         let rw = renderWidth + ml;
 
+        if (isUndefined(res) || isNull(res)) return;
+
         // 左边界限定
         if (rw < config.defaultColumnWidth) return;
-
         res = rw;
 
         target.style.left = `${ml + left}px`;
@@ -52,14 +54,16 @@ export default {
         $vTable.classList.remove('c--resize');
         target.style.display = 'none';
 
+        this.onmousemove = null;
+        this.onmouseup = null;
+
+        if (isUndefined(res) || isNull(res)) return;
+
         _this.column.renderWidth = res;
         _this.$set(_this.column, 'width', res);
 
         doLayout();
         setLocalColumns(columns);
-
-        this.onmousemove = null;
-        this.onmouseup = null;
       };
 
       return false;

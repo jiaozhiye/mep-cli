@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-19 08:19:49
+ * @Last Modified time: 2021-03-16 17:46:42
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -281,6 +281,7 @@ export default {
           if (aliasKeys.includes(fieldName)) {
             shChangeHandle(form[fieldName]);
           }
+          this[`__${fieldName}_is_change`] = false;
         }
         const { closed = noop } = searchHelper;
         closed(data);
@@ -326,11 +327,12 @@ export default {
       const openShPanel = val => {
         const { open = () => true } = searchHelper;
         if (this.visible[fieldName] || !open(this.form)) return;
+        this[`__${fieldName}_deriveValue`] = createShFilters(val);
         this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
         // 清空搜索帮助
-        clearSearchHelperValue();
+        // clearSearchHelperValue();
         // 设置搜索帮助查询参数
-        this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(createShFilters(val)));
+        // this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(createShFilters(val)));
       };
       // 创建 field alias 别名
       const createFieldAlias = async () => {
@@ -358,7 +360,12 @@ export default {
       // 设置搜索帮助的值
       const resetSearchHelperValue = async (list = [], val) => {
         const alias = await createFieldAlias();
-        const records = list.filter(data => data[alias[fieldName]]?.toString().includes(val));
+        const records = list.filter(data =>
+          data[alias[fieldName]]
+            ?.toString()
+            .toLowerCase()
+            .includes(val.toLowerCase())
+        );
         if (records.length === 1) {
           return shCloseHandle(false, records[0], alias);
         }
@@ -387,7 +394,14 @@ export default {
               containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
             },
             on: {
-              'update:visible': val => (this.visible[fieldName] = val)
+              'update:visible': val => (this.visible[fieldName] = val),
+              close: () => {
+                this[`__${fieldName}_deriveValue`] = {};
+                if (this[`__${fieldName}_is_change`]) {
+                  clearSearchHelperValue();
+                }
+                this[`__${fieldName}_is_change`] = false;
+              }
             }
           }
         : null;
@@ -395,7 +409,8 @@ export default {
         ? {
             ref: `INPUT-SH-${fieldName}`,
             props: {
-              ...searchHelper
+              ...searchHelper,
+              initialValue: merge({}, searchHelper.initialValue, this[`__${fieldName}_deriveValue`])
             },
             on: {
               close: shCloseHandle
@@ -431,6 +446,7 @@ export default {
               if (noInput) return;
               form[fieldName] = !toUpper ? val : val.toUpperCase();
               onInput(val);
+              isSearchHelper && (this[`__${fieldName}_is_change`] = true);
             }}
             title={form[fieldName]}
             minlength={minlength}

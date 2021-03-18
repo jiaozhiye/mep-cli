@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-22 15:58:41
+ * @Last Modified time: 2021-03-18 08:11:27
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -46,7 +46,6 @@ export default {
     // tds
     this.DEFINE = ['valueName', 'displayName', 'descriptionName'];
     return {
-      showTable: false,
       result: null,
       topFilters: this.createTopFilters(),
       height: 300,
@@ -87,11 +86,7 @@ export default {
   },
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
-    this.$nextTick(() => {
-      this.fetch.params = merge({}, this.fetch.params, this.formatParams(this.$topFilter.form));
-      this.showTable = true;
-    });
-    setTimeout(() => this.calcTableHeight());
+    this.$nextTick(() => this.resizeEventHandle());
   },
   destroyed() {
     this.resizeEvent && this.resizeEvent.remove();
@@ -290,7 +285,7 @@ export default {
     }
   },
   render() {
-    const { showTable, loading, initialValue, topFilters, showFilterCollapse, height, columns, selection, tableList, fetch, showAlert, webPagination, disabled } = this;
+    const { loading, initialValue, topFilters, showFilterCollapse, height, columns, selection, tableList, fetch, showAlert, webPagination, disabled } = this;
     const tableProps = { props: !webPagination ? { fetch } : { dataSource: tableList, webPagination: !0 } };
     return (
       <div>
@@ -304,20 +299,18 @@ export default {
             onChange={this.filterChangeHandle}
             onCollapseChange={this.collapseHandle}
           />
-          {showTable ? (
-            <VirtualTable
-              ref="vTable"
-              height={height}
-              columns={columns}
-              {...tableProps}
-              rowKey={this.table.rowKey}
-              rowSelection={selection}
-              showAlert={showAlert}
-              columnsChange={columns => (this.columns = columns)}
-              onRowEnter={this.rowEnterHandle}
-              onRowDblclick={this.dbClickHandle}
-            />
-          ) : null}
+          <VirtualTable
+            ref="vTable"
+            height={height}
+            columns={columns}
+            {...tableProps}
+            rowKey={this.table.rowKey}
+            rowSelection={selection}
+            showAlert={showAlert}
+            columnsChange={columns => (this.columns = columns)}
+            onRowEnter={this.rowEnterHandle}
+            onRowDblclick={this.dbClickHandle}
+          />
         </Spin>
         <div
           style={{

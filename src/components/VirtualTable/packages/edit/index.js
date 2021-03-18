@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-13 09:48:29
+ * @Last Modified time: 2021-03-17 09:15:57
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -25,6 +25,7 @@ export default {
   inject: ['$$table', '$$body'],
   data() {
     return {
+      shDeriveValue: {},
       shVisible: false, // 是否显示搜索帮助面板
       shMatching: false // 是否正在匹配数据回显
     };
@@ -355,16 +356,14 @@ export default {
         if (records.length === 1) {
           return closeHelperHandle(false, records[0]);
         }
-        openHelperPanel();
+        openHelperPanel(val);
         setHelperValues('');
-        this.$nextTick(() => {
-          this.$refs[`sh-panel-${this.dataKey}`]?.$refs[`topFilter`]?.SET_FORM_VALUES(setHelperFilterValues(val));
-        });
       };
-      const openHelperPanel = () => {
+      const openHelperPanel = val => {
         // 打开的前置钩子
         const beforeOpen = helper.beforeOpen ?? helper.open ?? trueNoop;
         if (!beforeOpen({ [this.dataKey]: prevValue }, row, column)) return;
+        this.shDeriveValue = setHelperFilterValues(val);
         this.shVisible = !0;
       };
       const dialogProps = {
@@ -382,6 +381,7 @@ export default {
           'update:visible': val => (this.shVisible = val),
           closed: () => {
             const { closed = noop } = helper;
+            this.shDeriveValue = {};
             closed(row);
           }
         }
@@ -389,7 +389,8 @@ export default {
       const shProps = {
         ref: `sh-panel-${this.dataKey}`,
         props: {
-          ...helper
+          ...helper,
+          initialValue: merge({}, helper?.initialValue, this.shDeriveValue)
         },
         on: {
           close: closeHelperHandle
@@ -420,7 +421,7 @@ export default {
             }}
             nativeOnDblclick={ev => {
               if (extra.disabled) return;
-              isObject(helper) && openHelperPanel();
+              isObject(helper) && openHelperPanel(prevValue);
             }}
             nativeOnKeydown={ev => {
               if (ev.keyCode === 13) {
@@ -433,7 +434,7 @@ export default {
               slot="append"
               icon="el-icon-search"
               onClick={ev => {
-                isObject(helper) ? openHelperPanel() : onClick({ [this.dataKey]: prevValue }, row, column, setHelperValues, ev);
+                isObject(helper) ? openHelperPanel(prevValue) : onClick({ [this.dataKey]: prevValue }, row, column, setHelperValues, ev);
               }}
             />
           </InputText>

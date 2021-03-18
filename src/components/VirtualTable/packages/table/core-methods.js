@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-02 13:49:36
+ * @Last Modified time: 2021-03-13 12:22:14
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -84,11 +84,10 @@ export default {
             this.createServerSummation(res.data);
             fetch.callback?.(res.data);
           }
-        } else {
-          this.createTableData([]);
-          this.setRecordsTotal(0);
         }
-      } catch (err) {}
+      } catch (err) {
+        this.dataLoadedHandle();
+      }
     }
     if (hasOwn(this.fetch, 'stopToFirst')) {
       this.fetch.stopToFirst = false;
