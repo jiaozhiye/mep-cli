@@ -2,10 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-29 14:40:28
+ * @Last Modified time: 2021-03-30 13:40:43
  */
 import baseProps from './props';
 import Store from '../store';
+import TableManager from '../manager';
 import config from '../config';
 import { isEqual, cloneDeep } from 'lodash';
 
@@ -75,6 +76,8 @@ export default {
       filters: {},
       // 表头排序
       sorter: {},
+      // 服务端合计
+      summaries: {},
       // 分页
       pagination: {
         currentPage: this.paginationConfig?.currentPage || config.pagination.currentPage,
@@ -138,9 +141,7 @@ export default {
       // 是否是 IE11
       isIE: browse()['msie'],
       // 全屏样式
-      isFullScreen: false,
-      // 服务端合计
-      summaries: {}
+      isFullScreen: false
     };
   },
   computed: {
@@ -365,6 +366,7 @@ export default {
     }
   },
   created() {
+    TableManager.register(this._uid, this);
     this.originColumns = cloneDeep(this.columns);
     this.columnSummaryQuery = this.createColumnSummary();
     // 获取表格数据
@@ -384,10 +386,12 @@ export default {
     this.createResizeState();
   },
   activated() {
+    TableManager.focus(this._uid);
     this.scrollYLoad && this.loadScrollYData(0);
     this.calcTableHeight();
   },
   destroyed() {
+    TableManager.deregister(this._uid);
     this.destroy();
   },
   methods: {

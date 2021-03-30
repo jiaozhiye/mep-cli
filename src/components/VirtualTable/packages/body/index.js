@@ -2,13 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-27 16:11:42
+ * @Last Modified time: 2021-03-30 13:41:13
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
 import { parseHeight, getCellValue, contains, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
 import { isValidElement } from '../../../_utils/props-util';
 import clickOutside from '../../../_utils/click-outside';
+import TableManager from '../manager';
 import config from '../config';
 
 import formatMixin from './format';
@@ -75,6 +76,12 @@ export default {
     },
     isDraggable() {
       return this.$$table.rowDraggable;
+    }
+  },
+  watch: {
+    clicked(next) {
+      if (!next.length) return;
+      TableManager.focus(this.$$table._uid);
     }
   },
   mounted() {

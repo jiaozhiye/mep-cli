@@ -297,10 +297,11 @@ export default {
     return diff.length === 1 && (diff.includes('currentPage') || diff.includes('pageSize'));
   },
   // 默认选中首行数据
-  selectFirstRow(bool = false) {
+  selectFirstRow(bool) {
     const { rowSelection, tableFullData } = this;
-    const { type, defaultSelectFirstRow = bool } = rowSelection || {};
-    if (type !== 'radio' || !defaultSelectFirstRow || !tableFullData.length) return;
+    const { type, defaultSelectFirstRow } = rowSelection || {};
+    const isSelectFirstRow = defaultSelectFirstRow || bool || false;
+    if (type !== 'radio' || !isSelectFirstRow || !tableFullData.length) return;
     const rowKey = this.getRowKey(tableFullData[0], tableFullData[0].index);
     this.$$tableBody.setClickedValues([rowKey, '__selection__']);
     this.selectionKeys = [rowKey];

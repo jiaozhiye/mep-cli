@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-17 09:15:57
+ * @Last Modified time: 2021-03-30 13:41:52
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -421,11 +421,12 @@ export default {
             }}
             nativeOnDblclick={ev => {
               if (extra.disabled) return;
-              isObject(helper) && openHelperPanel(prevValue);
+              isObject(helper) && openHelperPanel(ev.target.value);
+              this.$refs[`search-helper-${this.dataKey}`].blur();
             }}
             nativeOnKeydown={ev => {
               if (ev.keyCode === 13) {
-                this.$refs[`search-helper-${this.dataKey}`].blur();
+                isObject(helper) && openHelperPanel(ev.target.value);
               }
             }}
           >
