@@ -2,12 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-16 15:22:24
+ * @Last Modified time: 2021-03-29 14:40:28
  */
 import baseProps from './props';
 import Store from '../store';
 import config from '../config';
-import { isEqual } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
 
 import { columnsFlatMap, getAllColumns, getAllRowKeys, tableDataFlatMap, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
@@ -52,6 +52,8 @@ export default {
   },
   mixins: [sizeMixin, columnsMixin, expandableMixin, selectionMixin, validateMixin, localStorageMixin],
   data() {
+    // 原始列
+    this.originColumns = [];
     // 原始数据
     this.tableOriginData = [];
     // 内存分页，每页显示的数据
@@ -61,7 +63,7 @@ export default {
     // 高级检索的条件
     this.superFilters = [];
     // 列汇总条件
-    this.columnSummaryQuery = this.createColumnSummary();
+    this.columnSummaryQuery = '';
     return {
       // 组件 store 仓库
       store: new Store(),
@@ -101,8 +103,6 @@ export default {
         visibleSize: 0,
         rowHeight: 0
       },
-      // 支持的排序方式
-      sortDirections: ['ascend', 'descend'],
       // 表格布局相关参数
       layout: {
         // 滚动条宽度
@@ -365,6 +365,9 @@ export default {
     }
   },
   created() {
+    this.originColumns = cloneDeep(this.columns);
+    this.columnSummaryQuery = this.createColumnSummary();
+    // 获取表格数据
     if (!this.isFetch) {
       this.createTableData(this.dataSource);
     } else {
@@ -421,7 +424,6 @@ export default {
       isHeadSorter,
       isHeadFilter,
       isTableEmpty,
-      sortDirections,
       scrollX,
       scrollY,
       scrollYLoad,
@@ -470,8 +472,7 @@ export default {
       ref: 'tableHeader',
       props: {
         tableColumns,
-        flattenColumns,
-        sortDirections
+        flattenColumns
       }
     };
     const tableBodyProps = {

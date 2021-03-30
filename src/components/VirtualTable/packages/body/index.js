@@ -2,12 +2,14 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-26 13:51:04
+ * @Last Modified time: 2021-03-27 16:11:42
  */
 import addEventListener from 'add-dom-event-listener';
-import { parseHeight, getCellValue, contains, deepFindRowKey, isArrayContain } from '../utils';
-import config from '../config';
 import { isEqual, isFunction, isObject } from 'lodash';
+import { parseHeight, getCellValue, contains, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
+import { isValidElement } from '../../../_utils/props-util';
+import clickOutside from '../../../_utils/click-outside';
+import config from '../config';
 
 import formatMixin from './format';
 import keyboardMixin from './keyboard';
@@ -27,6 +29,9 @@ export default {
     return {
       $$body: this
     };
+  },
+  directives: {
+    clickOutside
   },
   mixins: [keyboardMixin, formatMixin],
   data() {
@@ -74,7 +79,7 @@ export default {
   },
   mounted() {
     this.event1 = addEventListener(this.$el, 'scroll', this.scrollEvent);
-    this.event2 = addEventListener(document.body, 'click', this.cancelEvent);
+    this.event2 = addEventListener(document.body, 'click', this.cancelClickEvent);
     this.event3 = addEventListener(document, 'keydown', this.keyboardEvent);
   },
   destroyed() {
@@ -103,7 +108,7 @@ export default {
       this.prevST = st;
       this.prevSL = sl;
     },
-    cancelEvent(ev) {
+    cancelClickEvent(ev) {
       const { target, currentTarget } = ev;
       if (target === currentTarget) return;
       if (target.className === 'v-cell--text' || contains(this.$vTableBody, target)) return;
@@ -203,7 +208,7 @@ export default {
       return (
         <td
           key={dataIndex}
-          title={isEllipsis && this.renderText(getCellValue(row, dataIndex), column, row)}
+          title={isEllipsis && this.renderCellTitle(column, row, rowIndex, columnIndex)}
           rowspan={rowspan}
           colspan={colspan}
           class={cls}
@@ -289,6 +294,25 @@ export default {
         }
       }
       return { rowspan, colspan };
+    },
+    renderCellTitle(column, row, rowIndex, columnIndex) {
+      const { dataIndex, render } = column;
+      if (['__expandable__', '__selection__', config.operationColumn].includes(dataIndex)) {
+        return '';
+      }
+      const text = getCellValue(row, dataIndex);
+      let title = '';
+      if (isFunction(render)) {
+        const result = render(text, row, column, rowIndex, columnIndex);
+        if (isValidElement(result)) {
+          title = getVNodeText(result).join('');
+        } else {
+          title = result;
+        }
+      } else {
+        title = this.renderText(text, column, row);
+      }
+      return title;
     },
     cellClickHandle(ev, row, column) {
       const { getRowKey, rowSelection = {}, selectionKeys, rowHighlight, isTreeTable } = this.$$table;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-16 17:45:19
+ * @Last Modified time: 2021-03-25 18:08:03
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -611,10 +611,9 @@ export default {
             onChange={onChange}
             nativeOnKeydown={ev => {
               if (ev.keyCode !== 13) return;
-              setTimeout(() => {
-                onEnter(form[fieldName] ?? '');
-                this.doFormItemValidate(fieldName);
-              });
+              const { value: val } = ev.target;
+              onEnter(val ? Number(val) : val);
+              this.doFormItemValidate(fieldName);
             }}
           />
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
@@ -1132,7 +1131,8 @@ export default {
             }}
             nativeOnInput={ev => {
               let val = ev.target.value;
-              if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+              if (!val) return;
+              if (!/^[\d-\s\:]+$/.test(val)) {
                 return (ev.target.value = this[`__${fieldName}__pv`] ?? form[fieldName] ?? '');
               }
               if (dateType === 'date' || dateType === 'exactdate') {
@@ -1146,11 +1146,11 @@ export default {
               }
               ev.target.value = val;
               this[`__${fieldName}__pv`] = val;
-              this.__dateInputed__ = !0;
+              this[`__${fieldName}__inputed`] = !0;
             }}
             onBlur={C => {
-              if (!this.__dateInputed__) return;
-              this.__dateInputed__ = !1;
+              if (!this[`__${fieldName}__inputed`]) return;
+              this[`__${fieldName}__inputed`] = !1;
               const currentVal = C.$el.children[0].value;
               const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
               if (passed) {
@@ -1160,7 +1160,7 @@ export default {
             }}
             nativeOnKeydown={ev => {
               if (ev.keyCode === 13) {
-                if (!this.__dateInputed__) return;
+                if (!this[`__${fieldName}__inputed`]) return;
                 const currentVal = ev.target.value;
                 const passed = !this.setDisabledDate(dayjs(currentVal).toDate(), [minDateTime, maxDateTime]);
                 if (passed) {
@@ -1266,7 +1266,8 @@ export default {
               disabled={disabled || startDisabled}
               nativeOnInput={ev => {
                 let val = ev.target.value;
-                if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+                if (!val) return;
+                if (!/^[\d-\s\:]+$/.test(val)) {
                   return (ev.target.value = this[`__${fieldName}_start__pv`] ?? form[fieldName][0] ?? '');
                 }
                 if (dateType === 'daterange' || dateType === 'exactdaterange') {
@@ -1280,11 +1281,11 @@ export default {
                 }
                 ev.target.value = val;
                 this[`__${fieldName}_start__pv`] = val;
-                this.__dateInputed__ = !0;
+                this[`__${fieldName}_start__inputed`] = !0;
               }}
               onBlur={C => {
-                if (!this.__dateInputed__) return;
-                this.__dateInputed__ = !1;
+                if (!this[`__${fieldName}_start__inputed`]) return;
+                this[`__${fieldName}_start__inputed`] = !1;
                 const startVal = C.$el.children[0].value;
                 const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                 if (passed) {
@@ -1294,7 +1295,7 @@ export default {
               }}
               nativeOnKeydown={ev => {
                 if (ev.keyCode === 13) {
-                  if (!this.__dateInputed__) return;
+                  if (!this[`__${fieldName}_start__inputed`]) return;
                   const startVal = ev.target.value;
                   const passed = !this.setDisabledDate(dayjs(startVal).toDate(), [minDateTime, endDate]);
                   if (passed) {
@@ -1330,7 +1331,8 @@ export default {
               disabled={disabled || endDisabled}
               nativeOnInput={ev => {
                 let val = ev.target.value;
-                if (val !== '' && !/^[\d-\s\:]+$/.test(val)) {
+                if (!val) return;
+                if (!/^[\d-\s\:]+$/.test(val)) {
                   return (ev.target.value = this[`__${fieldName}_end__pv`] ?? form[fieldName][1] ?? '');
                 }
                 if (dateType === 'daterange' || dateType === 'exactdaterange') {
@@ -1344,11 +1346,11 @@ export default {
                 }
                 ev.target.value = val;
                 this[`__${fieldName}_end__pv`] = val;
-                this.__dateInputed__ = !0;
+                this[`__${fieldName}_end__inputed`] = !0;
               }}
               onBlur={C => {
-                if (!this.__dateInputed__) return;
-                this.__dateInputed__ = !1;
+                if (!this[`__${fieldName}_end__inputed`]) return;
+                this[`__${fieldName}_end__inputed`] = !1;
                 const endVal = C.$el.children[0].value;
                 const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                 if (passed) {
@@ -1358,7 +1360,7 @@ export default {
               }}
               nativeOnKeydown={ev => {
                 if (ev.keyCode === 13) {
-                  if (!this.__dateInputed__) return;
+                  if (!this[`__${fieldName}_end__inputed`]) return;
                   const endVal = ev.target.value;
                   const passed = !this.setDisabledDate(dayjs(endVal).toDate(), [startDate, maxDateTime]);
                   if (passed) {

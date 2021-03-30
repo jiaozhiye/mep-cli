@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:29:47
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-18 10:29:24
+ * @Last Modified time: 2021-03-29 14:41:26
  */
 import Popper from '../popper';
 import Draggable from '../draggable';
@@ -66,6 +66,10 @@ export default {
       const { columnsChange = noop } = this.$$table;
       columnsChange(this.realColumns);
     },
+    resetColumnsHandle() {
+      const { columnsChange = noop } = this.$$table;
+      columnsChange(this.$$table.originColumns);
+    },
     renderListItem(column, type) {
       const cls = [`iconfont`, `icon-menu`, `v-handle`, [`${type}-handle`]];
       return (
@@ -91,6 +95,12 @@ export default {
       const cls = [`v-column-filter--wrap`, `size--${this.$$table.tableSize}`];
       return (
         <div class={cls}>
+          <div class="reset">
+            <el-button type="text" onClick={this.resetColumnsHandle}>
+              {this.t('table.filter.reset')}
+            </el-button>
+          </div>
+          <div class="divider" />
           <div class="left">
             <Draggable
               value={leftFixedColumns}

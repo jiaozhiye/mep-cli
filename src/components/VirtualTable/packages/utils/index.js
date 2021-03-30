@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-22 16:54:04
+ * @Last Modified time: 2021-03-24 14:23:59
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
+import { isValidElement, isStringElement, filterEmpty } from '../../../_utils/props-util';
 import { stringify, array_format } from '../filter-sql';
 
 export const hasOwn = (obj, key) => {
@@ -421,6 +422,19 @@ export const stringToNumber = input => {
   if (!validateNumber(input)) return '';
   input = input === '-' ? '' : input;
   return input ? Number(input) : '';
+};
+
+// 获取 VNode 中的文本
+export const getVNodeText = vNode => {
+  const result = [];
+  if (isValidElement(vNode)) {
+    if (isStringElement(vNode)) {
+      result.push(vNode.text);
+    } else if (Array.isArray(vNode.children)) {
+      filterEmpty(vNode.children).forEach(c => result.push(...getVNodeText(c)));
+    }
+  }
+  return result;
 };
 
 // 生成 uuid key

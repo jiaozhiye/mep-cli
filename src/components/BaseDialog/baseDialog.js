@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-30 14:29:29
+ * @Last Modified time: 2021-03-23 10:54:38
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -114,6 +114,9 @@ export default {
     },
     parseHeight(val) {
       return Number(val) > 0 ? `${val}px` : val;
+    },
+    DO_CLOSE() {
+      this.$refs[`dialog`].handleClose();
     }
   },
   render() {

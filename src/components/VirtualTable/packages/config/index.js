@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-08 12:45:54
+ * @Last Modified time: 2021-03-29 14:41:02
  */
 import i18n from '../locale';
 
@@ -22,6 +22,8 @@ const config = {
     default: 'small',
     small: 'mini'
   },
+  // 排序方式
+  sortDirections: ['ascend', 'descend'],
   // 分页
   pagination: {
     currentPage: 1,

@@ -54,11 +54,13 @@ const keyboardMixin = {
           this.setClickedValues([rowKey, this.clicked[1]]);
         }
       }
-      // 可编辑单元格
-      if (!this.editableColumns.length) return;
       // Tab
       if (keyCode === 9) {
         ev.preventDefault();
+        // 非可编辑单元格
+        if (!this.editableColumns.length) {
+          return this.setClickedValues([]);
+        }
         const total = this.editableColumns.length;
         let index = this.editableColumns.findIndex(x => x.dataIndex === this.clicked[1]);
         let yIndex = ++index % total;

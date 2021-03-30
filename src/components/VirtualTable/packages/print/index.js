@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 10:42:26
+ * @Last Modified time: 2021-03-25 08:47:58
  */
 import _ from 'lodash';
 import Cookies from 'js-cookie';
@@ -267,15 +267,12 @@ export default {
       }
     },
     renderCell(row, rowIndex, column, columnIndex) {
-      const { dataIndex, render, extraRender } = column;
-      const text = getCellValue(row, dataIndex);
+      const { dataIndex, extraRender } = column;
+      let result = this.$$table.$$tableBody.renderCellTitle(column, row, rowIndex, columnIndex);
       if (_.isFunction(extraRender)) {
-        return extraRender(text, row, column, rowIndex, columnIndex);
+        result = extraRender(getCellValue(row, dataIndex), row, column, rowIndex, columnIndex);
       }
-      if (_.isFunction(render)) {
-        return render(text, row, column, rowIndex, columnIndex);
-      }
-      return this.$$table.$$tableBody.renderText(text, column, row);
+      return result;
     }
   },
   render() {

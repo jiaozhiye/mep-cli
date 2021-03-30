@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-13 12:22:14
+ * @Last Modified time: 2021-03-24 16:25:33
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -32,15 +32,16 @@ export default {
     // 设置表格数据
     this.tableFullData = [...results];
     this.tableOriginData = [...results];
-    // 设置选择列
-    this.selectionKeys = this.createSelectionKeys();
-    // 设置展开行
-    this.rowExpandedKeys = this.createRowExpandedKeys();
-    // 行选中 & 自动获得焦点
     this.$nextTick(() => {
+      // 设置选择列
+      this.selectionKeys = this.createSelectionKeys();
+      // 设置展开行
+      this.rowExpandedKeys = this.createRowExpandedKeys();
+      // 首行选中
       this.selectFirstRow();
-      this.dataLoadedHandle();
+      // 输入框获得焦点
       this.$$tableBody.createInputFocus();
+      this.dataLoadedHandle();
     });
   },
   // 服务端合计

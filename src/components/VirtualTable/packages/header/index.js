@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-30 09:46:41
+ * @Last Modified time: 2021-03-29 14:40:51
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -18,7 +18,7 @@ import THeadFilter from '../filter';
 export default {
   name: 'TableHeader',
   mixins: [Locale],
-  props: ['tableColumns', 'flattenColumns', 'sortDirections'],
+  props: ['tableColumns', 'flattenColumns'],
   provide() {
     return {
       $$header: this
@@ -29,8 +29,8 @@ export default {
     return {
       filters: {},
       sorter: {},
-      ascend: this.sortDirections[0],
-      descend: this.sortDirections[1]
+      ascend: config.sortDirections[0],
+      descend: config.sortDirections[1]
     };
   },
   computed: {

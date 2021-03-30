@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-06-20 11:30:47
+ * @Last Modified time: 2021-03-24 14:22:25
  */
 import { isPlainObject } from 'lodash';
 import classNames from 'classnames';
@@ -260,6 +260,10 @@ export function getComponentName(opts) {
   return opts && (opts.Ctor.options.name || opts.tag);
 }
 
+export function isStringElement(c) {
+  return !c.tag;
+}
+
 export function isEmptyElement(c) {
   return !(c.tag || (c.text && c.text.trim() !== ''));
 }
@@ -268,7 +272,11 @@ export function filterEmpty(children = []) {
   return children.filter(c => !isEmptyElement(c));
 }
 
-const initDefaultProps = (propTypes, defaultProps) => {
+export function isValidElement(c) {
+  return c && typeof c === 'object' && 'componentOptions' in c && 'context' in c;
+}
+
+export function initDefaultProps(propTypes, defaultProps) {
   Object.keys(defaultProps).forEach(k => {
     if (propTypes[k]) {
       propTypes[k].def && (propTypes[k] = propTypes[k].def(defaultProps[k]));
@@ -277,7 +285,7 @@ const initDefaultProps = (propTypes, defaultProps) => {
     }
   });
   return propTypes;
-};
+}
 
 export function mergeProps() {
   const args = [].slice.call(arguments, 0);
@@ -295,10 +303,6 @@ export function mergeProps() {
   return props;
 }
 
-function isValidElement(element) {
-  return element && typeof element === 'object' && 'componentOptions' in element && 'context' in element && element.tag !== undefined; // remove text node
-}
-
 export {
   hasProp,
   filterProps,
@@ -311,8 +315,6 @@ export {
   getAttrs,
   getValueByProp,
   parseStyleText,
-  initDefaultProps,
-  isValidElement,
   camelize,
   getSlots,
   getSlot,

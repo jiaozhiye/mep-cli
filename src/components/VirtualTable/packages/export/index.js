@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-12 12:35:24
+ * @Last Modified time: 2021-03-25 08:48:12
  */
 import dayjs from 'dayjs';
 import { isFunction } from 'lodash';
@@ -86,6 +86,11 @@ export default {
       this.exporting = !0;
       try {
         const res = await this.exportFetch.api({
+          columns: this.flatColumns.map(column => {
+            const { title, dataIndex, hidden } = column;
+            const { type } = column.filter || {};
+            return { title, dataIndex, type, hidden };
+          }),
           ...fetchParams,
           tsortby: undefined,
           tsummary: undefined,
@@ -155,14 +160,10 @@ export default {
       return html;
     },
     renderCell(row, rowIndex, column, columnIndex) {
-      const { dataIndex, precision, render, extraRender } = column;
-      const text = getCellValue(row, dataIndex);
-      let result = this.$$table.$$tableBody.renderText(text, column, row);
-      if (isFunction(render)) {
-        result = render(text, row, column, rowIndex, columnIndex);
-      }
+      const { dataIndex, precision, extraRender } = column;
+      let result = this.$$table.$$tableBody.renderCellTitle(column, row, rowIndex, columnIndex);
       if (isFunction(extraRender)) {
-        result = extraRender(text, row, column, rowIndex, columnIndex);
+        result = extraRender(getCellValue(row, dataIndex), row, column, rowIndex, columnIndex);
       }
       // 处理 number 类型
       if (precision >= 0 && result !== '') {

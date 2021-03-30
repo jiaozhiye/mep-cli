@@ -57,6 +57,13 @@
       }
     }
   }
+  .reset {
+    text-align: right;
+    .el-button {
+      padding: 5px 0;
+      min-height: auto;
+    }
+  }
   .left {
     li {
       padding-right: 15px;
