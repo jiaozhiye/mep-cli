@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-30 14:20:00
+ * @Last Modified time: 2021-03-31 16:54:45
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -95,7 +95,7 @@ export default {
     }
   },
   render() {
-    const { isVisible, loading, title, fullscreen, contentSize, direction, showFullScreen, maskToClose, closeOnPressEscape, stopEventBubble, containerStyle, $props, $attrs, $slots } = this;
+    const { isVisible, loading, title, fullscreen, contentSize, direction, showFullScreen, maskToClose, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
     const prefixCls = this.getPrefixCls('drawer--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -125,10 +125,7 @@ export default {
         closed: this.closed
       },
       nativeOn: {
-        click: ev => {
-          if (!stopEventBubble) return;
-          ev.stopPropagation();
-        }
+        mousedown: ev => ev.stopPropagation()
       }
     };
     const fullCls = ['iconfont', fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];

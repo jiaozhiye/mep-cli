@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-23 10:54:38
+ * @Last Modified time: 2021-03-31 16:59:34
  **/
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
@@ -120,7 +120,7 @@ export default {
     }
   },
   render() {
-    const { showDialog, showFullScreen, fullscreen, title, height, disTop, dragable, maskToClose, stopEventBubble, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
+    const { showDialog, showFullScreen, fullscreen, title, height, disTop, dragable, maskToClose, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
     const prefixCls = this.getPrefixCls('dialog--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -150,10 +150,7 @@ export default {
         closed: this.closed
       },
       nativeOn: {
-        click: ev => {
-          if (!stopEventBubble) return;
-          ev.stopPropagation();
-        }
+        mousedown: ev => ev.stopPropagation()
       },
       // drag -> 拖拽指令
       directives: dragable ? [{ name: 'drag' }] : null

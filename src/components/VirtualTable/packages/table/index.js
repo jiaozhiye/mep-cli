@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-30 13:40:43
+ * @Last Modified time: 2021-04-01 17:16:33
  */
 import baseProps from './props';
 import Store from '../store';
@@ -235,7 +235,7 @@ export default {
     fullHeight() {
       const pagerHeight = this.showPagination ? 40 : 0;
       if (this.isFullScreen && this.shouldUpdateHeight) {
-        return window.innerHeight - 30 - this.$refs[`v-top-info`].offsetHeight - pagerHeight;
+        return window.innerHeight - 30 - this.$refs[`table-toper`].offsetHeight - pagerHeight;
       }
       return null;
     },
@@ -535,8 +535,7 @@ export default {
         size: tableSize,
         total,
         currentPage: pagination.currentPage,
-        pageSize: pagination.pageSize,
-        extraRender: () => (showAlert && alertPosition === 'bottom' ? <Alert {...alertProps} /> : null)
+        pageSize: pagination.pageSize
       }),
       on: {
         change: this.pagerChangeHandle
@@ -544,7 +543,7 @@ export default {
     };
     return (
       <div class={vWrapperCls}>
-        <div ref="v-top-info" class="v-top-info">
+        <div ref="table-toper" class="v-table-toper">
           <div class="v-space">
             {/* 顶部信息 */}
             {showAlert && alertPosition === 'top' && <Alert {...alertProps} />}
@@ -590,7 +589,10 @@ export default {
           </div>
         </SpinLoading>
         {/* 分页 */}
-        {showPagination && <Pager {...pagerProps} />}
+        <div class="v-table-bottom">
+          {showAlert && alertPosition === 'bottom' && <Alert {...alertProps} />}
+          {showPagination && <Pager {...pagerProps} />}
+        </div>
       </div>
     );
   }

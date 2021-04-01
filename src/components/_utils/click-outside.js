@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-01 11:27:39
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-03 10:50:11
+ * @Last Modified time: 2021-03-31 16:48:43
  */
 import { on } from './tool';
 
@@ -43,7 +43,7 @@ const createDocumentHandler = (el, binding, vnode) => {
     if (binding.expression && el[ctx].methodName && vnode.context[el[ctx].methodName]) {
       vnode.context[el[ctx].methodName]();
     } else {
-      el[ctx]?.bindingFn();
+      el[ctx]?.bindingFn(mousedown.target, mouseup.target);
     }
   };
 };

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-19 13:45:50
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-11 12:24:02
+ * @Last Modified time: 2021-04-01 17:14:25
  */
 import PropTypes from '../../../_utils/vue-types';
 import config from '../config';
@@ -31,9 +31,7 @@ export default {
     // 列对其方式
     align: PropTypes.string.def('right'),
     // 带背景颜色
-    background: PropTypes.bool.def(true),
-    // 额外的组件渲染
-    extraRender: PropTypes.func
+    background: PropTypes.bool.def(true)
   },
   computed: {
     vSize() {
@@ -58,7 +56,7 @@ export default {
     }
   },
   render(h) {
-    const { vSize, align, extraRender } = this;
+    const { vSize, align } = this;
     const cls = [
       'v-pager',
       {
@@ -69,7 +67,6 @@ export default {
     ];
     return (
       <div class={cls}>
-        {typeof extraRender === 'function' && extraRender(h)}
         <div class="v-pager--wrapper">{this.layouts.map(name => this[`render${name}`]?.(h))}</div>
       </div>
     );

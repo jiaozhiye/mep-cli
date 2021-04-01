@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-30 13:41:52
+ * @Last Modified time: 2021-03-31 19:10:28
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -68,9 +68,15 @@ export default {
       if (!this.editable) return;
       const { type } = this.options;
       const { currentKey } = this;
-      if ((type === 'text' || type === 'number' || type === 'search-helper') && currentKey) {
-        setTimeout(() => {
-          this.$refs[`${type}-${currentKey}`]?.select();
+      if (!currentKey) return;
+      if (type === 'text' || type === 'number' || type === 'search-helper') {
+        this.$nextTick(() => {
+          this.$refs[`${type}-${currentKey}`].select?.();
+        });
+      }
+      if (type === 'select' || type === 'select-multiple') {
+        this.$nextTick(() => {
+          this.$refs[`${type}-${currentKey}`].focus?.();
         });
       }
     }
@@ -82,11 +88,11 @@ export default {
     },
     textHandle(row, column) {
       const { dataIndex } = column;
-      const { extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
+      const { type, extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
       return (
         <InputText
-          ref={`text-${this.dataKey}`}
+          ref={`${type}-${this.dataKey}`}
           size={this.size}
           value={prevValue}
           maxlength={extra.maxlength}
@@ -114,11 +120,11 @@ export default {
     },
     numberHandle(row, column) {
       const { dataIndex, precision } = column;
-      const { extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
+      const { type, extra = {}, rules = [], onInput = noop, onChange = noop, onEnter = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
       return (
         <InputNumber
-          ref={`number-${this.dataKey}`}
+          ref={`${type}-${this.dataKey}`}
           size={this.size}
           value={prevValue}
           onInput={val => {
@@ -147,11 +153,13 @@ export default {
     },
     selectHandle(row, column, isMultiple) {
       const { dataIndex } = column;
-      const { extra = {}, rules = [], items = [], onChange = noop } = this.options;
+      const { type, extra = {}, rules = [], items = [], onChange = noop } = this.options;
       const prevValue = getCellValue(row, dataIndex);
       return (
         <el-select
+          ref={`${type}-${this.dataKey}`}
           size={this.size}
+          popper-class={'table-editable__popper'}
           value={prevValue}
           onInput={val => {
             setCellValue(row, dataIndex, val);
@@ -186,6 +194,7 @@ export default {
         <el-date-picker
           size={this.size}
           type={!isDateTime ? 'date' : 'datetime'}
+          popper-class={'table-editable__popper'}
           style={{ width: '100%' }}
           value={prevValue ? dayjs(prevValue).format(dateFormat.replace('yyyy', 'YYYY').replace('dd', 'DD')) : prevValue}
           onInput={val => {
@@ -221,6 +230,7 @@ export default {
       return (
         <el-time-picker
           size={this.size}
+          popper-class={'table-editable__popper'}
           value={prevValue}
           onInput={val => {
             setCellValue(row, dataIndex, val);

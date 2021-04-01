@@ -2,11 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-30 13:41:13
+ * @Last Modified time: 2021-03-31 17:00:36
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
-import { parseHeight, getCellValue, contains, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
+import { parseHeight, getCellValue, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
+import { getParentNode } from '../../../_utils/tool';
 import { isValidElement } from '../../../_utils/props-util';
 import clickOutside from '../../../_utils/click-outside';
 import TableManager from '../manager';
@@ -86,13 +87,11 @@ export default {
   },
   mounted() {
     this.event1 = addEventListener(this.$el, 'scroll', this.scrollEvent);
-    this.event2 = addEventListener(document.body, 'click', this.cancelClickEvent);
-    this.event3 = addEventListener(document, 'keydown', this.keyboardEvent);
+    this.event2 = addEventListener(document, 'keydown', this.keyboardEvent);
   },
   destroyed() {
     this.event1.remove();
     this.event2.remove();
-    this.event3.remove();
   },
   methods: {
     scrollEvent(ev) {
@@ -115,10 +114,8 @@ export default {
       this.prevST = st;
       this.prevSL = sl;
     },
-    cancelClickEvent(ev) {
-      const { target, currentTarget } = ev;
-      if (target === currentTarget) return;
-      if (target.className === 'v-cell--text' || contains(this.$vTableBody, target)) return;
+    cancelClickEvent($down, $up) {
+      if (!!getParentNode($up, 'table-editable__popper')) return;
       this.setClickedValues([]);
     },
     renderBodyXSpace() {
@@ -427,7 +424,7 @@ export default {
       <div class="v-table--body-wrapper body--wrapper" style={{ ...wrapStyle }}>
         {this.renderBodyYSpace()}
         {this.renderBodyXSpace()}
-        <table class="v-table--body" cellspacing="0" cellpadding="0" border="0" style={{ width: bodyWidth }}>
+        <table class="v-table--body" cellspacing="0" cellpadding="0" border="0" style={{ width: bodyWidth }} v-clickOutside={($down, $up) => this.cancelClickEvent($down, $up)}>
           {this.renderColgroup()}
           {!isDraggable ? <tbody>{this.renderRows(tableData)}</tbody> : <Draggable {...dragProps}>{this.renderRows(tableData)}</Draggable>}
         </table>

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-24 16:25:33
+ * @Last Modified time: 2021-04-01 17:12:47
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -309,6 +309,13 @@ export default {
   // 返回到第一页
   toFirstPage() {
     this.pagerChangeHandle({ ...this.pagination, currentPage: 1 });
+  },
+  // 前往最后一页
+  toLastPage() {
+    const { currentPage, pageSize } = this.pagination;
+    const pageCount = Math.ceil(this.total / pageSize);
+    if (!this.webPagination || currentPage >= pageCount) return;
+    this.pagerChangeHandle({ currentPage: pageCount, pageSize });
   },
   // 清空列选中
   clearRowSelection() {

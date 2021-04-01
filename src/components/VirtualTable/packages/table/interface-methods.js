@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-14 15:21:30
+ * @Last Modified time: 2021-04-01 17:12:38
  */
 import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
@@ -114,7 +114,10 @@ export default {
     // 滚动条定位
     if (rows.length > 0) {
       const lastRowKey = this.getRowKey(rows[rows.length - 1], rows[rows.length - 1].index);
-      this.$nextTick(() => this.$$tableBody.scrollYToRecord(lastRowKey));
+      this.$nextTick(() => {
+        this.toLastPage();
+        this.$$tableBody.scrollYToRecord(lastRowKey);
+      });
     }
   },
   // 删除数据

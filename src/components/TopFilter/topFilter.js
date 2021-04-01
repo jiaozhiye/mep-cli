@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-25 18:08:38
+ * @Last Modified time: 2021-04-01 17:13:55
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -302,16 +302,26 @@ export default {
         alias.forEach(x => (inputParams[x] = val));
         return inputParams;
       };
+      // 格式化查询参数 for tds
+      const formatParams = val => {
+        const { name, fieldsDefine, getServerConfig, beforeFetch = k => k } = searchHelper;
+        val = beforeFetch(val);
+        // tds 搜索条件的参数规范
+        if (name && fieldsDefine && getServerConfig) {
+          val = { name, condition: val };
+        }
+        return val;
+      };
       // 执行搜索帮助接口，获取数据
       const getShTableData = val => {
-        const { table, initialValue = {}, beforeFetch = k => k } = searchHelper;
+        const { table, initialValue = {} } = searchHelper;
         return new Promise(async (resolve, reject) => {
           if (process.env.MOCK_DATA === 'true') {
             await sleep(500);
             const { data } = cloneDeep(require('@/mock/tableData').default);
             return resolve(data.items);
           } else {
-            const params = merge({}, table.fetch?.params, beforeFetch({ ...initialValue, ...createShFilters(val) }), { currentPage: 1, pageSize: 500 });
+            const params = merge({}, table.fetch?.params, formatParams({ ...initialValue, ...createShFilters(val) }), { currentPage: 1, pageSize: 500 });
             try {
               const res = await table.fetch.api(params);
               if (res.code === 200) {

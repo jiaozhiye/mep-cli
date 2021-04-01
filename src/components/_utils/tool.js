@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 10:58:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 09:33:20
+ * @Last Modified time: 2021-03-31 16:56:17
  */
 /**
  * @description 判断浏览器是否 IE11
@@ -122,7 +122,7 @@ export const off = (el, evType, handler) => {
 export const getParentNode = (el, parElCls) => {
   let node = el;
   while (node) {
-    if (node.classList.contains(parElCls)) {
+    if (node.classList?.contains(parElCls)) {
       return node;
     }
     node = node.parentNode;

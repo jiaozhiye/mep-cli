@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-07 19:04:14
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-18 14:26:44
+ * @Last Modified time: 2021-03-31 16:40:53
  */
 import { isUndefined, isNull } from 'lodash';
 import { getNodeOffset } from '../utils';
@@ -45,7 +45,7 @@ export default {
 
         // 左边界限定
         if (rw < config.defaultColumnWidth) return;
-        res = rw;
+        res = Number.parseInt(rw);
 
         target.style.left = `${ml + left}px`;
       };
