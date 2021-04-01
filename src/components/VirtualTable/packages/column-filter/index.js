@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:29:47
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-29 14:41:26
+ * @Last Modified time: 2021-04-01 17:59:30
  */
 import Popper from '../popper';
 import Draggable from '../draggable';
@@ -100,7 +100,6 @@ export default {
               {this.t('table.filter.reset')}
             </el-button>
           </div>
-          <div class="divider" />
           <div class="left">
             <Draggable
               value={leftFixedColumns}
