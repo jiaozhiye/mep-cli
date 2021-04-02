@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-01 17:15:06
+ * @Last Modified time: 2021-04-02 11:57:32
  */
 @import './common.scss';
 
@@ -22,26 +22,10 @@
   height: $v-table-row-height-mini;
 }
 
-%CellEllipsis {
-  .v-cell {
-    @include text-overflow-cut;
-  }
-}
-
 .v-table--body-wrapper {
   @include reset-component();
   overflow-y: auto;
   overflow-x: auto;
-}
-
-.v-table--borders {
-  .v-table-border-top,
-  .v-table-border-right,
-  .v-table-border-bottom,
-  .v-table-border-left {
-    position: absolute;
-    background-color: $v-primary-color;
-  }
 }
 
 /* 顶部信息 */
@@ -187,6 +171,15 @@
     &.col--right:not(.v-header--column) {
       text-align: right;
     }
+    .v-cell {
+      white-space: pre-wrap;
+      padding: 0 $v-module-distance;
+      .v-cell--indent {
+        float: left;
+        height: 1px;
+        visibility: hidden;
+      }
+    }
   }
 
   // 自定义
@@ -263,21 +256,8 @@
     }
     .v-header--column,
     .v-body--column,
-    .v-body--expanded-column,
-    .v-footer--column {
+    .v-body--expanded-column {
       border-bottom: 1px solid $v-table-border-color;
-    }
-  }
-
-  .v-cell {
-    word-break: break-all;
-    /* 保留空白字符 */
-    white-space: pre !important;
-    padding: 0 $v-module-distance;
-    .v-cell--indent {
-      float: left;
-      height: 1px;
-      visibility: hidden;
     }
   }
 
@@ -339,8 +319,11 @@
   .v-body--expanded-column,
   .v-footer--column {
     &.col--ellipsis {
-      @extend %DefaultColumnHeight;
-      @extend %CellEllipsis;
+      .v-cell {
+        @include text-overflow-cut;
+        word-break: break-all;
+        white-space: pre;
+      }
     }
   }
   &.virtual--y {

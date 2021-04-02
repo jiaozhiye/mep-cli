@@ -2,9 +2,31 @@
  * @Author: 焦质晔
  * @Date: 2020-05-30 14:13:37
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-13 10:30:18
+ * @Last Modified time: 2021-04-02 12:02:56
  */
 .v-table {
+  &.size--default {
+    font-size: $v-font-size;
+    .v-header--column,
+    .v-body--column,
+    .v-body--expanded-column,
+    .v-footer--column {
+      &.col--ellipsis {
+        @extend %DefaultColumnHeight;
+      }
+      &:not(.col--ellipsis) {
+        padding: #{floor(($v-table-row-height-default - $v-table-row-line-height) / 2)} 0;
+      }
+    }
+    &.virtual--y {
+      .col--ellipsis {
+        .v-cell {
+          max-height: $v-table-row-height-default;
+        }
+      }
+    }
+  }
+
   &.size--medium {
     font-size: $v-font-size-medium;
     .v-header--column,
@@ -35,9 +57,6 @@
     .v-footer--column {
       &.col--ellipsis {
         @extend %SmallColumnHeight;
-        .v-cell {
-          max-height: $v-table-row-height-small;
-        }
       }
       &:not(.col--ellipsis) {
         padding: #{floor(($v-table-row-height-small - $v-table-row-line-height) / 2)} 0;
@@ -60,9 +79,6 @@
     .v-footer--column {
       &.col--ellipsis {
         @extend %MiniColumnHeight;
-        .v-cell {
-          max-height: $v-table-row-height-mini;
-        }
       }
       &:not(.col--ellipsis) {
         padding: #{floor(($v-table-row-height-mini - $v-table-row-line-height) / 2)} 0;

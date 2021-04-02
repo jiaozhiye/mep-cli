@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:11:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-23 18:11:05
+ * @Last Modified time: 2021-04-02 11:58:27
  */
 %TheadAlignCenter {
   .v-cell--text {
@@ -128,20 +128,14 @@
     z-index: 1;
     cursor: col-resize;
     &.is--line {
-      &:before,
-      &:after {
-        content: '';
-        display: inline-block;
-        vertical-align: middle;
-      }
       &:before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 20%;
         width: 1px;
-        height: 50%;
+        height: 60%;
         background-color: $v-table-resizable-color;
-      }
-      &:after {
-        width: 0;
-        height: 100%;
       }
     }
   }
