@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-31 19:10:28
+ * @Last Modified time: 2021-04-02 08:42:33
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -71,12 +71,12 @@ export default {
       if (!currentKey) return;
       if (type === 'text' || type === 'number' || type === 'search-helper') {
         this.$nextTick(() => {
-          this.$refs[`${type}-${currentKey}`].select?.();
+          this.$refs[`${type}-${currentKey}`]?.select();
         });
       }
       if (type === 'select' || type === 'select-multiple') {
         this.$nextTick(() => {
-          this.$refs[`${type}-${currentKey}`].focus?.();
+          this.$refs[`${type}-${currentKey}`]?.focus();
         });
       }
     }
