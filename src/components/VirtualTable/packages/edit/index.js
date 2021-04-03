@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-22 14:34:21
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-02 08:42:33
+ * @Last Modified time: 2021-04-03 14:28:55
  */
 import { isEqual, isFunction, isObject, get, merge, cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
@@ -344,7 +344,7 @@ export default {
             try {
               const res = await table.fetch.api(params);
               if (res.code === 200) {
-                const list = get(res.data, table.fetch.dataKey) ?? (Array.isArray(res.data) ? res.data : []);
+                const list = Array.isArray(res.data) ? res.data : get(res.data, table.fetch.dataKey) ?? [];
                 resolve(list);
               } else {
                 reject();
