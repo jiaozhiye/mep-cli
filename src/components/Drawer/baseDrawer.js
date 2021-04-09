@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-31 16:54:45
+ * @Last Modified time: 2021-04-08 15:11:14
  **/
+import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
 import Spin from '../Spin';
@@ -69,6 +70,7 @@ export default {
     opened() {
       this.loading = false;
       this.isVisible = true;
+      this.addStopEvent();
       this.$emit('opened');
       this.$emit('afterVisibleChange', true);
     },
@@ -79,6 +81,7 @@ export default {
     closed() {
       this.isVisible = !this.destroyOnClose;
       this.doReload = undefined;
+      this.removeStopEvent();
       this.$emit('closed');
       this.$emit('afterVisibleChange', false);
     },
@@ -89,6 +92,12 @@ export default {
     calcContentSize(val) {
       let size = Number(val) > 0 ? `${val}px` : val;
       return `calc(${size} - ${(Number(this.level) - 1) * 60}px)`;
+    },
+    addStopEvent() {
+      this.stopEvent = addEventListener(document.body, 'mousedown', ev => ev.stopPropagation());
+    },
+    removeStopEvent() {
+      this.stopEvent?.remove();
     },
     DO_CLOSE() {
       this.$refs[`drawer`].closeDrawer();
@@ -123,9 +132,6 @@ export default {
         opened: this.opened,
         close: this.close,
         closed: this.closed
-      },
-      nativeOn: {
-        mousedown: ev => ev.stopPropagation()
       }
     };
     const fullCls = ['iconfont', fullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'];

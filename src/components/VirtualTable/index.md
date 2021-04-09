@@ -78,6 +78,7 @@
 | title        | 列头显示文字，必要参数                         | string                                                            | -      |
 | width        | 列宽度/最小宽度                                | number                                                            | -      |
 | fixed        | 列固定（IE 下无效）                            | left \| right                                                     | -      |
+| colSpan      | 表头列合并,设置为 0 时，不渲染                 | number                                                            | -      |
 | align        | 设置列的对齐方式                               | left \| center \| right                                           | left   |
 | theadAlign   | 设置表头的对齐方式                             | left \| center \| right                                           | left   |
 | hidden       | 是否隐藏列                                     | boolean                                                           | false  |
@@ -283,10 +284,11 @@
 
 ### exportExcel
 
-| 参数     | 说明                                         | 类型   | 默认值                |
-| -------- | -------------------------------------------- | ------ | --------------------- |
-| fileName | 导出的文件名，需包含扩展名 xlsx \| csv       | string | [当前时间字符串].xlsx |
-| fetch    | 导出文件的接口(服务端导出)，[配置项](#fetch) | object | -                     |
+| 参数      | 说明                                         | 类型    | 默认值                |
+| --------- | -------------------------------------------- | ------- | --------------------- |
+| fileName  | 导出的文件名，需包含扩展名 xlsx \| csv       | string  | [当前时间字符串].xlsx |
+| fetch     | 导出文件的接口(服务端导出)，[配置项](#fetch) | object  | -                     |
+| cellStyle | 是否给单元格添加样式                         | boolean | -                     |
 
 ### tablePrint
 

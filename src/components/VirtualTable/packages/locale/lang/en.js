@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:18:31
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-24 09:37:02
+ * @Last Modified time: 2021-04-08 08:42:42
  */
 export default {
   table: {
@@ -59,8 +59,17 @@ export default {
       cancelFull: 'normal'
     },
     export: {
-      fileName: 'export-data',
-      text: 'export'
+      text: 'export',
+      closeButton: 'close',
+      settingTitle: 'export setting',
+      fileName: 'file name',
+      fileType: 'file type',
+      sheetName: 'sheet title',
+      all: 'export all',
+      selected: 'export selected',
+      custom: 'export custom',
+      footSummation: 'footer summation',
+      useStyle: 'use style'
     },
     print: {
       text: 'print'

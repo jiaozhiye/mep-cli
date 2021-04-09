@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-22 10:54:31
+ * @Last Modified time: 2021-04-08 14:07:41
  */
 'use strict';
 
@@ -13,7 +13,8 @@ const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
@@ -41,15 +42,16 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[name].[chunkhash:8].js')
   },
   optimization: {
+    minimize: true,
     runtimeChunk: 'single',
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
+      new TerserPlugin({
+        // cache: true,
         parallel: true,
-        sourceMap: config.build.productionSourceMap, // set to true if you want JS source maps
-        uglifyOptions: {
-          warnings: false,
+        // sourceMap: config.build.productionSourceMap,
+        terserOptions: {
           compress: {
+            drop_console: true,
             drop_debugger: true
           }
         }
@@ -75,7 +77,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         libs: {
           name: 'app.libs',
           test: module => {
-            return /echarts|xlsx/.test(module.context);
+            return /echarts|exceljs|xlsx/.test(module.context);
           },
           priority: 10
         }

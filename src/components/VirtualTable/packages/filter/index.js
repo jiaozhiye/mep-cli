@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-23 11:55:08
+ * @Last Modified time: 2021-04-08 18:01:35
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -323,6 +323,7 @@ export default {
               <span>&gt;&nbsp;</span>
               <el-date-picker
                 size={this.size}
+                popper-class={'table-filterable__popper'}
                 type="date"
                 value={this.filterValues[dataKey]?.[`>`]}
                 valueFormat="yyyy-MM-dd"
@@ -337,6 +338,7 @@ export default {
               <span>&lt;&nbsp;</span>
               <el-date-picker
                 size={this.size}
+                popper-class={'table-filterable__popper'}
                 type="date"
                 value={this.filterValues[dataKey]?.[`<`]}
                 valueFormat="yyyy-MM-dd"
@@ -351,6 +353,7 @@ export default {
               <span>=&nbsp;</span>
               <el-date-picker
                 size={this.size}
+                popper-class={'table-filterable__popper'}
                 type="date"
                 value={this.filterValues[dataKey]?.[`==`]}
                 valueFormat="yyyy-MM-dd"
@@ -365,6 +368,7 @@ export default {
               <span>!=</span>
               <el-date-picker
                 size={this.size}
+                popper-class={'table-filterable__popper'}
                 type="date"
                 value={this.filterValues[dataKey]?.[`!=`]}
                 valueFormat="yyyy-MM-dd"

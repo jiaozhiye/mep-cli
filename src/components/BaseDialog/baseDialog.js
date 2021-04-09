@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-31 16:59:34
+ * @Last Modified time: 2021-04-08 15:09:47
  **/
+import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
 import { getConfig } from '../_utils/globle-config';
 import Size from '../_utils/mixins/size';
@@ -83,6 +84,7 @@ export default {
       this.$emit('open');
     },
     opened() {
+      this.addStopEvent();
       this.$emit('opened');
       this.$emit('afterVisibleChange', true);
     },
@@ -92,6 +94,7 @@ export default {
     },
     closed() {
       this.isVisible = false;
+      this.removeStopEvent();
       this.$emit('closed');
       this.$emit('afterVisibleChange', false);
     },
@@ -114,6 +117,12 @@ export default {
     },
     parseHeight(val) {
       return Number(val) > 0 ? `${val}px` : val;
+    },
+    addStopEvent() {
+      this.stopEvent = addEventListener(document.body, 'mousedown', ev => ev.stopPropagation());
+    },
+    removeStopEvent() {
+      this.stopEvent?.remove();
     },
     DO_CLOSE() {
       this.$refs[`dialog`].handleClose();
@@ -148,9 +157,6 @@ export default {
         opened: this.opened,
         close: this.close,
         closed: this.closed
-      },
-      nativeOn: {
-        mousedown: ev => ev.stopPropagation()
       },
       // drag -> 拖拽指令
       directives: dragable ? [{ name: 'drag' }] : null

@@ -2,8 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-17 10:29:47
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-01 17:59:30
+ * @Last Modified time: 2021-04-09 08:36:00
  */
+import { cloneDeep, isUndefined } from 'lodash';
 import Popper from '../popper';
 import Draggable from '../draggable';
 import Checkbox from '../checkbox';
@@ -19,6 +20,7 @@ export default {
   props: ['columns'],
   inject: ['$$table'],
   data() {
+    this.colGroups = []; // 表头跨列分组
     this.dragOptions = { animation: 200 };
     return {
       showPopper: false,
@@ -42,6 +44,7 @@ export default {
   },
   created() {
     this.createColumns();
+    this.createColGroups();
   },
   methods: {
     popperVisibleHandle(showPopper) {
@@ -51,6 +54,14 @@ export default {
       this.leftFixedColumns = this.columns.filter(column => column.fixed === 'left');
       this.rightFixedColumns = this.columns.filter(column => column.fixed === 'right');
       this.mainColumns = this.columns.filter(column => !column.fixed);
+    },
+    createColGroups() {
+      this.columns.forEach((column, i) => {
+        const { colSpan } = column;
+        if (colSpan > 1 && this.columns.slice(i + 1, i + colSpan).every(({ colSpan }) => colSpan === 0)) {
+          this.colGroups.push(this.columns.slice(i, i + colSpan));
+        }
+      });
     },
     fixedChangeHandle(column, dir) {
       column.fixed = dir;
@@ -64,13 +75,45 @@ export default {
     },
     changeHandle() {
       const { columnsChange = noop } = this.$$table;
-      columnsChange(this.realColumns);
+      const resultColumns = [];
+      this.realColumns.forEach(column => {
+        const { colSpan, dataIndex } = column;
+        if (colSpan === 0) return;
+        if (colSpan === 1) {
+          return resultColumns.push(column);
+        }
+        const groupIndex = this.colGroups.findIndex(group => group.map(x => x.dataIndex).includes(dataIndex));
+        if (groupIndex === -1) {
+          return resultColumns.push(column);
+        }
+        resultColumns.push(
+          ...this.colGroups[groupIndex].map(({ dataIndex }, index) => {
+            const target = this.realColumns.find(x => x.dataIndex === dataIndex);
+            if (index > 0) {
+              if (!isUndefined(column.hidden)) {
+                target.hidden = column.hidden;
+              }
+              if (!isUndefined(column.fixed)) {
+                target.fixed = column.fixed;
+              } else if (target.fixed) {
+                delete target.fixed;
+              }
+            }
+            return target;
+          })
+        );
+      });
+      columnsChange(resultColumns);
     },
     resetColumnsHandle() {
       const { columnsChange = noop } = this.$$table;
-      columnsChange(this.$$table.originColumns);
+      columnsChange(cloneDeep(this.$$table.originColumns));
     },
     renderListItem(column, type) {
+      const { colSpan } = column;
+      if (colSpan === 0) {
+        return <li key={column.dataIndex} style={{ display: 'none' }} />;
+      }
       const cls = [`iconfont`, `icon-menu`, `v-handle`, [`${type}-handle`]];
       return (
         <li key={column.dataIndex} class="item">

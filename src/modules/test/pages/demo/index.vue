@@ -582,6 +582,7 @@ export default {
           title: '状态',
           dataIndex: 'state',
           width: 150,
+          colSpan: 2,
           filter: {
             type: 'radio',
             items: [
@@ -610,6 +611,7 @@ export default {
           title: '业余爱好',
           dataIndex: 'hobby',
           width: 150,
+          colSpan: 0,
           filter: {
             type: 'checkbox',
             items: [

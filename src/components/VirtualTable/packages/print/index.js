@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-25 08:47:58
+ * @Last Modified time: 2021-04-08 16:47:17
  */
 import _ from 'lodash';
 import Cookies from 'js-cookie';
@@ -199,7 +199,20 @@ export default {
         html += [
           `<thead>`,
           this.showLogo ? `<tr><th colspan="${flatColumns.length}" style="border: 0">${this._toLogo()}</th></tr>` : '',
-          columnRows.map(columns => `<tr>${columns.map(column => `<th colspan="${column.colSpan}" rowspan="${column.rowSpan}">${column.title}</th>`).join('')}</tr>`).join(''),
+          columnRows
+            .map(
+              columns =>
+                `<tr>${columns
+                  .map(column => {
+                    const { rowSpan, colSpan } = column;
+                    if (colSpan === 0) {
+                      return null;
+                    }
+                    return `<th colspan="${colSpan}" rowspan="${rowSpan}">${column.title}</th>`;
+                  })
+                  .join('')}</tr>`
+            )
+            .join(''),
           `</thead>`
         ].join('');
       }
@@ -227,7 +240,8 @@ export default {
               row =>
                 `<tr>${flatColumns
                   .map((column, index) => {
-                    let text = getCellValue(row, column.dataIndex);
+                    const { dataIndex, summation } = column;
+                    const text = summation?.render ? summation.render(tableFullData) : getCellValue(row, dataIndex);
                     return `<td>${index === 0 && text === '' ? config.summaryText() : text}</td>`;
                   })
                   .join('')}</tr>`

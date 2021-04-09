@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-03 14:22:38
+ * @Last Modified time: 2021-04-07 12:29:46
  */
 import baseProps from './props';
 import Store from '../store';
@@ -431,12 +431,11 @@ export default {
       scrollX,
       scrollY,
       scrollYLoad,
+      isFetch,
       isPingLeft,
       isPingRight,
       leftFixedColumns,
       rightFixedColumns,
-      fetch,
-      fetchParams,
       pagination,
       paginationConfig,
       total,
@@ -517,15 +516,7 @@ export default {
           props: {
             tableColumns,
             flattenColumns,
-            fileName: exportExcel.fileName,
-            fetch: !!fetch
-              ? {
-                  api: fetch.api,
-                  params: fetchParams,
-                  dataKey: fetch.dataKey,
-                  total
-                }
-              : null
+            fileName: exportExcel.fileName
           }
         }
       : null;
@@ -556,7 +547,7 @@ export default {
             {/* 全屏 */}
             {showFullScreen && <FullScreen />}
             {/* 刷新 */}
-            {showRefresh && !!fetch && <Reload />}
+            {showRefresh && isFetch && <Reload />}
             {/* 打印 */}
             {tablePrint && <PrintTable {...printProps} />}
             {/* 导出 */}

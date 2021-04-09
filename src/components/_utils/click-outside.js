@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-07-01 11:27:39
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-31 16:48:43
+ * @Last Modified time: 2021-04-08 18:00:33
  */
 import { on } from './tool';
 
@@ -11,17 +11,6 @@ const ctx = '__clickOutsideContext__';
 
 let startClick;
 let seed = 0;
-
-const containsFn = (cls, el) => {
-  let node = el;
-  while (node && node !== document) {
-    if (node.classList.contains(cls)) {
-      return true;
-    }
-    node = node.parentNode;
-  }
-  return false;
-};
 
 on(document, 'mousedown', ev => (startClick = ev));
 on(document, 'mouseup', ev => nodeList.forEach(node => node[ctx].documentHandler(ev, startClick)));
@@ -36,8 +25,7 @@ const createDocumentHandler = (el, binding, vnode) => {
       el.contains(mouseup.target) ||
       el.contains(mousedown.target) ||
       el === mouseup.target ||
-      (vnode.context.popperElm && (vnode.context.popperElm.contains(mouseup.target) || vnode.context.popperElm.contains(mousedown.target))) ||
-      (vnode.context.popperElmCls && (containsFn(vnode.context.popperElmCls, mouseup.target) || containsFn(vnode.context.popperElmCls, mousedown.target)))
+      (vnode.context.popperElm && (vnode.context.popperElm.contains(mouseup.target) || vnode.context.popperElm.contains(mousedown.target)))
     )
       return;
     if (binding.expression && el[ctx].methodName && vnode.context[el[ctx].methodName]) {

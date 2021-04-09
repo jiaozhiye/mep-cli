@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:15:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-24 09:37:04
+ * @Last Modified time: 2021-04-08 08:40:06
  */
 export default {
   table: {
@@ -59,8 +59,17 @@ export default {
       cancelFull: '取消全屏'
     },
     export: {
-      fileName: '导出数据',
-      text: '导出'
+      text: '导出',
+      closeButton: '关闭',
+      settingTitle: '导出设置',
+      fileName: '文件名',
+      fileType: '文件类型',
+      sheetName: '标题',
+      all: '全部',
+      selected: '选中',
+      custom: '自定义',
+      footSummation: '底部合计',
+      useStyle: '使用样式'
     },
     print: {
       text: '打印'

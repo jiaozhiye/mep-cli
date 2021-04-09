@@ -2,12 +2,12 @@
  * @Author: 焦质晔
  * @Date: 2020-07-06 08:30:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-06 08:43:35
+ * @Last Modified time: 2021-04-08 18:10:37
  */
 import Popper from './popper.js';
 import PropTypes from '../../../_utils/vue-types';
 import clickOutside from '../../../_utils/click-outside';
-import { on, off } from '../../../_utils/tool';
+import { on, off, getParentNode } from '../../../_utils/tool';
 
 export default {
   name: 'Popper',
@@ -81,7 +81,6 @@ export default {
     this.referenceElm = this.reference || this.$slots.reference[0].elm;
     this.popper = this.$slots.default[0].elm;
     this.popperElm = this.popper;
-    this.popperElmCls = 'el-picker-panel';
     // 事件绑定
     switch (this.trigger) {
       case 'clickToOpen':
@@ -240,7 +239,12 @@ export default {
   render() {
     const { transition: transitionName, disabled, showPopper, rootClass, containerStyle, $slots } = this;
     return (
-      <span v-clickOutside={this.doClose}>
+      <span
+        v-clickOutside={($down, $up) => {
+          if (!!getParentNode($up, 'table-filterable__popper')) return;
+          this.doClose();
+        }}
+      >
         <transition name={transitionName} duration={200} onAfterLeave={this.doDestroy}>
           <span ref="popper" v-show={!disabled && showPopper} class={rootClass} style={containerStyle}>
             {$slots[`default`]}

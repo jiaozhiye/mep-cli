@@ -2,33 +2,34 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-03 15:00:52
+ * @Last Modified time: 2021-04-08 16:48:16
  */
 import dayjs from 'dayjs';
-import { isFunction } from 'lodash';
-
+import { get, cloneDeep, isFunction } from 'lodash';
 import PropTypes from '../../../_utils/vue-types';
-import JsonToExcel from '../../../JsonToExcel';
-import ExcellentExport from './tableToExcel';
+
+import { getCellValue, setCellValue, convertToRows, filterTableColumns } from '../utils';
 import { download } from '../../../_utils/tool';
+import { getConfig } from '../../../_utils/globle-config';
 
 import config from '../config';
 import Locale from '../locale/mixin';
-import { getConfig } from '../../../_utils/globle-config';
-import { getCellValue, setCellValue, convertToRows, filterTableColumns } from '../utils';
+import ExportMixin from './mixin';
+import BaseDialog from '../../../BaseDialog';
+import ExportSetting from './setting';
 
 export default {
   name: 'Export',
-  mixins: [Locale],
+  mixins: [ExportMixin, Locale],
   props: {
     tableColumns: PropTypes.array,
     flattenColumns: PropTypes.array,
-    fileName: PropTypes.string,
-    fetch: PropTypes.object
+    fileName: PropTypes.string
   },
   inject: ['$$table'],
   data() {
     return {
+      visible: false,
       exporting: false
     };
   },
@@ -42,13 +43,6 @@ export default {
     exportFetch() {
       return this.$$table.exportExcel.fetch ?? null;
     },
-    fields() {
-      const target = {};
-      this.flatColumns.forEach(x => {
-        target[x.title] = x.dataIndex;
-      });
-      return target;
-    },
     disabledState() {
       return !this.$$table.total || this.exporting;
     }
@@ -59,27 +53,51 @@ export default {
         let item = { ...x, index: i, pageIndex: i };
         this.flatColumns.forEach((column, index) => {
           const { dataIndex } = column;
-          setCellValue(item, dataIndex, this.renderCell(item, item.index, column, index));
+          if (dataIndex === 'index' || dataIndex === 'pageIndex') return;
+          setCellValue(item, dataIndex, getCellValue(item, dataIndex));
         });
         return item;
       });
     },
-    createFetchParams(fetch) {
-      if (!fetch) {
-        return null;
-      }
-      const { api, dataKey, total } = fetch;
-      return {
-        fetch: {
-          api,
-          params: {
-            ...this.$$table.fetchParams,
-            currentPage: 1,
-            pageSize: total
-          },
-          dataKey
+    async getTableData(options) {
+      const { fileType, exportType, startIndex = 1, endIndex } = options;
+      const { fetch, fetchParams, total, tableFullData, selectionKeys, getRowKey } = this.$$table;
+      let tableList = [];
+
+      if (!!fetch) {
+        this.exporting = !0;
+        const { api, dataKey } = fetch;
+        if (process.env.MOCK_DATA === 'true') {
+          const { data } = cloneDeep(require('@/mock/tableData').default);
+          tableList = this.createDataList(data.items);
+        } else {
+          try {
+            const res = await api({ ...fetchParams, currentPage: 1, pageSize: total });
+            if (res.code === 200) {
+              tableList = this.createDataList(Array.isArray(res.data) ? res.data : get(res.data, dataKey) ?? []);
+            }
+          } catch (err) {}
         }
-      };
+
+        this.exporting = !1;
+      } else {
+        tableList = tableFullData;
+      }
+
+      if (exportType === 'selected') {
+        tableList = tableList.filter(row => selectionKeys.includes(getRowKey(row, row.index)));
+      }
+      if (exportType === 'custom') {
+        tableList = tableList.slice(startIndex - 1, endIndex ? endIndex : undefined);
+      }
+      if (fileType === 'xlsx') {
+        this.exportXLSX(options, tableList);
+      }
+      if (fileType === 'csv') {
+        this.exportCSV(options, this._toTable(options, convertToRows(this.headColumns), this.flatColumns, tableList));
+      }
+
+      this.recordExportLog();
     },
     async exportHandle(fileName) {
       const { fetchParams } = this.$$table;
@@ -100,31 +118,39 @@ export default {
         });
         if (res.data) {
           download(res.data, fileName);
-          this.recordExportInfo();
+          this.recordExportLog();
         }
       } catch (err) {}
       this.exporting = !1;
     },
-    localExportHandle(fileName) {
-      const tableHTML = this._toTable(convertToRows(this.headColumns), this.flatColumns);
-      const blob = ExcellentExport.excel(tableHTML);
-      download(blob, fileName);
-      this.recordExportInfo();
-    },
-    _toTable(columnRows, flatColumns) {
-      const { tableFullData, showHeader, showFooter, $refs } = this.$$table;
+    _toTable(options, columnRows, flatColumns, dataList) {
+      const { footSummation } = options;
+      const { showHeader, showFooter, $refs } = this.$$table;
       const summationRows = flatColumns.some(x => !!x.summation) ? $refs[`tableFooter`].summationRows : [];
       let html = `<table width="100%" border="0" cellspacing="0" cellpadding="0">`;
       html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (showHeader) {
         html += [
           `<thead>`,
-          columnRows.map(columns => `<tr>${columns.map(column => `<th colspan="${column.colSpan}" rowspan="${column.rowSpan}">${column.title}</th>`).join('')}</tr>`).join(''),
+          columnRows
+            .map(
+              columns =>
+                `<tr>${columns
+                  .map(column => {
+                    const { rowSpan, colSpan } = column;
+                    if (colSpan === 0) {
+                      return null;
+                    }
+                    return `<th colspan="${colSpan}" rowspan="${rowSpan}">${column.title}</th>`;
+                  })
+                  .join('')}</tr>`
+            )
+            .join(''),
           `</thead>`
         ].join('');
       }
-      if (tableFullData.length) {
-        html += `<tbody>${tableFullData
+      if (dataList.length) {
+        html += `<tbody>${dataList
           .map(
             row =>
               `<tr>${flatColumns
@@ -139,7 +165,7 @@ export default {
           )
           .join('')}</tbody>`;
       }
-      if (showFooter) {
+      if (showFooter && footSummation) {
         html += [
           `<tfoot>`,
           summationRows
@@ -147,7 +173,8 @@ export default {
               row =>
                 `<tr>${flatColumns
                   .map((column, index) => {
-                    let text = getCellValue(row, column.dataIndex);
+                    const { dataIndex, summation } = column;
+                    const text = summation?.render ? summation.render(dataList) : getCellValue(row, dataIndex);
                     return `<td>${index === 0 && text === '' ? config.summaryText() : text}</td>`;
                   })
                   .join('')}</tr>`
@@ -171,7 +198,7 @@ export default {
       }
       return result;
     },
-    recordExportInfo() {
+    recordExportLog() {
       if (process.env.MOCK_DATA === 'true') return;
       const fetchFn = getConfig('recordExportConfigApi');
       if (!fetchFn) return;
@@ -181,24 +208,26 @@ export default {
     }
   },
   render() {
-    const { fields, fileName, fetch, exportFetch, disabledState } = this;
+    const { visible, fileName, exportFetch, disabledState } = this;
     const exportFileName = fileName ?? `${dayjs().format('YYYYMMDDHHmmss')}.xlsx`;
     const exportFileType = exportFileName.slice(exportFileName.lastIndexOf('.') + 1).toLowerCase();
     const wrapProps = {
       props: {
-        initialValue: this.$$table.tableFullData,
-        fields,
-        fileType: exportFileType,
-        fileName: exportFileName,
-        ...this.createFetchParams(fetch),
-        disabled: disabledState,
-        formatHandle: this.createDataList
+        visible,
+        title: this.t('table.export.settingTitle'),
+        showFullScreen: false,
+        width: '600px',
+        destroyOnClose: true,
+        containerStyle: { height: 'calc(100% - 52px)', paddingBottom: '52px' }
       },
       on: {
-        success: () => {
-          this.recordExportInfo();
-        }
+        'update:visible': val => (this.visible = val)
       }
+    };
+    const settingProps = {
+      fileName: exportFileName.slice(0, exportFileName.lastIndexOf('.')),
+      fileType: exportFileType,
+      useStyle: this.$$table.exportExcel.cellStyle ? 1 : 0
     };
     const cls = [
       `v-export--wrapper`,
@@ -209,17 +238,16 @@ export default {
     ];
     return (
       <span class={cls} title={this.t('table.export.text')}>
-        {exportFetch || exportFileType === 'xls' ? (
-          <i
-            class="iconfont icon-export-excel"
-            onClick={() => {
-              if (disabledState) return;
-              exportFetch ? this.exportHandle(exportFileName) : this.localExportHandle(exportFileName);
-            }}
-          />
-        ) : (
-          <JsonToExcel type="text" {...wrapProps} />
-        )}
+        <i
+          class="iconfont icon-export-excel"
+          onClick={() => {
+            if (disabledState) return;
+            exportFetch ? this.exportHandle(exportFileName) : (this.visible = !0);
+          }}
+        />
+        <BaseDialog {...wrapProps}>
+          <ExportSetting defaultValue={settingProps} onClose={() => (this.visible = !1)} onChange={data => this.getTableData(data)} />
+        </BaseDialog>
       </span>
     );
   }

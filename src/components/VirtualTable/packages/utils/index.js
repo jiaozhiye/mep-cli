@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-24 14:23:59
+ * @Last Modified time: 2021-04-07 17:17:37
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { isValidElement, isStringElement, filterEmpty } from '../../../_utils/props-util';
@@ -180,7 +180,7 @@ export const convertToRows = originColumns => {
       });
       column.colSpan = colSpan;
     } else {
-      column.colSpan = 1;
+      column.colSpan = column.colSpan ?? 1;
     }
   };
 

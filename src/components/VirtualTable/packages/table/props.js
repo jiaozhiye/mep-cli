@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-24 16:25:53
+ * @Last Modified time: 2021-04-07 17:16:54
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -11,6 +11,7 @@ const columnItem = {
   title: PropTypes.any.isRequired,
   width: PropTypes.number, // 列宽度/最小宽度
   fixed: PropTypes.oneOf(['left', 'right']), // 列固定（IE 下无效）
+  colSpan: PropTypes.number, // 表头列合并,设置为 0 时，不渲染
   align: PropTypes.oneOf(['left', 'center', 'right']), // 设置列的对齐方式
   theadAlign: PropTypes.oneOf(['left', 'center', 'right']), // 设置表头的对齐方式
   hidden: PropTypes.bool, // 是否隐藏列
@@ -207,7 +208,8 @@ export default {
     fetch: PropTypes.shape({
       api: PropTypes.func.isRequired, // api 接口
       params: PropTypes.object // 接口参数
-    })
+    }),
+    cellStyle: PropTypes.bool // 是否给单元格添加样式
   }),
   // 表格打印
   tablePrint: PropTypes.shape({
