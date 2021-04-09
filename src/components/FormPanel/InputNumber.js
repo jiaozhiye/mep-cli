@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-11 08:19:36
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-14 15:13:21
+ * @Last Modified time: 2021-04-09 10:03:48
  */
 import PropTypes from '../_utils/vue-types';
 import Emitter from '../_utils/mixins/emitter';
@@ -61,6 +61,9 @@ export default {
       this.$emit('input', val);
       this.$emit('change', val);
       this.dispatch('ElFormItem', 'el.form.change', [val]);
+    },
+    emitInputHandle(val) {
+      this.$emit('valueInput', val !== '' ? Number(val) : undefined);
     },
     increaseHandle() {
       if (this.maxDisabled) return;
@@ -127,6 +130,7 @@ export default {
             if (precision > 0 && chunks.length > 1 && chunks[1].length > precision) return;
             // 设置数据值
             this.currentValue = val;
+            this.emitInputHandle(val);
           }}
           validateEvent={false}
           placeholder={placeholder}

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-01 17:13:28
+ * @Last Modified time: 2021-04-09 10:04:00
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -599,7 +599,7 @@ export default {
         disabled,
         onChange = noop
       } = option;
-      const { maxlength, min = 0, max, step, precision, controls = !1, onEnter = noop } = options;
+      const { maxlength, min = 0, max, step, precision, controls = !1, onInput = noop, onEnter = noop } = options;
       this.setViewValue(fieldName, form[fieldName]);
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
@@ -618,6 +618,7 @@ export default {
             readonly={readonly}
             disabled={disabled}
             style={{ ...style }}
+            onValueInput={onInput}
             onChange={onChange}
             nativeOnKeydown={ev => {
               if (ev.keyCode !== 13) return;

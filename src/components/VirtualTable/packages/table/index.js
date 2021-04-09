@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-07 12:29:46
+ * @Last Modified time: 2021-04-09 09:57:22
  */
 import baseProps from './props';
 import Store from '../store';
@@ -471,6 +471,13 @@ export default {
         [`virtual--y`]: scrollYLoad
       }
     ];
+    const vBottomCls = [
+      'v-table-bottom',
+      {
+        [`is-pager`]: showPagination,
+        [`is-alert`]: showAlert && alertPosition === 'bottom'
+      }
+    ];
     const tableHeaderProps = {
       ref: 'tableHeader',
       props: {
@@ -580,7 +587,7 @@ export default {
           </div>
         </SpinLoading>
         {/* 分页 */}
-        <div class="v-table-bottom">
+        <div class={vBottomCls}>
           {showAlert && alertPosition === 'bottom' && <Alert {...alertProps} />}
           {showPagination && <Pager {...pagerProps} />}
         </div>

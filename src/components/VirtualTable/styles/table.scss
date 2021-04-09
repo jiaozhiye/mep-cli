@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-02 11:57:32
+ * @Last Modified time: 2021-04-09 09:47:06
  */
 @import './common.scss';
 
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  & > :not(.v-pager) {
+  &.is-alert:not(.is-pager) {
     margin-top: 8px;
   }
 }
