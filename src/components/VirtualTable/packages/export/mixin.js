@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 15:18:39
+ * @Last Modified time: 2021-04-10 09:29:26
  */
-import ExcelJS from 'exceljs/lib/exceljs.browser.js';
+import ExcelJS from 'exceljs/dist/exceljs.min';
 import { isFunction } from 'lodash';
 import { getCellValue, convertToRows, deepFindColumn } from '../utils';
 import { download } from '../../../_utils/tool';
@@ -100,7 +100,7 @@ const exportMixin = {
       });
 
       if (showHeader) {
-        // 处理分组
+        // 表头分组
         if (isGroup) {
           colGroups.forEach((cols, rowIndex) => {
             const groupHead = {};
@@ -173,9 +173,11 @@ const exportMixin = {
         const { fileName, sheetName, useStyle } = options;
         const workbook = new ExcelJS.Workbook();
         const sheet = workbook.addWorksheet(sheetName);
+        let lastRowNumber = 0;
         sheet.columns = sheetCols;
         if (showHeader) {
-          sheet.addRows(colList).forEach(excelRow => {
+          sheet.addRows(colList);
+          sheet.eachRow(excelRow => {
             if (useStyle) {
               setExcelRowHeight(excelRow, rowHeight);
             }
@@ -204,8 +206,14 @@ const exportMixin = {
               }
             });
           });
+          lastRowNumber = sheet._lastRowNumber;
         }
-        sheet.addRows(rowList).forEach(excelRow => {
+        sheet.addRows(rowList);
+        if (showFooter) {
+          sheet.addRows(footList);
+        }
+        sheet.eachRow((excelRow, rowNumber) => {
+          if (rowNumber <= lastRowNumber) return;
           if (useStyle) {
             setExcelRowHeight(excelRow, rowHeight);
           }
@@ -226,29 +234,6 @@ const exportMixin = {
             }
           });
         });
-        if (showFooter) {
-          sheet.addRows(footList).forEach(excelRow => {
-            if (useStyle) {
-              setExcelRowHeight(excelRow, rowHeight);
-            }
-            excelRow.eachCell(excelCell => {
-              const excelCol = sheet.getColumn(excelCell.col);
-              const column = deepFindColumn(headColumns, excelCol.key);
-              const { align } = column;
-              setExcelCellStyle(excelCell, align);
-              if (useStyle) {
-                Object.assign(excelCell, {
-                  font: {
-                    color: {
-                      argb: defaultCellFontColor
-                    }
-                  },
-                  border: getDefaultBorderStyle()
-                });
-              }
-            });
-          });
-        }
         sheetMerges.forEach(({ s, e }) => {
           sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1);
         });
