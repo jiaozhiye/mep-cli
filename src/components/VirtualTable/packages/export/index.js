@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-12 15:03:13
+ * @Last Modified time: 2021-04-12 16:03:54
  */
 import dayjs from 'dayjs';
 import { get, cloneDeep, isFunction } from 'lodash';
@@ -187,8 +187,12 @@ export default {
       return html;
     },
     renderCell(row, rowIndex, column, columnIndex) {
-      const { dataIndex, extraRender } = column;
+      const { dataIndex, precision, formatType, extraRender } = column;
       let result = this.$$table.$$tableBody.renderCellTitle(column, row, rowIndex, columnIndex);
+      // 处理 number 类型
+      if (precision >= 0 && !formatType && result !== '') {
+        result = Number(result);
+      }
       if (isFunction(extraRender)) {
         result = extraRender(getCellValue(row, dataIndex), row, column, rowIndex, columnIndex);
       }
