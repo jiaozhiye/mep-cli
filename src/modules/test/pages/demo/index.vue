@@ -240,6 +240,7 @@ export default {
                 dataKey: 'items'
               }
             },
+            // height: '500px',
             fieldAliasMap: () => {
               return { b: 'date', code: 'date', extra: 'date' };
             },

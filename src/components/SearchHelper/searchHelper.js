@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-03 14:23:03
+ * @Last Modified time: 2021-04-12 09:10:44
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -278,8 +278,9 @@ export default {
         default: 52,
         small: 48
       };
-      const containerHeight = window.innerHeight - getParentNode(this.$el, 'el-dialog')?.offsetTop * 2 - 50 - ftHeight[this.currentSize];
-      this.height = containerHeight - this.$topFilter.$el.offsetHeight - 94;
+      this.$el.parentNode.style.paddingBottom = ftHeight[this.currentSize] + 'px';
+      const containerHeight = window.innerHeight - getParentNode(this.$el, 'el-dialog')?.offsetTop * 2 - ftHeight[this.currentSize] * 2;
+      this.height = containerHeight - this.$topFilter.$el.offsetHeight - 90;
     },
     resizeEventHandle() {
       this.calcTableHeight();
@@ -323,7 +324,8 @@ export default {
             borderTop: '1px solid #d9d9d9',
             padding: '10px 15px',
             background: '#fff',
-            textAlign: 'right'
+            textAlign: 'right',
+            boxSizing: 'border-box'
           }}
         >
           <el-button onClick={() => this.cancelHandle()}>{this.t('searchHelper.close')}</el-button>
