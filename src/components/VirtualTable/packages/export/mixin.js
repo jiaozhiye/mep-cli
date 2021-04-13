@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-10 09:29:26
+ * @Last Modified time: 2021-04-13 14:47:32
  */
 import ExcelJS from 'exceljs/dist/exceljs.min';
 import { isFunction } from 'lodash';
@@ -72,14 +72,14 @@ const exportMixin = {
     exportXLSX(options, dataList) {
       const { footSummation } = options;
       const {
-        spanMethod,
+        spanMethod: bodyMergeMethod,
         showHeader,
         isGroup,
         showFooter,
         scrollYStore: { rowHeight },
+        exportExcel: { spanMethod: exportMergeMethod },
         $$tableBody
       } = this.$$table;
-      const { getSpan } = $$tableBody;
       const { flatColumns: columns, headColumns } = this;
       const colGroups = convertToRows(headColumns);
       const colList = [];
@@ -87,6 +87,22 @@ const exportMixin = {
       const sheetCols = [];
       const sheetMerges = [];
       let beforeRowCount = 0;
+
+      const getSpan = (row, column, rowIndex, columnIndex) => {
+        let rowspan = 1;
+        let colspan = 1;
+        if (isFunction(exportMergeMethod)) {
+          const result = exportMergeMethod({ row, column, rowIndex, columnIndex, tableData: $$tableBody.tableData });
+          if (Array.isArray(result)) {
+            rowspan = result[0];
+            colspan = result[1];
+          } else if (isObject(result)) {
+            rowspan = result.rowspan;
+            colspan = result.colspan;
+          }
+        }
+        return { rowspan, colspan };
+      };
 
       // 处理表头
       const colHead = {};
@@ -140,8 +156,8 @@ const exportMixin = {
         const colBody = {};
         columns.forEach((column, columnIndex) => {
           // 处理合并
-          if (isFunction(spanMethod)) {
-            const { rowspan, colspan } = getSpan(row, column, rowIndex, columnIndex);
+          if (isFunction(bodyMergeMethod) || isFunction(exportMergeMethod)) {
+            const { rowspan, colspan } = bodyMergeMethod ? $$tableBody.getSpan(row, column, rowIndex, columnIndex) : getSpan(row, column, rowIndex, columnIndex);
             if (colspan > 1 || rowspan > 1) {
               sheetMerges.push({
                 s: { r: rowIndex + beforeRowCount, c: columnIndex },
