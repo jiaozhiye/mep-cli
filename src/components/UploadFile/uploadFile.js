@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-25 10:33:04
+ * @Last Modified time: 2021-04-13 08:58:35
  **/
 import axios from 'axios';
 import { Message } from 'element-ui';
@@ -74,12 +74,19 @@ export default {
     removeFileHandle(file, fileList) {
       this.fileList = fileList;
     },
+    clearFiles() {
+      this.$refs[`upload`].clearFiles();
+    },
     successHandle(res, file, fileList) {
       if (res.code === 200) {
         this.fileList = [...this.fileList, { name: file.name, url: res.data || '' }];
         this.$emit('success', res.data);
       } else {
+        this.clearFiles();
         this.$message.error(res.msg);
+      }
+      if (this.isOnlyButton) {
+        this.removeFileHandle(null, []);
       }
       this.stopLoading();
     },

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-02 08:46:33
+ * @Last Modified time: 2021-04-13 09:00:54
  **/
 import axios from 'axios';
 import PropTypes from '../_utils/vue-types';
@@ -91,14 +91,12 @@ export default {
           const res = await this.remove.api({ ...this.fileList[index], ...this.remove.params });
           if (res.code === 200) {
             this.fileList.splice(index, 1);
-            this.clearFiles();
             this.remove?.callback && this.remove.callback();
             this.$message.success(this.t('confirm.success'));
           }
         } catch (err) {}
       } else {
         this.fileList.splice(index, 1);
-        this.clearFiles();
       }
     },
     changeHandler(file, files) {
@@ -158,6 +156,9 @@ export default {
         if (res.code === 200) {
           this.fileList.push({ name: this.file.name, url: res.data || '' });
           this.$emit('success', res.data);
+        } else {
+          this.clearFiles();
+          this.$message.error(res.msg);
         }
       } catch (err) {
         this.clearFiles();
