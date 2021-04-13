@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-13 08:58:35
+ * @Last Modified time: 2021-04-13 11:40:51
  **/
 import axios from 'axios';
 import { Message } from 'element-ui';
@@ -84,9 +84,6 @@ export default {
       } else {
         this.clearFiles();
         this.$message.error(res.msg);
-      }
-      if (this.isOnlyButton) {
-        this.removeFileHandle(null, []);
       }
       this.stopLoading();
     },

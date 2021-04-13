@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-09 10:04:00
+ * @Last Modified time: 2021-04-13 11:12:04
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -52,6 +52,7 @@ export default {
   },
   data() {
     this.arrayTypes = ['RANGE_DATE', 'EP_RANGE_DATE', 'RANGE_TIME', 'RANGE_TIME_SELECT', 'RANGE_INPUT', 'RANGE_INPUT_NUMBER', 'MULTIPLE_SELECT', 'MULTIPLE_CHECKBOX', 'UPLOAD_IMG', 'UPLOAD_FILE'];
+    this.sh_changed = {};
     return {
       form: {}, // 表单的值
       desc: {}, // 描述信息
@@ -331,7 +332,7 @@ export default {
           if (aliasKeys.includes(fieldName)) {
             shChangeHandle(form[fieldName]);
           }
-          this[`__${fieldName}_is_change`] = false;
+          this.sh_changed[fieldName] = false;
         }
         const { closed = noop } = searchHelper;
         closed(data);
@@ -457,10 +458,10 @@ export default {
               'update:visible': val => (this.visible[fieldName] = val),
               close: () => {
                 this[`__${fieldName}_deriveValue`] = {};
-                if (this[`__${fieldName}_is_change`]) {
+                if (this.sh_changed[fieldName]) {
                   clearSearchHelperValue();
                 }
-                this[`__${fieldName}_is_change`] = false;
+                this.sh_changed[fieldName] = false;
               }
             }
           }
@@ -507,7 +508,7 @@ export default {
               if (noInput) return;
               form[fieldName] = !toUpper ? val : val.toUpperCase();
               onInput(val);
-              isSearchHelper && (this[`__${fieldName}_is_change`] = true);
+              isSearchHelper && (this.sh_changed[fieldName] = true);
             }}
             title={form[fieldName]}
             minlength={minlength}
@@ -2106,7 +2107,7 @@ export default {
       this.excuteFormValue(this.form);
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((valid, fields) => {
-          if (!valid) {
+          if (!valid || Object.values(this.sh_changed).some(bool => bool)) {
             reject(fields);
           } else {
             resolve(this.form);
