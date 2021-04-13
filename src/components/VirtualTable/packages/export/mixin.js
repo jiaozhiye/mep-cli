@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-13 14:47:32
+ * @Last Modified time: 2021-04-13 16:14:52
  */
 import ExcelJS from 'exceljs/dist/exceljs.min';
-import { isFunction } from 'lodash';
+import { isFunction, isObject } from 'lodash';
 import { getCellValue, convertToRows, deepFindColumn } from '../utils';
 import { download } from '../../../_utils/tool';
 
@@ -88,11 +88,12 @@ const exportMixin = {
       const sheetMerges = [];
       let beforeRowCount = 0;
 
-      const getSpan = (row, column, rowIndex, columnIndex) => {
+      const getSpan = (row, column, rowIndex, columnIndex, tableData) => {
         let rowspan = 1;
         let colspan = 1;
-        if (isFunction(exportMergeMethod)) {
-          const result = exportMergeMethod({ row, column, rowIndex, columnIndex, tableData: $$tableBody.tableData });
+        const fn = exportMergeMethod || bodyMergeMethod;
+        if (isFunction(fn)) {
+          const result = fn({ row, column, rowIndex, columnIndex, tableData });
           if (Array.isArray(result)) {
             rowspan = result[0];
             colspan = result[1];
@@ -157,7 +158,7 @@ const exportMixin = {
         columns.forEach((column, columnIndex) => {
           // 处理合并
           if (isFunction(bodyMergeMethod) || isFunction(exportMergeMethod)) {
-            const { rowspan, colspan } = bodyMergeMethod ? $$tableBody.getSpan(row, column, rowIndex, columnIndex) : getSpan(row, column, rowIndex, columnIndex);
+            const { rowspan, colspan } = getSpan(row, column, rowIndex, columnIndex, dataList);
             if (colspan > 1 || rowspan > 1) {
               sheetMerges.push({
                 s: { r: rowIndex + beforeRowCount, c: columnIndex },
