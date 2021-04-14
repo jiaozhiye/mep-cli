@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-12 13:07:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-12 09:10:44
+ * @Last Modified time: 2021-04-14 11:06:11
  */
 import addEventListener from 'add-dom-event-listener';
 import Spin from '../Spin';
@@ -86,7 +86,7 @@ export default {
   },
   mounted() {
     this.resizeEvent = addEventListener(window, 'resize', debounce(this.resizeEventHandle, 0));
-    this.$nextTick(() => this.resizeEventHandle());
+    setTimeout(() => this.resizeEventHandle());
   },
   destroyed() {
     this.resizeEvent && this.resizeEvent.remove();
