@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-07 17:16:33
+ * @Last Modified time: 2021-04-14 11:29:21
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -140,13 +140,13 @@ export default {
     },
     renderCell(column) {
       const { dataIndex, type, sorter, title } = column;
-      const { selectionKeys } = this.$$table;
+      const { selectionKeys, rowSelection } = this.$$table;
       if (dataIndex === '__selection__' && type === 'checkbox') {
-        return (
+        return !rowSelection?.hideSelectAll ? (
           <div class="v-cell">
             <AllSelection selectionKeys={selectionKeys} />
           </div>
-        );
+        ) : null;
       }
       const vNodes = [];
       vNodes.push(

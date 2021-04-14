@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-13 14:32:11
+ * @Last Modified time: 2021-04-14 11:23:03
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -155,6 +155,7 @@ export default {
   rowSelection: PropTypes.shape({
     type: PropTypes.oneOf(['checkbox', 'radio']).isRequired, // 选择类型
     selectedRowKeys: PropTypes.array, // 选中项的 key 数组，支持动态赋值
+    hideSelectAll: PropTypes.bool.def(false), // 隐藏表头全选勾选框
     checkStrictly: PropTypes.bool.def(true), // true -> 节点选择完全受控（父子数据选中状态不再关联）
     defaultSelectFirstRow: PropTypes.bool.def(false), // 是否默认选中第一行（单选时生效）
     disabled: PropTypes.func, // 是否允许行选择，参数：row，返回值 bool

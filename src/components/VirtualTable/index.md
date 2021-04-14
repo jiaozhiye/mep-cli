@@ -241,8 +241,9 @@
 | --------------------- | ------------------------------------------ | -------------------------------------- | ------ |
 | type                  | 选择类型，必要参数                         | checkbox \| radio                      | -      |
 | selectedRowKeys       | 选中项的 rowKey 数组                       | array                                  | -      |
+| hideSelectAll         | 隐藏表头全选勾选框                         | boolean                                | -      |
 | checkStrictly         | 选择列完全受控（父子数据选中状态不再关联） | boolean                                | true   |
-| defaultSelectFirstRow | 是否默认选中第一行（单选时生效）           | boolean                                | false  |
+| defaultSelectFirstRow | 是否默认选中第一行（单选时生效）           | boolean                                | -      |
 | disabled              | 是否允许行选择                             | Function(row) => boolean               | -      |
 | onChange              | 选中项发生变化时触发                       | Function(selectionKeys, selectionRows) | -      |
 
