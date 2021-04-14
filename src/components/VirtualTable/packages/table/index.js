@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-09 09:57:22
+ * @Last Modified time: 2021-04-14 09:16:55
  */
 import baseProps from './props';
 import Store from '../store';
@@ -261,8 +261,8 @@ export default {
     }
   },
   watch: {
-    dataSource(next, prev) {
-      if (isEqual(next, prev)) return;
+    dataSource(next) {
+      if (isEqual(next, this.tableFullData)) return;
       this.clearTableSorter();
       this.clearTableFilter();
       this.clearSuperSearch();
