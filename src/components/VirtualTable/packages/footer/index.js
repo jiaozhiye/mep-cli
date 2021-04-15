@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-24 16:24:29
+ * @Last Modified time: 2021-04-15 09:16:49
  */
 import { formatNumber, setCellValue, getCellValue } from '../utils';
 import config from '../config';
@@ -23,11 +23,13 @@ export default {
         const {
           dataIndex,
           precision,
-          summation: { sumBySelection, unit = '', onChange = noop }
+          summation: { sumBySelection, displayWhenNotSelect, unit = '', onChange = noop }
         } = column;
+        // 未选择时，显示合计结果
+        const notSelectAndDisplay = !selectionKeys.length && displayWhenNotSelect;
         let values = [];
         // 可选择列动态合计
-        if (!sumBySelection) {
+        if (!sumBySelection || notSelectAndDisplay) {
           values = tableFullData.map(x => Number(getCellValue(x, dataIndex)));
         } else {
           values = selectionKeys.map(x => {
@@ -44,7 +46,8 @@ export default {
           return prev;
         }, 0);
         // 服务端合计
-        if (Object.keys(summaries).includes(dataIndex)) {
+        const isServerSummation = Object.keys(summaries).includes(dataIndex);
+        if (isServerSummation && (!sumBySelection || notSelectAndDisplay)) {
           result = getCellValue(summaries, dataIndex);
         }
         result = precision >= 0 ? result.toFixed(precision) : result;

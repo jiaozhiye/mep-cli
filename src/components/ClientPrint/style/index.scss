@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-02 16:18:17
+ * @Last Modified time: 2021-04-15 14:28:43
  */
 @import '../../style/index.scss';
 
@@ -19,6 +19,7 @@ $prefix-vpcls: '#{$v-prefix}-cviewport--wrapper';
   margin: -$padding-base;
   height: calc(100% + 20px);
   min-height: calc(80vh - 48px);
+  position: relative;
   .outer {
     display: flex;
     flex-direction: column;
@@ -76,6 +77,22 @@ $prefix-vpcls: '#{$v-prefix}-cviewport--wrapper';
         font-style: normal;
         margin-left: 10px;
       }
+    }
+  }
+  .progress-masker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.65);
+    z-index: 9999;
+    .el-progress {
+      width: 240px;
+      position: absolute;
+      left: 50%;
+      margin-left: -120px;
+      top: 48%;
     }
   }
   // small

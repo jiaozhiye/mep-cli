@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-01 13:51:33
+ * @Last Modified time: 2021-04-15 15:23:27
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import dayjs from 'dayjs';
@@ -117,11 +117,11 @@ export default {
       if (printerType === 'laser') {
         // 纵向
         if (setting.direction === 'vertical') {
-          LODOP.SET_PRINT_PAGESIZE(1, pageSize[0] * 10, pageSize[1] * 10, '');
+          LODOP.SET_PRINT_PAGESIZE(1);
         }
         // 横向
         if (setting.direction === 'horizontal') {
-          LODOP.SET_PRINT_PAGESIZE(2, pageSize[0] * 10, pageSize[1] * 10, '');
+          LODOP.SET_PRINT_PAGESIZE(2);
           LODOP.SET_SHOW_MODE('LANDSCAPE_DEFROTATED', 1);
         }
       }
@@ -144,6 +144,7 @@ export default {
       LODOP.On_Return = (TaskID, Value) => {
         this.dispatch('ClientPrint', 'print', Value);
         if (Value) {
+          this.closeProgress();
           closeOnPrinted && this.doClose();
         } else {
           this.$message.error(this.t('clientPrint.printError'));

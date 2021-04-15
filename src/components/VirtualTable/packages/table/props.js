@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-14 11:23:03
+ * @Last Modified time: 2021-04-15 09:04:09
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -44,6 +44,7 @@ const columnItem = {
   // 底部合计
   summation: PropTypes.shape({
     sumBySelection: PropTypes.bool, // 是否通过选择列合计
+    displayWhenNotSelect: PropTypes.bool, // 未选择时，显示合计结果
     dataKey: PropTypes.string, // 服务端合计的数据字段名(路径)
     unit: PropTypes.string, // 合计字段的单位
     render: PropTypes.func, // 自定义渲染方法

@@ -40,6 +40,7 @@ export default {
   mixins: [size],
   props: ['visible'],
   data() {
+    this.connecting = false;
     return {
       currentKey: '1',
       messageList: {
@@ -95,9 +96,20 @@ export default {
       let nDid = data.nDID ?? '';
       let userId = data.id ?? '';
       if (!nDid || !userId) return;
+      this.connecting = false;
       const socket = new w3cwebsocket(`${proto}//${address}/ws/socket/websocket/${nDid}/${userId}/pc`);
+      // onerror 和 onclose 可能会连续执行，通过防抖控制重连次数
       socket.onerror = () => {
         console.log('WebSocket Connection Error');
+        if (this.connecting) return;
+        setTimeout(() => this.createWebsocket(), 10 * 1000);
+        this.connecting = true;
+      };
+      socket.onclose = function() {
+        console.log('WebSocket Client Closed');
+        if (this.connecting) return;
+        setTimeout(() => this.createWebsocket(), 10 * 1000);
+        this.connecting = true;
       };
       socket.onopen = () => {
         console.log('WebSocket Client Connected');
@@ -110,13 +122,10 @@ export default {
         }
         sendNumber();
       };
-      socket.onclose = function() {
-        console.log('WebSocket Client Closed');
-      };
       socket.onmessage = ev => {
         if (typeof ev.data === 'string') {
           // console.log(`Received: `, JSON.parse(ev.data));
-          const data = JSON.parse(ev.data);
+          const data = ev.data ? JSON.parse(ev.data) : {};
           // 消息有更新
           if (Object.keys(data).includes('message')) {
             this.getMessageInfo();

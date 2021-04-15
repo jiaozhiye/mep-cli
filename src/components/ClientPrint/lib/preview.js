@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-06 19:54:01
+ * @Last Modified time: 2021-04-15 16:01:57
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
@@ -29,6 +29,7 @@ export default {
     };
   },
   data() {
+    this.timer = null;
     return {
       form: {
         printerName: -1,
@@ -52,6 +53,8 @@ export default {
       printPage: undefined,
       currentPage: 1,
       totalPage: 0,
+      progress: 0,
+      printing: !1,
       visible: !1
     };
   },
@@ -112,6 +115,9 @@ export default {
       }
     } catch (err) {}
   },
+  beforeDestroy() {
+    this.stopProgress();
+  },
   methods: {
     settingChange(val) {
       this.form.setting = val;
@@ -126,7 +132,30 @@ export default {
     exportClickHandle() {
       this.doExport(this.$$container.createExportHtml());
     },
+    startProgress() {
+      if (!this.preview) return;
+      this.printing = true;
+      this.progress = 0;
+      this.stopProgress();
+      this.timer = setInterval(() => {
+        if (this.progress >= 90) {
+          this.stopProgress();
+        } else {
+          this.progress += 5;
+        }
+      }, 250);
+    },
+    stopProgress() {
+      this.timer && clearInterval(this.timer);
+    },
+    closeProgress() {
+      if (!this.preview) return;
+      this.progress = 100;
+      this.stopProgress();
+      setTimeout(() => (this.printing = false), 500);
+    },
     async printClickHandle() {
+      this.startProgress();
       this.doPrint(this.$$container.createPrintHtml(this.printPage));
       // 存储配置信息
       try {
@@ -163,7 +192,7 @@ export default {
     }
   },
   render() {
-    const { form, preview, printerTypeItems, printerItems, currentPage, totalPage, visible, pageSize, dataSource, templateRender } = this;
+    const { form, preview, printerTypeItems, printerItems, currentPage, totalPage, visible, printing, progress, pageSize, dataSource, templateRender } = this;
     const prefixCls = this.getPrefixCls('cpreview--wrapper');
     const dialogProps = {
       props: {
@@ -263,6 +292,11 @@ export default {
         <BaseDialog {...dialogProps}>
           <PageSetting setting={form.setting} onChange={this.settingChange} onClose={val => (this.visible = val)} />
         </BaseDialog>
+        {printing && (
+          <div class="progress-masker">
+            <el-progress percentage={progress} />
+          </div>
+        )}
       </div>
     ) : (
       <Container ref="container" dataSource={dataSource} templateRender={templateRender} directPrint={!0} />

@@ -76,7 +76,7 @@ export default {
   components: { AddInfo },
   mixins: [dictionary, language, authority],
   data() {
-    this.selectedKeys = [];
+    this.selectedKeys = [1, 2];
     return {
       filterList: this.createTopFilterList(),
       filterDefaultValue: {},
@@ -153,7 +153,7 @@ export default {
     async printHandle3() {
       await sleep(1000);
       let res = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 50; i++) {
         res[i] = i;
       }
       this.templateRender = PrintTemplate;
@@ -548,6 +548,8 @@ export default {
             type: 'number'
           },
           summation: {
+            sumBySelection: true,
+            displayWhenNotSelect: true,
             unit: '元'
           },
           render: (text, row) => {
