@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-13 11:06:23
+ * @Last Modified time: 2021-04-22 14:28:14
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -282,7 +282,6 @@ export default {
           if (aliasKeys.includes(fieldName)) {
             shChangeHandle(form[fieldName]);
           }
-          this.sh_changed[fieldName] = false;
         }
         const { closed = noop } = searchHelper;
         closed(data);
@@ -292,7 +291,7 @@ export default {
       const shChangeHandle = val => {
         const others = {};
         this[`${fieldName}ExtraKeys`].forEach(key => (others[key] = form[key]));
-        // 忘记了之前为啥加 $nextTick
+        this.sh_changed[fieldName] = false;
         onChange(val, Object.keys(others).length ? others : null);
       };
       // 设置搜做帮助组件表单数据
@@ -340,10 +339,6 @@ export default {
         if (this.visible[fieldName] || !open(this.form)) return;
         this[`__${fieldName}_deriveValue`] = createShFilters(val);
         this.visible = Object.assign({}, this.visible, { [fieldName]: !0 });
-        // 清空搜索帮助
-        // clearSearchHelperValue();
-        // 设置搜索帮助查询参数
-        // this.$nextTick(() => this.$refs[`INPUT-SH-${fieldName}`].$refs[`topFilter`]?.SET_FORM_VALUES(createShFilters(val)));
       };
       // 创建 field alias 别名
       const createFieldAlias = async () => {
