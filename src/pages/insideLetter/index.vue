@@ -1,6 +1,6 @@
 <template>
   <div :class="noticeCls">
-    <SuperTabs v-if="visible" v-model="currentKey" :tabNavOffsetLeft="15" tabClassName="notice-tab" size="large" animated>
+    <SuperTabs v-show="visible" v-model="currentKey" :tabNavOffsetLeft="15" tabClassName="notice-tab" size="large" animated>
       <div slot="extraContent">
         <el-button type="text" class="more-link" @click="closePopperHandle">查看更多</el-button>
       </div>
@@ -40,6 +40,7 @@ export default {
   mixins: [size],
   props: ['visible'],
   data() {
+    this.socket = null;
     this.connecting = false;
     return {
       currentKey: '1',
@@ -66,6 +67,9 @@ export default {
     this.getMessageInfo();
     this.getTodoInfo();
     this.createWebsocket();
+  },
+  beforeDestroy() {
+    this.closeWebsocket();
   },
   methods: {
     async getMessageInfo() {
@@ -97,32 +101,33 @@ export default {
       let userId = data.id ?? '';
       if (!nDid || !userId) return;
       this.connecting = false;
-      const socket = new w3cwebsocket(`${proto}//${address}/ws/socket/websocket/${nDid}/${userId}/pc`);
+      this.closeWebsocket();
+      this.socket = new w3cwebsocket(`${proto}//${address}/ws/socket/websocket/${nDid}/${userId}/pc`);
       // onerror 和 onclose 可能会连续执行，通过防抖控制重连次数
-      socket.onerror = () => {
+      this.socket.onerror = () => {
         console.log('WebSocket Connection Error');
         if (this.connecting) return;
         setTimeout(() => this.createWebsocket(), 10 * 1000);
         this.connecting = true;
       };
-      socket.onclose = function() {
+      this.socket.onclose = function() {
         console.log('WebSocket Client Closed');
         if (this.connecting) return;
         setTimeout(() => this.createWebsocket(), 10 * 1000);
         this.connecting = true;
       };
-      socket.onopen = () => {
+      this.socket.onopen = () => {
         console.log('WebSocket Client Connected');
-        function sendNumber() {
-          if (socket.readyState === socket.OPEN) {
+        const sendNumber = () => {
+          if (this.socket.readyState === this.socket.OPEN) {
             let number = Math.round(Math.random() * 0xffffff);
-            socket.send(number.toString());
+            this.socket.send(number.toString());
             setTimeout(sendNumber, 1000 * 30);
           }
-        }
+        };
         sendNumber();
       };
-      socket.onmessage = ev => {
+      this.socket.onmessage = ev => {
         if (typeof ev.data === 'string') {
           // console.log(`Received: `, JSON.parse(ev.data));
           const data = ev.data ? JSON.parse(ev.data) : {};
@@ -136,6 +141,9 @@ export default {
           }
         }
       };
+    },
+    closeWebsocket() {
+      this.socket && this.socket.close();
     },
     doRouteHandle(uid) {
       this.$emit('close');
