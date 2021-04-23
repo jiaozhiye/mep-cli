@@ -27,9 +27,7 @@ $prefix-cls: '#{$v-prefix}-dialog--wrapper';
           flex: 1;
         }
         .fullscreen {
-          padding: 5px;
-          padding-right: 2px;
-          line-height: 1;
+          padding: 5px 3px;
           color: $text-color-secondary;
           cursor: pointer;
           i {
@@ -42,7 +40,7 @@ $prefix-cls: '#{$v-prefix}-dialog--wrapper';
         position: static;
         top: auto;
         right: auto;
-        padding: 5px;
+        padding: 5px 3px;
         font-size: 22px;
         line-height: 1;
         outline: none;
