@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-02 15:37:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-15 15:23:27
+ * @Last Modified time: 2021-04-27 13:13:36
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import dayjs from 'dayjs';
@@ -74,8 +74,9 @@ export default {
     },
     doPrint(__html__) {
       const LODOP = getLodop();
-
       if (!LODOP) return;
+
+      this.startProgress();
 
       const {
         form: { setting, printerName, printerType, copies },

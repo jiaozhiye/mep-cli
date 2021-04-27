@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-30 11:34:10
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-16 11:33:40
+ * @Last Modified time: 2021-04-25 10:25:09
  */
 import { xor, isEqual, isUndefined } from 'lodash';
 import { getConfig } from '../../../_utils/globle-config';
@@ -39,7 +39,9 @@ const localStorageMixin = {
       if (!localColumns) {
         this.getTableColumnsConfig(this.uniqueKey)
           .then(result => {
-            if (!result) return;
+            if (!result) {
+              return this.setLocalColumns(this.columns);
+            }
             localStorage.setItem(this.uniqueKey, JSON.stringify(result));
             this.initLocalColumns();
           })

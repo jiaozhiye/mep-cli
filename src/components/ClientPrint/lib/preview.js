@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-08-01 23:36:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-15 16:01:57
+ * @Last Modified time: 2021-04-27 13:13:17
  */
 import { getLodop } from '../../BasePrint/LodopFuncs';
 import localforage from 'localforage';
@@ -141,9 +141,9 @@ export default {
         if (this.progress >= 90) {
           this.stopProgress();
         } else {
-          this.progress += 5;
+          this.progress += 2;
         }
-      }, 250);
+      }, 100);
     },
     stopProgress() {
       this.timer && clearInterval(this.timer);
@@ -155,7 +155,6 @@ export default {
       setTimeout(() => (this.printing = false), 500);
     },
     async printClickHandle() {
-      this.startProgress();
       this.doPrint(this.$$container.createPrintHtml(this.printPage));
       // 存储配置信息
       try {
