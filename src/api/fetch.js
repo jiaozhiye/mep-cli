@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-11-27 11:11:24
+ * @Last Modified time: 2021-05-06 13:06:35
  */
 import axios from 'axios';
 import qs from 'qs';
@@ -11,26 +11,6 @@ import store from '@/store';
 import { getToken } from '@/utils/cookies';
 import { notifyAction } from '@/utils';
 import i18n from '@/lang';
-
-// 请求异常提示信息
-const codeMessage = {
-  200: '服务器成功返回请求的数据。',
-  201: '新建或修改数据成功。',
-  202: '一个请求已经进入后台排队（异步任务）。',
-  204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
-  403: '用户得到授权，但是访问是被禁止的。',
-  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
-  406: '请求的格式不可得。',
-  410: '请求的资源被永久删除，且不会再得到的。',
-  412: '客户端请求信息的先决条件错误。',
-  422: '当创建一个对象时，发生一个验证错误。',
-  500: '服务器发生错误，请检查服务器。',
-  502: '网关错误。',
-  503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。'
-};
 
 // 自定义扩展 header 请求头
 const getConfigHeaders = () => {
@@ -42,16 +22,45 @@ const getConfigHeaders = () => {
   };
 };
 
-// 取消 ajax 请求
-const CancelToken = axios.CancelToken;
-const pending = [];
+const pendingRequest = new Map();
+const lockingRequest = new Map();
 
-const removePending = config => {
-  for (let i = 0; i < pending.length; i++) {
-    if (pending[i].u === `${config.url}&${config.method}`) {
-      pending[i].f();
-      pending.splice(i--, 1);
+const generateReqKey = config => {
+  const { method, url } = config;
+  return [method, url].join('&');
+};
+
+const addPendingRequest = config => {
+  if (!config.cancelable) return;
+  const requestKey = generateReqKey(config);
+  config.cancelToken = new axios.CancelToken(cancel => {
+    if (!pendingRequest.has(requestKey)) {
+      pendingRequest.set(requestKey, cancel);
     }
+  });
+};
+
+const removePendingRequest = config => {
+  const requestKey = generateReqKey(config);
+  if (pendingRequest.has(requestKey)) {
+    const cancelToken = pendingRequest.get(requestKey);
+    cancelToken(i18n.t('fetch.cancelText'));
+    pendingRequest.delete(requestKey);
+  }
+};
+
+const addLockingRequest = config => {
+  if (!config.lockable) return;
+  const requestKey = generateReqKey(config);
+  if (!lockingRequest.has(requestKey)) {
+    lockingRequest.set(requestKey, true);
+  }
+};
+
+const removeLockingRequest = config => {
+  const requestKey = generateReqKey(config);
+  if (lockingRequest.has(requestKey)) {
+    lockingRequest.delete(requestKey);
   }
 };
 
@@ -61,23 +70,30 @@ const instance = axios.create({
   timeout: 1000 * 20,
   withCredentials: true, // 跨域请求时是否需要使用凭证
   paramsSerializer: params => {
-    // 序列化 GET 请求参数 -> a: [1, 2] => a=1&a=2
-    return qs.stringify(params, { arrayFormat: 'repeat' });
+    // 序列化 GET 请求参数 -> a: [1, 2] => a[0]=1&a[1]=2
+    return qs.stringify(params, { arrayFormat: 'indices' });
   }
 });
 
 // 异常处理程序
 const errorHandler = error => {
-  const { response = {} } = error;
-  const errortext = codeMessage[response.status] || response.statusText || i18n.t('fetch.default');
-  !error.__CANCEL__ && notifyAction(errortext, 'error', 10);
+  const { isAxiosError, config = {}, response = {} } = error;
+  const { status, statusText = '' } = response;
+  const errortext = i18n.t('fetch.errorCode')[status] || statusText || i18n.t('fetch.errorText');
+  removePendingRequest(config);
+  removeLockingRequest(config);
+  isAxiosError && notifyAction(errortext, 'error', 10);
   return Promise.reject(error);
 };
 
 // 请求拦截
 instance.interceptors.request.use(config => {
-  // 取消相同的请求
-  removePending(config);
+  // 锁定当次请求
+  if (lockingRequest.has(generateReqKey(config))) {
+    return Promise.reject({ message: i18n.t('fetch.lockText') });
+  }
+  // 取消已发请求
+  removePendingRequest(config);
   // 请求头信息，token 验证
   config.headers = {
     ...config.headers,
@@ -88,20 +104,16 @@ instance.interceptors.request.use(config => {
     ...config.params,
     _t: +new Date().getTime()
   };
-  // 处理 cancelToken
-  config.cancelToken = new CancelToken(c => {
-    if (config.cancelRequest) {
-      pending.push({ u: `${config.url}&${config.method}`, f: c });
-    }
-  });
+  addPendingRequest(config);
+  addLockingRequest(config);
   return config;
 }, errorHandler);
 
 // 响应拦截
 instance.interceptors.response.use(response => {
   let { config, headers, data } = response;
-  // 取消相同的请求
-  removePending(config);
+  removePendingRequest(config);
+  removeLockingRequest(config);
   // 请求异常提示信息
   if (data.code !== 200) {
     // token 过期，需要重新登录
