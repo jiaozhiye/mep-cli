@@ -2,18 +2,21 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-07-28 19:01:58
+ * @Last Modified time: 2021-05-08 10:08:18
  **/
 const styleText = `
   <style type="text/css">
     table {
       width: 100%;
-      border-collapse: collapse;
       border-spacing: 0;
+      border-collapse: collapse;
+      table-layout: fixed;
     }
     table tr th,
     table tr td {
-      padding: 4px 0 4px 4px;
+      padding: 2px;
+      line-height: 1.2;
+      word-wrap: break-word;
     }
     .fs12, .fs12 * {
       font-size: 12px;

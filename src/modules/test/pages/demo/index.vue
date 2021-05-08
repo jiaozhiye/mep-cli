@@ -52,7 +52,7 @@
       />
     </base-dialog>
     <client-print ref="print1" uniqueKey="cprint_jzy" :dataSource="printDataList" :templateRender="templateRender" />
-    <base-print ref="print" :data="printList" alwaysPrint :isPreview="false" :render="() => import(`@test/pages/printTemplate/demo`)" />
+    <base-print ref="print" :data="printList" printerType="stylus" :render="() => import(`@test/pages/printTemplate/demo`)" />
   </div>
 </template>
 
