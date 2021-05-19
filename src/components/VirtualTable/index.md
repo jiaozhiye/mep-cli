@@ -10,6 +10,7 @@
 | rowKey           | 表格行 key 的取值，可以是字符串或一个函数                     | string\|Function(row, index) => string                 | uid    |
 | fetch            | 向后台请求数据的接口，[配置项](#fetch)                        | object                                                 | -      |
 | border           | 是否带有纵向边框                                              | boolean                                                | true   |
+| stripe           | 是否为斑马纹表格                                              | boolean                                                | false  |
 | height           | 表格的高度，单位 px                                           | number \| auto                                         | -      |
 | minHeight        | 表格的最小高度，单位 px                                       | number                                                 | 150    |
 | maxHeight        | 表格的最大高度，单位 px                                       | number                                                 | -      |

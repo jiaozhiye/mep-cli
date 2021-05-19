@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-10 14:46:35
+ * @Last Modified time: 2021-05-19 15:56:14
  */
 import { formatNumber, setCellValue, getCellValue } from '../utils';
 import config from '../config';
@@ -15,7 +15,7 @@ export default {
   inject: ['$$table'],
   computed: {
     summationRows() {
-      const { tableFullData, selectionKeys, summaries, getRowKey, getGroupValidData, isGroupSubtotal } = this.$$table;
+      const { tableFullData, selectionKeys, selectionRows, summaries, getGroupValidData, isGroupSubtotal } = this.$$table;
       const summationColumns = this.flattenColumns.filter(x => typeof x.summation !== 'undefined');
       // 结果
       const res = {};
@@ -33,10 +33,7 @@ export default {
         if (!sumBySelection || notSelectAndDisplay) {
           values = tableDataList.map(x => Number(getCellValue(x, dataIndex)));
         } else {
-          values = selectionKeys.map(x => {
-            const record = this.$$table.selectionRows.find(row => getRowKey(row, row.index) === x);
-            return record ? Number(getCellValue(record, dataIndex)) : 0;
-          });
+          values = selectionRows.map(record => Number(getCellValue(record, dataIndex)));
         }
         // 累加求和
         let result = values.reduce((prev, curr) => {

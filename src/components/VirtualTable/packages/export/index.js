@@ -2,13 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-11 13:03:50
+ * @Last Modified time: 2021-05-19 15:51:37
  */
 import dayjs from 'dayjs';
-import { get, cloneDeep, isFunction, isObject } from 'lodash';
+import { get, cloneDeep, isFunction } from 'lodash';
 import PropTypes from '../../../_utils/vue-types';
 
-import { getCellValue, setCellValue, convertToRows, filterTableColumns, getAllTableData } from '../utils';
+import { getCellValue, setCellValue, convertToRows, filterTableColumns } from '../utils';
 import { download } from '../../../_utils/tool';
 import { getConfig } from '../../../_utils/globle-config';
 
@@ -61,10 +61,10 @@ export default {
     },
     async getTableData(options) {
       const { fileType, exportType, startIndex = 1, endIndex } = options;
-      const { fetch, fetchParams, total, tableFullData, selectionKeys, getRowKey } = this.$$table;
-      let tableList = [];
+      const { fetch, fetchParams, total, isFetch, allTableData, selectionKeys, getRowKey } = this.$$table;
+      let tableList = allTableData;
 
-      if (!!fetch) {
+      if (isFetch) {
         this.exporting = !0;
         const { api, dataKey } = fetch;
         if (process.env.MOCK_DATA === 'true') {
@@ -80,8 +80,6 @@ export default {
         }
 
         this.exporting = !1;
-      } else {
-        tableList = getAllTableData(tableFullData);
       }
 
       if (exportType === 'selected') {
@@ -125,8 +123,8 @@ export default {
     },
     _toTable(options, columnRows, flatColumns, dataList) {
       const { footSummation } = options;
-      const { showHeader, showFooter, $refs } = this.$$table;
-      const summationRows = flatColumns.some(x => !!x.summation) ? $refs[`tableFooter`].summationRows : [];
+      const { showHeader, showFooter } = this.$$table;
+      const summationRows = flatColumns.some(x => !!x.summation) ? this.$$table.$refs[`tableFooter`].summationRows : [];
       let html = `<table width="100%" border="0" cellspacing="0" cellpadding="0">`;
       html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (showHeader) {

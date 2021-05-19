@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-15 11:18:40
+ * @Last Modified time: 2021-05-19 14:56:11
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { isValidElement, isStringElement, filterEmpty } from '../../../_utils/props-util';
@@ -127,18 +127,6 @@ export const deepFindRowKey = (rowKeys, mark) => {
       return rowKeys[i];
     }
   }
-  return result;
-};
-
-// 所有 rowKey
-export const getAllRowKeys = (data, getRowKey) => {
-  const result = [];
-  data.forEach(record => {
-    result.push(getRowKey(record, record.index));
-    if (record.children) {
-      result.push.apply(result, getAllRowKeys(record.children, getRowKey));
-    }
-  });
   return result;
 };
 

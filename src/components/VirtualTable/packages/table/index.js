@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-10 14:00:34
+ * @Last Modified time: 2021-05-19 14:55:49
  */
 import baseProps from './props';
 import Store from '../store';
@@ -10,7 +10,7 @@ import TableManager from '../manager';
 import config from '../config';
 import { isEqual, cloneDeep } from 'lodash';
 
-import { columnsFlatMap, getAllColumns, getAllRowKeys, getAllTableData, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
+import { columnsFlatMap, convertToRows, getAllColumns, getAllTableData, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
@@ -58,8 +58,6 @@ export default {
     this.originColumns = [];
     // 原始数据
     this.tableOriginData = [];
-    // 内存分页，每页显示的数据
-    this.pageTableData = [];
     // 选中的行记录
     this.selectionRows = [];
     // 高级检索的条件
@@ -96,8 +94,6 @@ export default {
       scrollY: false,
       // 是否启用了纵向 Y 可视渲染方式加载
       scrollYLoad: false,
-      // 是否拥有多级表头
-      isGroup: false,
       // 存放纵向 Y 虚拟滚动相关信息
       scrollYStore: {
         startIndex: 0,
@@ -129,7 +125,7 @@ export default {
       // 行高亮，已选中的 key
       highlightKey: this.rowHighlight?.currentRowKey ?? '',
       // 已展开行的 keys
-      rowExpandedKeys: [],
+      rowExpandedKeys: this.expandable?.expandedRowKeys ?? [],
       // X 滚动条是否离开左边界
       isPingLeft: false,
       // X 滚动条是否离开右边界
@@ -161,8 +157,11 @@ export default {
     allColumns() {
       return getAllColumns(this.tableColumns);
     },
+    allTableData() {
+      return !this.isTreeTable ? this.tableFullData : getAllTableData(this.tableFullData);
+    },
     allRowKeys() {
-      return getAllRowKeys(this.tableFullData, this.getRowKey);
+      return this.allTableData.map(row => this.getRowKey(row, row.index));
     },
     deriveRowKeys() {
       return this.createDeriveRowKeys(this.tableFullData, null);
@@ -182,6 +181,9 @@ export default {
     showPagination() {
       return this.isFetch || this.webPagination;
     },
+    isGroup() {
+      return convertToRows(this.tableColumns).length > 1;
+    },
     isHeadSorter() {
       return this.flattenColumns.some(column => column.sorter);
     },
@@ -200,11 +202,11 @@ export default {
     isGroupSubtotal() {
       return !!this.groupSubtotal?.length;
     },
-    isTableEmpty() {
-      return !this.tableData.length;
-    },
     isTreeTable() {
       return this.tableFullData.some(x => Array.isArray(x.children) && x.children.length);
+    },
+    isTableEmpty() {
+      return !this.tableData.length;
     },
     isFetch() {
       return !!this.fetch;
@@ -272,8 +274,6 @@ export default {
       this.createTableData(next);
     },
     tableFullData() {
-      // 处理内存分页
-      this.createLimitData();
       // 加载表格数据
       this.loadTableData().then(() => {
         this.doLayout();
@@ -319,7 +319,7 @@ export default {
       if (!this.rowSelection || isEqual(next, prev)) return;
       const { onChange = noop } = this.rowSelection;
       // 设置选中的行数据
-      this.createSelectionRows(next);
+      this.selectionRows = this.createSelectionRows(next);
       onChange(next, this.selectionRows);
     },
     [`rowSelection.selectedRowKeys`](next) {
@@ -340,14 +340,15 @@ export default {
     rowExpandedKeys(next, prev) {
       if (!this.expandable || isEqual(next, prev)) return;
       const { onChange = noop } = this.expandable;
-      const expandedRows = getAllTableData(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
-      onChange(next, expandedRows);
+      onChange(
+        next,
+        next.map(x => this.allTableData[this.allRowKeys.findIndex(k => k === x)])
+      );
     },
     highlightKey(next) {
       if (!this.rowHighlight) return;
       const { onChange = noop } = this.rowHighlight;
-      const currentRow = getAllTableData(this.tableFullData).find(record => this.getRowKey(record, record.index) === next);
-      onChange(next, currentRow || null);
+      onChange(next, this.allTableData[this.allRowKeys.findIndex(x => x === next)] ?? null);
     },
     [`rowHighlight.currentRowKey`](next) {
       this.$$tableBody.setClickedValues(!isEmpty(next) ? [next, 'index'] : []);
@@ -421,6 +422,7 @@ export default {
       tableSize,
       showLoading,
       bordered,
+      stripe,
       tableStyles,
       rowStyle,
       cellStyle,
@@ -460,6 +462,7 @@ export default {
       {
         [`size--${tableSize}`]: !0,
         [`is--border`]: bordered,
+        [`is--striped`]: stripe,
         [`is--fixed`]: leftFixedColumns.length || rightFixedColumns.length,
         [`is--group`]: isGroup,
         [`is--sortable`]: isHeadSorter,

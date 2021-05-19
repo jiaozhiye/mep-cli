@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-17 16:36:04
+ * @Last Modified time: 2021-05-19 14:24:06
  */
 import { isUndefined } from 'lodash';
 import TableManager from '../manager';
@@ -33,14 +33,14 @@ const keyboardMixin = {
       // 上  下
       if (keyCode === 38 || keyCode === 40) {
         ev.preventDefault();
-        const { allRowKeys, tableFullData, getRowKey } = this.$$table;
+        const { allRowKeys, allTableData } = this.$$table;
         const total = allRowKeys.length;
         let index = allRowKeys.findIndex(x => x === this.clicked[0]);
         // let xIndex = keyCode === 38 ? (--index + total) % total : ++index % total;
         let xIndex = keyCode === 38 ? --index : ++index;
         if (!(index < 0 || index > total - 1)) {
           const rowKey = allRowKeys[xIndex];
-          const row = tableFullData.find(record => getRowKey(record, record.index) === rowKey);
+          const row = allTableData[xIndex];
           // 行单选
           if (rowSelection?.type === 'radio' && !rowSelection.disabled?.(row)) {
             this.setSelectionKeys([rowKey]);

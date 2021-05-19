@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-12 12:19:28
+ * @Last Modified time: 2021-05-19 14:57:22
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -135,7 +135,7 @@ export default {
       );
     },
     renderRows(list, depth = 0) {
-      const { getRowKey, selectionKeys, highlightKey, rowSelection, expandable, rowExpandedKeys, isGroupSubtotal } = this.$$table;
+      const { getRowKey, stripe, selectionKeys, highlightKey, rowSelection, expandable, rowExpandedKeys, isGroupSubtotal } = this.$$table;
       const rows = [];
       list.forEach(row => {
         // 行记录 索引
@@ -145,6 +145,7 @@ export default {
         const cls = [
           `v-body--row`,
           {
+            [`v-body--row-striped`]: stripe && rowIndex % 2 !== 0,
             [`v-body--row-selected`]: selectionKeys.includes(rowKey),
             [`v-body--row-current`]: highlightKey === rowKey,
             ...(isGroupSubtotal ? this.createGroupRowCls(row._group) : null)
@@ -360,7 +361,7 @@ export default {
           if (isTreeTable && !checkStrictly) {
             this.setTreeSelectionKeys(rowKey, selectionKeys);
           } else {
-            this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...new Set([...selectionKeys, rowKey])] : selectionKeys.filter(x => x !== rowKey));
+            this.setSelectionKeys(!selectionKeys.includes(rowKey) ? [...selectionKeys, rowKey] : selectionKeys.filter(x => x !== rowKey));
           }
         }
       }

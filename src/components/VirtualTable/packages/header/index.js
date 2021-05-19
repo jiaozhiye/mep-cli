@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-10 14:41:27
+ * @Last Modified time: 2021-05-19 14:34:56
  */
-import { pickBy, intersection, isFunction } from 'lodash';
+import { pickBy, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
 import config from '../config';
 import { where } from '../filter-sql';
@@ -211,19 +211,9 @@ export default {
         this.doSortHandle(column, validSorter[key]);
       }
       if (type === 'filter') return;
-      // 还原
+      // 还原排序数据
       if (!Object.keys(validSorter).length) {
-        this.doResetHandle();
-      }
-    },
-    // 还原排序数据
-    doResetHandle() {
-      const { tableFullData, tableOriginData, createGroupData, getGroupValidData, isGroupSubtotal } = this.$$table;
-      if (!isGroupSubtotal) {
-        this.$$table.tableFullData = intersection(tableOriginData, tableFullData);
-      } else {
-        const result = intersection(getGroupValidData(tableOriginData), getGroupValidData(tableFullData));
-        this.$$table.tableFullData = createGroupData(result);
+        this.doSortHandle({ dataIndex: 'index' }, this.ascend);
       }
     },
     // 排序算法
@@ -231,9 +221,9 @@ export default {
       const { dataIndex, sorter } = column;
       const { tableFullData, createGroupData, getGroupValidData, isGroupSubtotal } = this.$$table;
       const sortFn = (a, b) => {
-        const start = getCellValue(a, dataIndex);
-        const end = getCellValue(b, dataIndex);
-        if (!!Number(start - end)) {
+        let start = getCellValue(a, dataIndex);
+        let end = getCellValue(b, dataIndex);
+        if (!Number.isNaN(start - end)) {
           return order === this.ascend ? start - end : end - start;
         }
         return order === this.ascend ? start.toString().localeCompare(end.toString()) : end.toString().localeCompare(start.toString());
@@ -325,8 +315,6 @@ export default {
       layout: { tableBodyWidth }
     } = this.$$table;
     const columnRows = convertToRows(tableColumns);
-    // 是否拥有多级表头
-    this.$$table.isGroup = columnRows.length > 1;
     // 处理左右的固定列
     this.setFixedColumns(columnRows);
     return (

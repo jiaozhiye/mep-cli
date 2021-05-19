@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-09 13:18:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 18:01:35
+ * @Last Modified time: 2021-05-19 14:30:17
  */
 import SvgIcon from '../../../SvgIcon';
 import Popper from '../popper';
@@ -299,7 +299,7 @@ export default {
                   <Checkbox
                     value={prevValue}
                     onInput={val => {
-                      const arr = val !== null ? [...new Set([...results, val])] : results.filter(x => x !== prevValue);
+                      const arr = val !== null ? [...results, val] : results.filter(x => x !== prevValue);
                       this.filterValues[dataKey] = Object.assign({}, this.filterValues[dataKey], { [`in`]: arr });
                     }}
                     trueValue={x.value}

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-17 16:38:28
+ * @Last Modified time: 2021-05-19 14:45:18
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -124,7 +124,7 @@ export default {
   },
   // 获取表格数据
   createTableList() {
-    return !this.webPagination ? this.tableFullData : this.pageTableData;
+    return !this.webPagination ? this.tableFullData : this.createPageData();
   },
   // 设置是否开启虚拟滚动
   createScrollYLoad() {
@@ -248,11 +248,11 @@ export default {
   },
   // 创建派生的 rowKeys for treeTable
   createDeriveRowKeys(tableData, key) {
-    return tableData.map((x, i) => {
-      let rowKey = this.getRowKey(x, i);
+    return tableData.map(row => {
+      let rowKey = this.getRowKey(row, row.index);
       let item = { rowKey };
-      if (x.children) {
-        item.children = this.createDeriveRowKeys(x.children, rowKey);
+      if (row.children) {
+        item.children = this.createDeriveRowKeys(row.children, rowKey);
       }
       return key ? Object.assign({}, item, { parentRowKey: key }) : item;
     });
@@ -297,17 +297,14 @@ export default {
     this.pagination.currentPage = currentPage;
     this.pagination.pageSize = pageSize;
     if (!this.webPagination) return;
-    // 处理内存分页
-    this.createLimitData();
     // 在内存分页模式下，分页改变时，加载数据
     this.loadTableData();
     this.$$tableBody.resetTableBodyScroll();
   },
   // 创建内存分页的列表数据
-  createLimitData() {
-    if (!this.webPagination) return;
+  createPageData() {
     const { currentPage, pageSize } = this.pagination;
-    this.pageTableData = this.tableFullData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    return this.tableFullData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   },
   // 设置高级检索的条件
   createSuperSearch(val) {

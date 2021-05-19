@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-18 09:20:10
+ * @Last Modified time: 2021-05-19 14:55:18
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -127,6 +127,8 @@ export default {
   }),
   // 是否带有纵向边框
   border: PropTypes.bool.def(true),
+  // 是否为斑马纹
+  stripe: PropTypes.bool.def(false),
   // 表格的高度
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // 表格的最小高度
