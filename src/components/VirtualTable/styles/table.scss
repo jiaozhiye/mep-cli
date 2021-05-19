@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:27:04
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-09 09:47:06
+ * @Last Modified time: 2021-05-12 12:20:26
  */
 @import './common.scss';
 
@@ -149,15 +149,32 @@
     }
   }
 
-  .v-body--expanded-row {
-    .v-body--expanded-column {
+  .v-body--row-expanded {
+    .v-body--column {
       background-color: $v-table-row-expanded-background-color;
+    }
+  }
+
+  .v-body--row-group_1 {
+    .v-body--column {
+      background-color: $primary-5;
+    }
+  }
+
+  .v-body--row-group_2 {
+    .v-body--column {
+      background-color: $primary-7;
+    }
+  }
+
+  .v-body--row-group_3 {
+    .v-body--column {
+      background-color: $primary-9;
     }
   }
 
   .v-header--column,
   .v-body--column,
-  .v-body--expanded-column,
   .v-footer--column {
     position: relative;
     text-align: left;
@@ -242,7 +259,6 @@
   &.is--border {
     .v-header--column,
     .v-body--column,
-    .v-body--expanded-column,
     .v-footer--column {
       border-bottom: 1px solid $v-table-border-color;
       border-right: 1px solid $v-table-border-color;
@@ -255,8 +271,7 @@
       border: 0;
     }
     .v-header--column,
-    .v-body--column,
-    .v-body--expanded-column {
+    .v-body--column {
       border-bottom: 1px solid $v-table-border-color;
     }
   }
@@ -316,7 +331,6 @@
   /* 溢出列 */
   .v-header--column,
   .v-body--column,
-  .v-body--expanded-column,
   .v-footer--column {
     &.col--ellipsis {
       .v-cell {

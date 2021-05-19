@@ -2,10 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 16:47:17
+ * @Last Modified time: 2021-05-18 09:19:53
  */
-import _ from 'lodash';
 import Cookies from 'js-cookie';
+import { flatten, groupBy, map, spread, mergeWith, isFunction, isObject } from 'lodash';
 import { convertToRows, deepFindColumn, filterTableColumns, getCellValue } from '../utils';
 import config from '../config';
 import Locale from '../locale/mixin';
@@ -59,6 +59,9 @@ export default {
     },
     flatColumns() {
       return filterTableColumns(this.flattenColumns, ['__expandable__', '__selection__', config.operationColumn]);
+    },
+    printFixedColumns() {
+      return this.tableColumns.filter(column => column.printFixed);
     }
   },
   methods: {
@@ -100,18 +103,16 @@ export default {
       });
     },
     doMerge(columns, mark) {
-      return _(_.flatten(columns))
-        .groupBy(mark)
-        .map(
-          _.spread((...values) => {
-            return _.mergeWith(...values, (objValue, srcValue) => {
-              if (Array.isArray(objValue)) {
-                return this.doMerge(objValue.concat(srcValue), mark);
-              }
-            });
-          })
-        )
-        .value();
+      return map(
+        groupBy(flatten(columns), mark),
+        spread((...rest) => {
+          return mergeWith(...rest, (objValue, srcValue) => {
+            if (Array.isArray(objValue)) {
+              return this.doMerge(objValue.concat(srcValue), mark);
+            }
+          });
+        })
+      );
     },
     createChunkColumns(columns) {
       let res = [];
@@ -130,6 +131,7 @@ export default {
           i++;
         } else if (i > 0) {
           columns.splice(0, i);
+          this.printFixedColumns.length && columns.unshift(...this.printFixedColumns);
           res.push(tmp);
           tmp = [];
           sum = 0;
@@ -222,7 +224,7 @@ export default {
             row =>
               `<tr>${flatColumns
                 .map((column, index) => {
-                  const { rowspan, colspan } = this.$$table.$$tableBody.getSpan(row, column, row.index, index);
+                  const { rowspan, colspan } = this.$$table.getSpan(row, column, row.index, index, tableFullData);
                   if (!rowspan || !colspan) {
                     return null;
                   }
@@ -283,7 +285,7 @@ export default {
     renderCell(row, rowIndex, column, columnIndex) {
       const { dataIndex, extraRender } = column;
       let result = this.$$table.$$tableBody.renderCellTitle(column, row, rowIndex, columnIndex);
-      if (_.isFunction(extraRender)) {
+      if (isFunction(extraRender)) {
         result = extraRender(getCellValue(row, dataIndex), row, column, rowIndex, columnIndex);
       }
       return result;

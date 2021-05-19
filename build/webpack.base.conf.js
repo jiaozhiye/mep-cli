@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-17 18:47:15
+ * @Last Modified time: 2021-05-15 11:42:52
  */
 'use strict';
 
@@ -37,7 +37,7 @@ module.exports = {
   },
   output: {
     path: config.build.assetsRoot,
-    filename: '[name].js',
+    filename: 'js/[name].js',
     publicPath: process.env.NODE_ENV === 'production' ? config.build.assetsPublicPath : config.dev.assetsPublicPath
   },
   resolve: {

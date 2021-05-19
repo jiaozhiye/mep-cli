@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-13 16:14:52
+ * @Last Modified time: 2021-05-11 13:04:47
  */
 import ExcelJS from 'exceljs/dist/exceljs.min';
 import { isFunction, isObject } from 'lodash';
@@ -77,8 +77,7 @@ const exportMixin = {
         isGroup,
         showFooter,
         scrollYStore: { rowHeight },
-        exportExcel: { spanMethod: exportMergeMethod },
-        $$tableBody
+        exportExcel: { spanMethod: exportMergeMethod }
       } = this.$$table;
       const { flatColumns: columns, headColumns } = this;
       const colGroups = convertToRows(headColumns);

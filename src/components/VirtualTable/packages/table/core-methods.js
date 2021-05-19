@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-03 13:53:51
+ * @Last Modified time: 2021-05-17 16:38:28
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
-import { get, cloneDeep } from 'lodash';
+import { get, cloneDeep, isFunction, isObject } from 'lodash';
 
 const noop = () => {};
 const $browse = browse();
@@ -28,10 +28,16 @@ export default {
         return record;
       });
     };
-    const results = resetRowData(list);
+    const results = this.createGroupData(resetRowData(list));
     // 设置表格数据
     this.tableFullData = [...results];
     this.tableOriginData = [...results];
+    // 行选中 & 自动获得焦点
+    this.initialTable();
+    this.dataLoadedHandle();
+  },
+  // 表格初始化
+  initialTable() {
     this.$nextTick(() => {
       // 设置选择列
       this.selectionKeys = this.createSelectionKeys();
@@ -41,7 +47,7 @@ export default {
       this.selectFirstRow();
       // 输入框获得焦点
       this.$$tableBody.createInputFocus();
-      this.dataLoadedHandle();
+      this.$$tableBody.resetTableBodyScroll();
     });
   },
   // 服务端合计
@@ -116,10 +122,13 @@ export default {
 
     return this.computeScrollLoad();
   },
+  // 获取表格数据
+  createTableList() {
+    return !this.webPagination ? this.tableFullData : this.pageTableData;
+  },
   // 设置是否开启虚拟滚动
   createScrollYLoad() {
-    let dataList = !this.webPagination ? this.tableFullData : this.pageTableData;
-    return dataList.length > config.virtualScrollY;
+    return this.createTableList().length > config.virtualScrollY;
   },
   // 创建分页索引
   createPageIndex(index) {
@@ -131,8 +140,8 @@ export default {
   },
   // 处理渲染数据
   handleTableData() {
-    const { scrollYLoad, scrollYStore, webPagination, tableFullData, pageTableData } = this;
-    let dataList = !webPagination ? tableFullData : pageTableData;
+    const { scrollYLoad, scrollYStore } = this;
+    const dataList = this.createTableList();
     // 处理显示数据
     this.tableData = scrollYLoad ? dataList.slice(scrollYStore.startIndex, scrollYStore.startIndex + scrollYStore.renderSize) : dataList;
   },
@@ -147,9 +156,10 @@ export default {
   },
   // 纵向 Y 可视渲染处理
   loadScrollYData(scrollTop = 0) {
-    const { tableFullData, scrollYStore } = this;
+    const { scrollYStore } = this;
     const { startIndex, renderSize, offsetSize, visibleSize, rowHeight } = scrollYStore;
     const toVisibleIndex = Math.ceil(scrollTop / rowHeight);
+    const dataList = this.createTableList();
 
     let preload = false;
 
@@ -166,7 +176,7 @@ export default {
         // 向下
         preload = toVisibleIndex + visibleSize + offsetSize >= startIndex + renderSize;
         if (preload) {
-          scrollYStore.startIndex = Math.max(0, Math.min(tableFullData.length - renderSize, toVisibleIndex - marginSize));
+          scrollYStore.startIndex = Math.max(0, Math.min(dataList.length - renderSize, toVisibleIndex - marginSize));
         }
       }
 
@@ -179,14 +189,15 @@ export default {
   },
   // 更新纵向 Y 可视渲染上下剩余空间大小
   updateScrollYSpace(isReset) {
-    const { scrollYStore, tableFullData, $$tableBody } = this;
+    const { scrollYStore, $$tableBody } = this;
+    const dataList = this.createTableList();
 
     const $tableBody = $$tableBody.$el.querySelector('.v-table--body');
     const $tableYSpaceElem = $$tableBody.$el.querySelector('.v-body--y-space');
 
     if (!isReset) {
       // 计算高度
-      let bodyHeight = tableFullData.length * scrollYStore.rowHeight;
+      let bodyHeight = dataList.length * scrollYStore.rowHeight;
       let topSpaceHeight = Math.max(scrollYStore.startIndex * scrollYStore.rowHeight, 0);
 
       $tableBody.style.transform = `translateY(${topSpaceHeight}px)`;
@@ -217,6 +228,23 @@ export default {
         });
       }
     });
+  },
+  // 表格单元格合并
+  getSpan(row, column, rowIndex, columnIndex, tableData) {
+    let rowspan = 1;
+    let colspan = 1;
+    const fn = this.spanMethod;
+    if (isFunction(fn)) {
+      const result = fn({ row, column, rowIndex, columnIndex, tableData });
+      if (Array.isArray(result)) {
+        rowspan = result[0];
+        colspan = result[1];
+      } else if (isObject(result)) {
+        rowspan = result.rowspan;
+        colspan = result.colspan;
+      }
+    }
+    return { rowspan, colspan };
   },
   // 创建派生的 rowKeys for treeTable
   createDeriveRowKeys(tableData, key) {
@@ -273,6 +301,7 @@ export default {
     this.createLimitData();
     // 在内存分页模式下，分页改变时，加载数据
     this.loadTableData();
+    this.$$tableBody.resetTableBodyScroll();
   },
   // 创建内存分页的列表数据
   createLimitData() {

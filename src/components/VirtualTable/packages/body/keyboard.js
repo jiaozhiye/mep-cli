@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-23 12:51:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-30 13:41:31
+ * @Last Modified time: 2021-05-17 16:36:04
  */
 import { isUndefined } from 'lodash';
 import TableManager from '../manager';
@@ -105,6 +105,10 @@ const keyboardMixin = {
       const v = isUndefined(index) ? allRowKeys.findIndex(x => x === rowKey) : index;
       if (v < 0) return;
       this.$el.scrollTop = v * scrollYStore.rowHeight;
+    },
+    resetTableBodyScroll() {
+      this.$el.scrollTop = 0;
+      this.$el.scrollLeft = 0;
     },
     createInputFocus() {
       const { tableFullData, getRowKey } = this.$$table;

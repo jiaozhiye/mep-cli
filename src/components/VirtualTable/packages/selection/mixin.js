@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-14 09:56:06
+ * @Last Modified time: 2021-05-09 17:10:37
  */
-import { deepFindRowKey, tableDataFlatMap, isArrayContain } from '../utils';
+import { deepFindRowKey, getAllTableData, isArrayContain } from '../utils';
 import config from '../config';
 
 const selectionMixin = {
@@ -51,12 +51,12 @@ const selectionMixin = {
       const uniqRecords = isFetch
         ? [
             ...selectionRows,
-            ...tableDataFlatMap(tableFullData).filter(row => {
+            ...getAllTableData(tableFullData).filter(row => {
               let rowKey = getRowKey(row, row.index);
               return selectedKeys.includes(rowKey) && !selectionRowKeys.includes(rowKey);
             })
           ]
-        : tableDataFlatMap(tableFullData);
+        : getAllTableData(tableFullData);
       this.selectionRows = uniqRecords.filter(row => selectedKeys.includes(getRowKey(row, row.index)));
     },
     // 选择列已选中 keys

@@ -2,13 +2,13 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-12 16:03:54
+ * @Last Modified time: 2021-05-11 13:03:50
  */
 import dayjs from 'dayjs';
-import { get, cloneDeep, isFunction } from 'lodash';
+import { get, cloneDeep, isFunction, isObject } from 'lodash';
 import PropTypes from '../../../_utils/vue-types';
 
-import { getCellValue, setCellValue, convertToRows, filterTableColumns } from '../utils';
+import { getCellValue, setCellValue, convertToRows, filterTableColumns, getAllTableData } from '../utils';
 import { download } from '../../../_utils/tool';
 import { getConfig } from '../../../_utils/globle-config';
 
@@ -81,7 +81,7 @@ export default {
 
         this.exporting = !1;
       } else {
-        tableList = tableFullData;
+        tableList = getAllTableData(tableFullData);
       }
 
       if (exportType === 'selected') {
@@ -155,7 +155,7 @@ export default {
             row =>
               `<tr>${flatColumns
                 .map((column, index) => {
-                  const { rowspan, colspan } = this.$$table.$$tableBody.getSpan(row, column, row.index, index);
+                  const { rowspan, colspan } = this.$$table.getSpan(row, column, row.index, index, dataList);
                   if (!rowspan || !colspan) {
                     return null;
                   }

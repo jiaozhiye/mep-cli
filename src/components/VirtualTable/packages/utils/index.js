@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 14:13:08
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-07 17:17:37
+ * @Last Modified time: 2021-05-15 11:18:40
  */
 import { get, set, transform, intersection, isEqual, isObject } from 'lodash';
 import { isValidElement, isStringElement, filterEmpty } from '../../../_utils/props-util';
@@ -131,13 +131,12 @@ export const deepFindRowKey = (rowKeys, mark) => {
 };
 
 // 所有 rowKey
-export const getAllRowKeys = (data, getRowKey, disabled = () => {}) => {
+export const getAllRowKeys = (data, getRowKey) => {
   const result = [];
   data.forEach(record => {
-    if (!!disabled(record)) return;
     result.push(getRowKey(record, record.index));
     if (record.children) {
-      result.push.apply(result, getAllRowKeys(record.children, getRowKey, disabled));
+      result.push.apply(result, getAllRowKeys(record.children, getRowKey));
     }
   });
   return result;
@@ -147,9 +146,22 @@ export const getAllRowKeys = (data, getRowKey, disabled = () => {}) => {
 export const tableDataFlatMap = data => {
   const result = [];
   data.forEach(record => {
-    result.push(record);
     if (record.children) {
       result.push.apply(result, tableDataFlatMap(record.children));
+    } else {
+      result.push(record);
+    }
+  });
+  return result;
+};
+
+// 获取所有 tableData
+export const getAllTableData = data => {
+  const result = [];
+  data.forEach(record => {
+    result.push(record);
+    if (record.children) {
+      result.push.apply(result, getAllTableData(record.children));
     }
   });
   return result;

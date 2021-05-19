@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-04-14 16:03:27
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-03 14:46:35
+ * @Last Modified time: 2021-05-09 17:10:55
  */
-import { getCellValue, setCellValue, tableDataFlatMap } from '../utils';
+import { getCellValue, setCellValue, getAllTableData } from '../utils';
 import { intersection, isObject, isFunction } from 'lodash';
 import config from '../config';
 
@@ -164,7 +164,7 @@ export default {
   // 表单校验
   FORM_VALIDATE() {
     const editableColumns = this.flattenColumns.filter(column => isFunction(column.editRender));
-    tableDataFlatMap(this.tableFullData).forEach(record => {
+    getAllTableData(this.tableFullData).forEach(record => {
       editableColumns.forEach(column => {
         const { dataIndex, editRender } = column;
         const options = editRender(record);

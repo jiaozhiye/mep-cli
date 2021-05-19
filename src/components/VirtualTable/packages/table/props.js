@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-15 09:04:09
+ * @Last Modified time: 2021-05-18 09:20:10
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -14,6 +14,7 @@ const columnItem = {
   colSpan: PropTypes.number, // 表头列合并,设置为 0 时，不渲染
   align: PropTypes.oneOf(['left', 'center', 'right']), // 设置列的对齐方式
   theadAlign: PropTypes.oneOf(['left', 'center', 'right']), // 设置表头的对齐方式
+  printFixed: PropTypes.bool, // 打印时，是否固定列
   hidden: PropTypes.bool, // 是否隐藏列
   ellipsis: PropTypes.bool, // 超过宽度将自动省略
   className: PropTypes.string, // 列样式类名
@@ -182,6 +183,15 @@ export default {
     defaultExpandAllRows: PropTypes.bool, // 默认展开所有行
     expandedRowKeys: PropTypes.array // 展开行的 key 数组，支持动态赋值
   }),
+  // 分组合计表格
+  groupSubtotal: PropTypes.arrayOf(
+    PropTypes.shape({
+      dataIndex: PropTypes.string.isRequired,
+      titleIndex: PropTypes.string,
+      color: PropTypes.string,
+      backgroundColor: PropTypes.string
+    }).loose
+  ),
   // 多列排序
   multipleSort: PropTypes.bool.def(true),
   // 是否为前端内存分页

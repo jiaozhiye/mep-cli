@@ -27,6 +27,7 @@
 | rowHighlight     | 列表行高亮选中，[配置项](#rowHighlight)                       | object                                                 | -      |
 | expandable       | 展开行配置项，[配置项](#expandable)                           | object                                                 | -      |
 | treeStructure    | 树结构选项，[配置项](#treeStructure)                          | object                                                 | -      |
+| groupSubtotal    | 分组合计表格，[配置项](#groupSubtotal)                        | array                                                  | -      |
 | multipleSort     | 是否为多列排序模式                                            | boolean                                                | true   |
 | paginationConfig | 分页参数的详细配置，[配置项](#pagination)                     | object                                                 | -      |
 | webPagination    | 是否为前端内存分页                                            | boolean                                                | false  |
@@ -81,6 +82,7 @@
 | colSpan      | 表头列合并,设置为 0 时，不渲染                 | number                                                            | -      |
 | align        | 设置列的对齐方式                               | left \| center \| right                                           | left   |
 | theadAlign   | 设置表头的对齐方式                             | left \| center \| right                                           | left   |
+| printFixed   | 打印时，是否固定列                             | boolean                                                           | false  |
 | hidden       | 是否隐藏列                                     | boolean                                                           | false  |
 | ellipsis     | 超过宽度将自动省略                             | boolean                                                           | false  |
 | className    | 列样式类名                                     | string                                                            | -      |
@@ -283,6 +285,15 @@
 | -------------------- | ---------------------- | ------- | ------ |
 | defaultExpandAllRows | 默认展开树表格的所有行 | boolean | -      |
 | expandedRowKeys      | 展开行的 rowKey 数组   | array   | -      |
+
+### groupSubtotal
+
+| 参数            | 说明                                                                                | 类型   | 默认值 |
+| --------------- | ----------------------------------------------------------------------------------- | ------ | ------ |
+| dataIndex       | 分组项的字段名，对应 column 的 dataIndex 值，必要参数                               | string | -      |
+| titleIndex      | 分组项标题的字段名，如果 dataIndex 设置的不是对应分组项标题字段，则需要设置此参数， | string | -      |
+| color           | 小计行的文本颜色                                                                    | string | -      |
+| backgroundColor | 小计行的背景颜色                                                                    | string | -      |
 
 ### exportExcel
 

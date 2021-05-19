@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-08 12:39:00
+ * @Last Modified time: 2021-05-10 14:00:34
  */
 import baseProps from './props';
 import Store from '../store';
@@ -10,13 +10,14 @@ import TableManager from '../manager';
 import config from '../config';
 import { isEqual, cloneDeep } from 'lodash';
 
-import { columnsFlatMap, getAllColumns, getAllRowKeys, tableDataFlatMap, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
+import { columnsFlatMap, getAllColumns, getAllRowKeys, getAllTableData, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
 import columnsMixin from '../columns';
 import expandableMixin from '../expandable/mixin';
 import selectionMixin from '../selection/mixin';
+import groupSubtotalMixin from '../group-subtotal';
 import validateMixin from '../edit/validate';
 import localStorageMixin from '../local-storage';
 import layoutMethods from './layout-methods';
@@ -51,7 +52,7 @@ export default {
       $$table: this
     };
   },
-  mixins: [sizeMixin, columnsMixin, expandableMixin, selectionMixin, validateMixin, localStorageMixin],
+  mixins: [sizeMixin, columnsMixin, expandableMixin, selectionMixin, groupSubtotalMixin, validateMixin, localStorageMixin],
   data() {
     // 原始列
     this.originColumns = [];
@@ -196,6 +197,9 @@ export default {
     isGroupSummary() {
       return this.flattenColumns.some(column => !!column.groupSummary);
     },
+    isGroupSubtotal() {
+      return !!this.groupSubtotal?.length;
+    },
     isTableEmpty() {
       return !this.tableData.length;
     },
@@ -336,13 +340,13 @@ export default {
     rowExpandedKeys(next, prev) {
       if (!this.expandable || isEqual(next, prev)) return;
       const { onChange = noop } = this.expandable;
-      const expandedRows = tableDataFlatMap(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
+      const expandedRows = getAllTableData(this.tableFullData).filter(record => next.includes(this.getRowKey(record, record.index)));
       onChange(next, expandedRows);
     },
     highlightKey(next) {
       if (!this.rowHighlight) return;
       const { onChange = noop } = this.rowHighlight;
-      const currentRow = tableDataFlatMap(this.tableFullData).find(record => this.getRowKey(record, record.index) === next);
+      const currentRow = getAllTableData(this.tableFullData).find(record => this.getRowKey(record, record.index) === next);
       onChange(next, currentRow || null);
     },
     [`rowHighlight.currentRowKey`](next) {

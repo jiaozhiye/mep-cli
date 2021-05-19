@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-12 14:48:41
+ * @Last Modified time: 2021-05-12 12:19:28
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -135,7 +135,7 @@ export default {
       );
     },
     renderRows(list, depth = 0) {
-      const { getRowKey, selectionKeys, highlightKey, rowSelection, expandable, rowExpandedKeys } = this.$$table;
+      const { getRowKey, selectionKeys, highlightKey, rowSelection, expandable, rowExpandedKeys, isGroupSubtotal } = this.$$table;
       const rows = [];
       list.forEach(row => {
         // 行记录 索引
@@ -146,7 +146,8 @@ export default {
           `v-body--row`,
           {
             [`v-body--row-selected`]: selectionKeys.includes(rowKey),
-            [`v-body--row-current`]: highlightKey === rowKey
+            [`v-body--row-current`]: highlightKey === rowKey,
+            ...(isGroupSubtotal ? this.createGroupRowCls(row._group) : null)
           }
         ];
         rows.push(
@@ -157,11 +158,11 @@ export default {
         // 展开行
         if (expandable) {
           const { rowExpandable = noop } = expandable;
-          const expandColumnCls = [`v-body--expanded-column`];
+          const expandColumnCls = [`v-body--column`];
           // 展开状态
           if (!rowExpandable(row) && rowExpandedKeys.includes(rowKey)) {
             rows.push(
-              <tr key={`expand_${rowKey}`} class="v-body--expanded-row">
+              <tr key={`expand_${rowKey}`} class="v-body--row-expanded">
                 <td colspan={this.flattenColumns.length} class={expandColumnCls} style={{ paddingLeft: !rowSelection ? `50px` : `100px` }}>
                   <div class="v-cell">{expandable.expandedRowRender(row, rowIndex)}</div>
                 </td>
@@ -180,7 +181,7 @@ export default {
       return rows;
     },
     renderColumn(column, columnIndex, row, rowIndex, rowKey, depth) {
-      const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, sorter, isIE } = this.$$table;
+      const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, sorter, isGroupSubtotal, isIE } = this.$$table;
       const { dataIndex, fixed, align, className } = column;
       const { rowspan, colspan } = this.getSpan(row, column, rowIndex, columnIndex);
       const isEllipsis = ellipsis || column.ellipsis;
@@ -209,6 +210,7 @@ export default {
         : null;
       const trExtraStys = this.rowStyle ? (isFunction(this.rowStyle) ? this.rowStyle(row, rowIndex) : this.rowStyle) : null;
       const tdExtraStys = this.cellStyle ? (isFunction(this.cellStyle) ? this.cellStyle(row, column, rowIndex, columnIndex) : this.cellStyle) : null;
+      const groupStys = isGroupSubtotal ? this.getGroupStyles(row._group) : null;
       return (
         <td
           key={dataIndex}
@@ -216,7 +218,7 @@ export default {
           rowspan={rowspan}
           colspan={colspan}
           class={cls}
-          style={{ ...stys, ...trExtraStys, ...tdExtraStys }}
+          style={{ ...stys, ...trExtraStys, ...tdExtraStys, ...groupStys }}
           onClick={ev => this.cellClickHandle(ev, row, column)}
           onDblclick={ev => this.cellDbclickHandle(ev, row, column)}
         >
@@ -296,8 +298,26 @@ export default {
           rowspan = result.rowspan;
           colspan = result.colspan;
         }
+        if (this.$$table.webPagination && row === this.tableData[0] && rowspan === 0) {
+          rowspan = 1;
+          for (let i = 1; i < this.tableData.length; i++) {
+            const { rowspan: rowSpan } = this.getSpan(this.tableData[i], column, this.tableData[i].index, columnIndex);
+            if (rowSpan > 0) break;
+            rowspan++;
+          }
+        }
       }
       return { rowspan, colspan };
+    },
+    createGroupRowCls(dataIndex) {
+      const level = this.$$table.groupSubtotal.findIndex(x => x.dataIndex === dataIndex);
+      return {
+        [`v-body--row-group_${level + 1}`]: level >= 0 ? true : false
+      };
+    },
+    getGroupStyles(dataIndex) {
+      const { backgroundColor, color } = this.$$table.groupSubtotal.find(x => x.dataIndex === dataIndex) ?? {};
+      return { backgroundColor, color };
     },
     renderCellTitle(column, row, rowIndex, columnIndex) {
       const { dataIndex, render } = column;

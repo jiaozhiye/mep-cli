@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-14 11:29:21
+ * @Last Modified time: 2021-05-10 14:41:27
  */
 import { pickBy, intersection, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -204,35 +204,45 @@ export default {
       this.clientSorter();
     },
     // 客户端排序
-    clientSorter() {
+    clientSorter(type) {
       const validSorter = pickBy(this.sorter);
       for (let key in validSorter) {
         let column = this.flattenColumns.find(column => column.dataIndex === key);
         this.doSortHandle(column, validSorter[key]);
       }
+      if (type === 'filter') return;
+      // 还原
       if (!Object.keys(validSorter).length) {
         this.doResetHandle();
       }
     },
     // 还原排序数据
     doResetHandle() {
-      const { tableFullData, tableOriginData } = this.$$table;
-      this.$$table.tableFullData = intersection(tableOriginData, tableFullData);
+      const { tableFullData, tableOriginData, createGroupData, getGroupValidData, isGroupSubtotal } = this.$$table;
+      if (!isGroupSubtotal) {
+        this.$$table.tableFullData = intersection(tableOriginData, tableFullData);
+      } else {
+        const result = intersection(getGroupValidData(tableOriginData), getGroupValidData(tableFullData));
+        this.$$table.tableFullData = createGroupData(result);
+      }
     },
     // 排序算法
     doSortHandle(column, order) {
       const { dataIndex, sorter } = column;
-      if (isFunction(sorter)) {
-        this.$$table.tableFullData.sort(sorter);
+      const { tableFullData, createGroupData, getGroupValidData, isGroupSubtotal } = this.$$table;
+      const sortFn = (a, b) => {
+        const start = getCellValue(a, dataIndex);
+        const end = getCellValue(b, dataIndex);
+        if (!!Number(start - end)) {
+          return order === this.ascend ? start - end : end - start;
+        }
+        return order === this.ascend ? start.toString().localeCompare(end.toString()) : end.toString().localeCompare(start.toString());
+      };
+      if (!isGroupSubtotal) {
+        this.$$table.tableFullData.sort(isFunction(sorter) ? sorter : sortFn);
       } else {
-        this.$$table.tableFullData.sort((a, b) => {
-          const start = getCellValue(a, dataIndex);
-          const end = getCellValue(b, dataIndex);
-          if (!!Number(start - end)) {
-            return order === this.ascend ? start - end : end - start;
-          }
-          return order === this.ascend ? start.toString().localeCompare(end.toString()) : end.toString().localeCompare(start.toString());
-        });
+        const result = getGroupValidData(tableFullData).sort(isFunction(sorter) ? sorter : sortFn);
+        this.$$table.tableFullData = createGroupData(result);
       }
     },
     // 表头筛选
@@ -242,11 +252,17 @@ export default {
     },
     // 客户端筛选
     clientFilter() {
-      const { tableOriginData, superFilters } = this.$$table;
+      this.$$table.tableFullData = this.getFilterTableData();
+      this.clientSorter('filter');
+    },
+    // 获取筛选后的数据
+    getFilterTableData() {
+      const { tableOriginData, superFilters, isGroupSubtotal, createGroupData, getGroupValidData } = this.$$table;
       const sql = !superFilters.length ? createWhereSQL(this.filters) : createWhereSQL(superFilters);
-      this.$$table.tableFullData = sql !== '' ? where(tableOriginData, sql) : [...tableOriginData];
-      // 执行排序
-      this.sorterHandle();
+      if (!isGroupSubtotal) {
+        return sql !== '' ? where(tableOriginData, sql) : [...tableOriginData];
+      }
+      return sql !== '' ? createGroupData(where(getGroupValidData(tableOriginData), sql)) : [...tableOriginData];
     },
     // 格式化排序参数
     formatSorterValue(sorter) {

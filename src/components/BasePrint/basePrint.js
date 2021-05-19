@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-08 10:38:23
+ * @Last Modified time: 2021-05-11 14:37:00
  **/
 import { getLodop } from './LodopFuncs';
 import css from './style.js';
@@ -96,7 +96,7 @@ export default {
           LODOP.SET_PRINT_PAGESIZE(1);
         }
         // 横向
-        if (setting.direction === 'horizontal') {
+        if (this.direction === 'horizontal') {
           LODOP.SET_PRINT_PAGESIZE(2);
           LODOP.SET_SHOW_MODE('LANDSCAPE_DEFROTATED', 1);
         }
