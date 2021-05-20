@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:57:22
+ * @Last Modified time: 2021-05-20 09:13:36
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
-import { parseHeight, getCellValue, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
+import { parseHeight, throttle, getCellValue, deepFindRowKey, getVNodeText, isArrayContain } from '../utils';
 import { getParentNode } from '../../../_utils/tool';
 import { isValidElement } from '../../../_utils/props-util';
 import clickOutside from '../../../_utils/click-outside';
@@ -87,7 +87,7 @@ export default {
   },
   mounted() {
     this.event1 = addEventListener(this.$el, 'scroll', this.scrollEvent);
-    this.event2 = addEventListener(document, 'keydown', this.keyboardEvent);
+    this.event2 = addEventListener(document, 'keydown', throttle(this.keyboardEvent, 100));
   },
   destroyed() {
     this.event1.remove();

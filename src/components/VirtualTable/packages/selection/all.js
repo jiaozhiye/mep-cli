@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-06 21:30:12
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:38:37
+ * @Last Modified time: 2021-05-20 10:37:21
  */
-import { intersection, xor } from 'lodash';
+import { intersection, union, xor } from 'lodash';
 import Checkbox from '../checkbox';
 
 const noop = () => {};
@@ -29,7 +29,7 @@ export default {
   methods: {
     changeHandle(val) {
       const { selectionKeys, filterAllRowKeys } = this;
-      this.$$table.selectionKeys = val ? [...new Set([...selectionKeys, ...filterAllRowKeys])] : xor(selectionKeys, filterAllRowKeys);
+      this.$$table.selectionKeys = val ? union(selectionKeys, filterAllRowKeys) : selectionKeys.filter(x => !filterAllRowKeys.includes(x));
     }
   },
   render() {
