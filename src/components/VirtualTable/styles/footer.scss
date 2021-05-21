@@ -2,13 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:13:07
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-03-23 21:43:32
+ * @Last Modified time: 2021-05-21 09:49:16
  */
 .v-table--footer-wrapper {
   background-color: $v-table-footer-background-color;
-  .gutter {
-    background-color: $v-table-footer-background-color;
-  }
   &::before {
     content: '';
     position: absolute;
@@ -17,5 +14,13 @@
     height: 0;
     z-index: 3;
     border-top: 1px solid $v-table-border-color;
+  }
+  .v-table--footer {
+    .gutter {
+      background-color: $v-table-footer-background-color;
+    }
+    .v-cell {
+      font-weight: 700;
+    }
   }
 }

@@ -248,6 +248,7 @@
 | hideSelectAll         | 隐藏表头全选勾选框                         | boolean                                | -      |
 | checkStrictly         | 选择列完全受控（父子数据选中状态不再关联） | boolean                                | true   |
 | defaultSelectFirstRow | 是否默认选中第一行（单选时生效）           | boolean                                | -      |
+| clearableAfterFetched | 重新检索之后，是否清空已选择列             | boolean                                | true   |
 | disabled              | 是否允许行选择                             | Function(row) => boolean               | -      |
 | onChange              | 选中项发生变化时触发                       | Function(selectionKeys, selectionRows) | -      |
 

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:55:49
+ * @Last Modified time: 2021-05-21 13:04:40
  */
 import baseProps from './props';
 import Store from '../store';
@@ -34,6 +34,7 @@ import Alert from '../alert';
 import ColumnFilter from '../column-filter';
 import GroupSummary from '../group-summary';
 import HighSearch from '../high-search';
+import SelectCollection from '../select-collection';
 import FullScreen from '../full-screen';
 import Export from '../export';
 import PrintTable from '../print';
@@ -193,6 +194,9 @@ export default {
     isServerSummation() {
       return this.flattenColumns.some(x => !!x.summation?.dataKey);
     },
+    isSelectCollection() {
+      return this.isFetch && this.rowSelection?.type === 'checkbox';
+    },
     isSuperSearch() {
       return this.showSuperSearch && this.isHeadFilter;
     },
@@ -305,9 +309,10 @@ export default {
       this.clearSuperSearch();
     },
     fetchParams(next, prev) {
+      const { clearableAfterFetched = !0 } = this.rowSelection || {};
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
       if (!isOnlyPageChange) {
-        this.isFetch && debounce(this.clearRowSelection)();
+        this.isFetch && clearableAfterFetched && debounce(this.clearRowSelection)();
       }
       if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch?.stopToFirst) {
         this.toFirstPage();
@@ -452,6 +457,7 @@ export default {
       showRefresh,
       tablePrint,
       exportExcel,
+      isSelectCollection,
       isSuperSearch,
       isGroupSummary,
       showColumnDefine
@@ -565,6 +571,8 @@ export default {
             {tablePrint && <PrintTable {...printProps} />}
             {/* 导出 */}
             {exportExcel && <Export {...exportProps} />}
+            {/* 多选集合 */}
+            {isSelectCollection && <SelectCollection columns={columns} />}
             {/* 高级检索 */}
             {isSuperSearch && <HighSearch columns={flattenColumns} />}
             {/* 分组汇总 */}

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:18:31
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 08:42:42
+ * @Last Modified time: 2021-05-21 12:41:32
  */
 export default {
   table: {
@@ -76,6 +76,11 @@ export default {
     },
     refresh: {
       text: 'refresh'
+    },
+    selectCollection: {
+      text: '行选集合',
+      settingTitle: '行选列表',
+      closeButton: '关闭'
     },
     groupSummary: {
       text: 'summary',

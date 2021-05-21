@@ -90,10 +90,12 @@ export default {
       selection: {
         type: 'checkbox',
         selectedRowKeys: this.selectedKeys,
+        clearableAfterFetched: false,
         disabled: row => {
           return row.id === 3;
         },
         onChange: (val, rows) => {
+          console.log(123, val, rows);
           this.selectedKeys = val;
         }
       },
@@ -665,7 +667,9 @@ export default {
     },
     // 新建按钮
     addInfoHandle() {
-      this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '新建信息', data: null });
+      // this.selection.selectedRowKeys = [];
+      this.$table.clearRowSelection();
+      // this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '新建信息', data: null });
     },
     // 表格编辑按钮
     editInfoHandle(row) {

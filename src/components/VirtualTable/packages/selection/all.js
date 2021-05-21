@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-06 21:30:12
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-20 10:37:21
+ * @Last Modified time: 2021-05-21 12:50:04
  */
 import { intersection, union, xor } from 'lodash';
 import Checkbox from '../checkbox';
@@ -33,6 +33,6 @@ export default {
     }
   },
   render() {
-    return <Checkbox indeterminate={this.indeterminate} value={this.selectable} onInput={this.changeHandle} />;
+    return <Checkbox indeterminate={this.indeterminate} disabled={!this.filterAllRowKeys.length} value={this.selectable} onInput={this.changeHandle} />;
   }
 };
