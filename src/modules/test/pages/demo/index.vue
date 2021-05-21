@@ -23,7 +23,7 @@
       height="auto"
       :columns="columns"
       :fetch="fetch"
-      :rowKey="record => record.id"
+      :rowKey="record => record.index"
       :rowSelection="selection"
       :rowHighlight="rowHighlight"
       :exportExcel="exportExcel"
@@ -667,9 +667,7 @@ export default {
     },
     // 新建按钮
     addInfoHandle() {
-      // this.selection.selectedRowKeys = [];
-      this.$table.clearRowSelection();
-      // this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '新建信息', data: null });
+      this.actions = Object.assign({}, this.actions, { type: '', visible: true, title: '新建信息', data: null });
     },
     // 表格编辑按钮
     editInfoHandle(row) {

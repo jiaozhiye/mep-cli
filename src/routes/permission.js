@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-08 19:44:10
+ * @Last Modified time: 2021-05-21 15:23:08
  */
 import router from '@/routes';
 import store from '@/store';
@@ -17,10 +17,10 @@ import i18n from '@/lang';
 NProgress.configure({ showSpinner: false });
 
 // 访问白名单
-const whiteList = ['/login', '/wechat'];
+const whiteList = ['/login', '/iframe', '/wechat'];
 
 // 权限白名单
-const whiteAuth = ['/home', '/iframe', '/redirect', '/404', '/user-center', '/notice-center', '/test'];
+const whiteAuth = ['/home', '/redirect', '/404', '/user-center', '/notice-center', '/test'];
 
 // 路由重定向
 const redirect = (next, path) => {
@@ -39,7 +39,7 @@ const isLogin = () => {
 
 // iframe 判断
 const isIframe = path => {
-  return path.startsWith(whiteAuth[1]);
+  return path.startsWith(whiteList[1]);
 };
 
 router.beforeEach(async (to, from, next) => {
@@ -68,10 +68,8 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    // 没有登录，清空菜单数据
-    store.dispatch('app/clearNavList');
     // 白名单，直接进入
-    if (whiteList.includes(to.path)) {
+    if (whiteList.some(x => to.path.startsWith(x))) {
       next();
     } else {
       process.env.ENV_CONFIG === 'gray' ? (window.location = '/login') : redirect(next, '/login');
@@ -83,7 +81,7 @@ router.afterEach(to => {
   const title = to.meta?.title ?? '404';
   document.title = `${config.systemName}-${title}`;
   NProgress.done();
-  if (whiteList.includes(to.path) || title === '404') return;
+  if (whiteList.some(x => to.path.startsWith(x)) || title === '404') return;
   if (!config.openBuryPoint) return;
   // 菜单埋点
   store.dispatch('app/createMenuRecord', { path: to.path, title });
