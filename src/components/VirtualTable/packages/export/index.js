@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 15:51:37
+ * @Last Modified time: 2021-05-24 08:50:11
  */
 import dayjs from 'dayjs';
 import { get, cloneDeep, isFunction } from 'lodash';
@@ -61,8 +61,8 @@ export default {
     },
     async getTableData(options) {
       const { fileType, exportType, startIndex = 1, endIndex } = options;
-      const { fetch, fetchParams, total, isFetch, allTableData, selectionKeys, getRowKey } = this.$$table;
-      let tableList = allTableData;
+      const { fetch, fetchParams, total, isFetch, allTableData, selectionRows } = this.$$table;
+      let tableList = [];
 
       if (isFetch) {
         this.exporting = !0;
@@ -80,10 +80,12 @@ export default {
         }
 
         this.exporting = !1;
+      } else {
+        tableList = allTableData.slice(0);
       }
 
       if (exportType === 'selected') {
-        tableList = tableList.filter(row => selectionKeys.includes(getRowKey(row, row.index)));
+        tableList = selectionRows.slice(0);
       }
       if (exportType === 'custom') {
         tableList = tableList.slice(startIndex - 1, endIndex ? endIndex : undefined);
