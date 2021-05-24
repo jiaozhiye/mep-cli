@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-15 12:08:22
+ * @Last Modified time: 2021-05-24 21:21:48
  */
 'use strict';
 
@@ -38,12 +38,12 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
-    filename: utils.assetsPath('js/[name].[contenthash:8].js?_=[contenthash:8]'),
-    chunkFilename: utils.assetsPath('js/[name].[contenthash:8].chunk.js?_=[contenthash:8]')
+    filename: utils.assetsPath('js/[name].[contenthash:8].js'),
+    chunkFilename: utils.assetsPath('js/[name].[contenthash:8].js')
   },
   optimization: {
     minimize: true,
-    runtimeChunk: 'single',
+    runtimeChunk: true,
     minimizer: [
       new TerserPlugin({
         // cache: true,
@@ -88,7 +88,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // extract css into its own file
     new MiniCssExtractPlugin({
       filename: utils.assetsPath('css/[name].[contenthash:8].css'),
-      chunkFilename: utils.assetsPath('css/[name].[contenthash:8].chunk.css')
+      chunkFilename: utils.assetsPath('css/[name].[contenthash:8].css')
     }),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
