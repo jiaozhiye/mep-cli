@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-20 09:13:36
+ * @Last Modified time: 2021-05-27 11:41:52
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -271,7 +271,9 @@ export default {
         result = Number(result).toFixed(precision);
       }
       // 处理换行符
-      result = result.toString().replace(/[\r\n]/g, '');
+      if (typeof result === 'string') {
+        result = result.replace(/[\r\n]/g, '');
+      }
       // 处理数据格式化
       if (formatType) {
         const render = this[`${formatType}Format`];

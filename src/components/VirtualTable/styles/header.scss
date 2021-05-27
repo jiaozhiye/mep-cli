@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:11:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-02 11:58:27
+ * @Last Modified time: 2021-05-27 11:53:31
  */
 %TheadAlignCenter {
   .v-cell--text {
@@ -148,6 +148,7 @@
       li {
         display: flex;
         align-items: center;
+        white-space: nowrap;
         margin-top: 8px;
         & > span {
           margin-right: 5px;
