@@ -23,7 +23,7 @@
       height="auto"
       :columns="columns"
       :fetch="fetch"
-      :rowKey="record => record.index"
+      :rowKey="record => record.id"
       :rowSelection="selection"
       :rowHighlight="rowHighlight"
       :exportExcel="exportExcel"

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 22:04:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-12-31 12:30:06
+ * @Last Modified time: 2021-06-01 08:59:37
  */
 import tableZhLocale from '../../VirtualTable/packages/locale/lang/zh';
 
@@ -104,6 +104,7 @@ export default {
     save: '保 存',
     spread: '展开',
     collect: '收起',
+    selectAll: '全选',
     searchHelper: '搜索帮助',
     trueText: '是',
     falseText: '否',

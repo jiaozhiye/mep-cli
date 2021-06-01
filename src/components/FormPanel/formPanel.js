@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-22 14:22:40
+ * @Last Modified time: 2021-06-01 09:03:50
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -1846,7 +1846,7 @@ export default {
         disabled,
         onChange = noop
       } = option;
-      const { filterable = !0, openPyt = !0, limit } = options;
+      const { filterable = !0, openPyt = !0, limit, showSelectAll } = options;
       const { fetchApi, params = {} } = request;
       let itemList = options.itemList || [];
       if (!options.itemList && fetchApi) {
@@ -1923,6 +1923,18 @@ export default {
                   </el-option-group>
                 ))}
           </el-select>
+          {multiple && showSelectAll ? (
+            <el-button
+              type="text"
+              style={{ marginLeft: '6px' }}
+              disabled={!itemList.length}
+              onClick={() => {
+                form[fieldName] = itemList.filter(x => !x.disabled).map(x => x.value);
+              }}
+            >
+              {this.t('form.selectAll')}
+            </el-button>
+          ) : null}
           {descOptions && this.createFormItemDesc({ fieldName, ...descOptions })}
         </el-form-item>
       );
