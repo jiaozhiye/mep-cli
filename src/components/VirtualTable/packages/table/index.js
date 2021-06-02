@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-21 13:04:40
+ * @Last Modified time: 2021-06-02 12:25:33
  */
 import baseProps from './props';
 import Store from '../store';
@@ -397,7 +397,7 @@ export default {
   activated() {
     TableManager.focus(this._uid);
     this.scrollYLoad && this.loadScrollYData(0);
-    this.calcTableHeight();
+    setTimeout(() => this.calcTableHeight());
   },
   destroyed() {
     TableManager.deregister(this._uid);

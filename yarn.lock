@@ -3369,10 +3369,10 @@ elegant-spinner@^1.0.1:
   resolved "https://registry.npm.taobao.org/elegant-spinner/download/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
 
-element-ui@2.13.2:
-  version "2.13.2"
-  resolved "https://registry.npm.taobao.org/element-ui/download/element-ui-2.13.2.tgz?cache=0&sync_timestamp=1610710781355&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felement-ui%2Fdownload%2Felement-ui-2.13.2.tgz#582bf47aaaaaafe23ea1958fae217a687ad06447"
-  integrity sha1-WCv0eqqqr+I+oZWPriF6aHrQZEc=
+element-ui@2.15.1:
+  version "2.15.1"
+  resolved "https://registry.nlark.com/element-ui/download/element-ui-2.15.1.tgz?cache=0&sync_timestamp=1622187030830&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felement-ui%2Fdownload%2Felement-ui-2.15.1.tgz#ada00aa6e32c02774a2e77563dd84668f813cdff"
+  integrity sha1-raAKpuMsAndKLndWPdhGaPgTzf8=
   dependencies:
     async-validator "~1.8.1"
     babel-helper-vue-jsx-merge-props "^2.0.0"
@@ -9494,10 +9494,10 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-template-compiler@2.6.11:
-  version "2.6.11"
-  resolved "https://registry.npm.taobao.org/vue-template-compiler/download/vue-template-compiler-2.6.11.tgz?cache=0&sync_timestamp=1597927391993&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-template-compiler%2Fdownload%2Fvue-template-compiler-2.6.11.tgz#c04704ef8f498b153130018993e56309d4698080"
-  integrity sha1-wEcE749JixUxMAGJk+VjCdRpgIA=
+vue-template-compiler@2.6.13:
+  version "2.6.13"
+  resolved "https://registry.nlark.com/vue-template-compiler/download/vue-template-compiler-2.6.13.tgz#a735b8974e013ce829e7f77e08e4ee5aecbd3005"
+  integrity sha1-pzW4l04BPOgp5/d+COTuWuy9MAU=
   dependencies:
     de-indent "^1.0.2"
     he "^1.1.0"
@@ -9507,10 +9507,10 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha1-HuO8mhbsv1EYvjNLsV+cRvgvWCU=
 
-vue@2.6.11:
-  version "2.6.11"
-  resolved "https://registry.npm.taobao.org/vue/download/vue-2.6.11.tgz?cache=0&sync_timestamp=1609359858533&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue%2Fdownload%2Fvue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
-  integrity sha1-dllNh31LEiNEBuhONSdcbVFBJcU=
+vue@2.6.13:
+  version "2.6.13"
+  resolved "https://registry.nlark.com/vue/download/vue-2.6.13.tgz#94b2c1b31fddf1dfcc34f28ec848ba8f01ea4c5b"
+  integrity sha1-lLLBsx/d8d/MNPKOyEi6jwHqTFs=
 
 vuex@3.4.0:
   version "3.4.0"
@@ -9566,10 +9566,10 @@ webpack-cli@^3.3.12:
     v8-compile-cache "^2.1.1"
     yargs "^13.3.2"
 
-webpack-custom-theme@^1.0.2:
-  version "1.0.5"
-  resolved "https://registry.npm.taobao.org/webpack-custom-theme/download/webpack-custom-theme-1.0.5.tgz?cache=0&sync_timestamp=1613309308316&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fwebpack-custom-theme%2Fdownload%2Fwebpack-custom-theme-1.0.5.tgz#678b13ff7791e47a3f4a687dc37ceb652b10912a"
-  integrity sha1-Z4sT/3eR5Ho/Smh9w3zrZSsQkSo=
+webpack-custom-theme@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.nlark.com/webpack-custom-theme/download/webpack-custom-theme-1.0.7.tgz#065328d43e8907774237cb8122b22737f2fa02b9"
+  integrity sha1-BlMo1D6JB3dCN8uBIrInN/L6Ark=
   dependencies:
     webpack-sources "*"
 
