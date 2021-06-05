@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-15 11:42:52
+ * @Last Modified time: 2021-06-05 14:16:22
  */
 'use strict';
 
@@ -14,9 +14,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 // 自定义主题
 const ThemeColorReplacer = require('webpack-custom-theme');
 const forElementUI = require('webpack-custom-theme/forElementUI');
-
-// 主题色
-const primaryColor = '#0d74b5';
 
 // Eslint 校验
 const createLintingRule = () => ({
@@ -110,14 +107,15 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        ENV_CONFIG: JSON.stringify(process.env.ENV_CONFIG)
+        ENV_CONFIG: JSON.stringify(process.env.ENV_CONFIG),
+        THEME_COLOR: JSON.stringify(config.primaryColor)
       }
     }),
     new ThemeColorReplacer({
       fileName: utils.assetsPath('css/theme-colors.css'),
       matchColors: [
-        ...forElementUI.getElementUISeries(primaryColor), // element-ui 主题色
-        primaryColor // 自定义主题色
+        ...forElementUI.getElementUISeries(config.primaryColor), // element-ui 主题色
+        config.primaryColor // 自定义主题色
       ],
       changeSelector: forElementUI.changeSelector
     })

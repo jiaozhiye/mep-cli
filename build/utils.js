@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-02-11 17:37:56
+ * @Last Modified time: 2021-06-05 14:28:33
  */
 'use strict';
 
@@ -10,7 +10,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const config = require('../config');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const mapDir = (d, reg) => {
@@ -81,10 +80,6 @@ exports.cssLoaders = function(options) {
     // Extract CSS when that option is specified
     // (which is the case during production build)
     if (options.extract) {
-      // return ExtractTextPlugin.extract({
-      //   use: loaders,
-      //   fallback: 'vue-style-loader'
-      // })
       return [MiniCssExtractPlugin.loader].concat(loaders);
     } else {
       return ['vue-style-loader'].concat(loaders);
@@ -97,7 +92,9 @@ exports.cssLoaders = function(options) {
     postcss: generateLoaders(),
     less: generateLoaders('less'),
     sass: generateLoaders('sass', { indentedSyntax: true }),
-    scss: generateLoaders('sass').concat({
+    scss: generateLoaders('sass', {
+      prependData: '$THEME_COLOR: ' + config.primaryColor + ';'
+    }).concat({
       loader: 'style-resources-loader',
       options: {
         patterns: [path.resolve(__dirname, '../src/assets/css/variables.scss')]

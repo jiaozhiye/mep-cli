@@ -1,11 +1,5 @@
 <template>
-  <el-color-picker
-    v-model="theme"
-    class="theme-picker"
-    popper-class="theme-picker-dropdown"
-    :predefine="['#0d74b5', '#1890ff', '#001e50', '#722ed1', '#11a983', '#13c2c2', '#52c41a', '#f5222d', '#fa541c', '#faad14']"
-    @change="changeThemeColor"
-  />
+  <el-color-picker v-model="theme" class="theme-picker" popper-class="theme-picker-dropdown" :predefine="themeColors" @change="changeThemeColor" />
 </template>
 
 <script>
@@ -13,7 +7,7 @@
  * @Author: 焦质晔
  * @Date: 2020-04-23 19:44:29
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2020-05-17 16:56:33
+ * @Last Modified time: 2021-06-05 14:18:07
  */
 import { mapState, mapActions } from 'vuex';
 
@@ -21,7 +15,8 @@ export default {
   name: 'ThemePicker',
   data() {
     return {
-      theme: localStorage.getItem('theme') || this.$store.state.app.theme
+      theme: localStorage.getItem('theme') || this.$store.state.app.theme,
+      themeColors: [process.env.THEME_COLOR, '#1890ff', '#001e50', '#722ed1', '#11a983', '#13c2c2', '#52c41a', '#f5222d', '#fa541c', '#faad14']
     };
   },
   methods: {

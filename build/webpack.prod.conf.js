@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-02 15:20:44
+ * @Last Modified time: 2021-06-05 14:15:44
  */
 'use strict';
 
@@ -13,12 +13,9 @@ const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const OptimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -56,9 +53,6 @@ const webpackConfig = merge(baseWebpackConfig, {
             drop_debugger: true
           }
         }
-      }),
-      new OptimizeCSSPlugin({
-        cssProcessorOptions: config.build.productionSourceMap ? { safe: true, map: { inline: false } } : { safe: true }
       })
     ],
     splitChunks: {
@@ -91,27 +85,41 @@ const webpackConfig = merge(baseWebpackConfig, {
       filename: utils.assetsPath('css/[name].[contenthash:8].css'),
       chunkFilename: utils.assetsPath('css/[name].[contenthash:8].css')
     }),
+    // css build and minimize
+    new OptimizeCssnanoPlugin({
+      sourceMap: config.build.productionSourceMap,
+      cssnanoOptions: {
+        preset: [
+          'default',
+          {
+            mergeLonghand: false,
+            cssDeclarationSorter: false
+          }
+        ]
+      }
+    }),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     new HtmlWebpackPlugin({
       filename: config.build.index,
       template: 'public/index.html',
+      favicon: 'public/favicon.ico',
       inject: true,
-      favicon: utils.resolve('public/favicon.ico'),
       minify: {
         removeComments: true
       },
       templateParameters: {
-        BASE_URL: config.build.assetsPublicPath + config.build.assetsSubDirectory
+        BASE_URL: config.build.assetsPublicPath + config.build.assetsSubDirectory,
+        THEME_COLOR: config.primaryColor
       }
     }),
-    // new Dotenv(),
-    new ScriptExtHtmlWebpackPlugin({
-      //`runtime` must same as runtimeChunk name. default is `runtime`
-      inline: /runtime\..*\.js$/
+    new Dotenv({
+      path: utils.resolve('.env.prod')
     }),
     // keep module.id stable when vendor modules does not change
-    new webpack.HashedModuleIdsPlugin(),
+    new webpack.HashedModuleIdsPlugin({
+      hashDigest: 'hex'
+    }),
     // copy custom static assets
     new CopyWebpackPlugin([
       {

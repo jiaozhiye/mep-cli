@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-17 18:50:16
+ * @Last Modified time: 2021-06-05 14:14:02
  */
 'use strict';
 const path = require('path');
@@ -12,6 +12,8 @@ const HOST = 'localhost';
 const PORT = 8080;
 
 module.exports = {
+  primaryColor: '#0d74b5', // 主题色
+
   dev: {
     // Paths
     assetsSubDirectory: 'static',

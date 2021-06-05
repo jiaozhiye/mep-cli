@@ -36,6 +36,13 @@ $ npm run build
 注意：npm 依赖需要统一管理，不允许私自安装；公共的表单校验规则统一管理
 ```
 
+## 自定义主题
+
+```bash
+# config/index.js
+primaryColor: '#0d74b5'
+```
+
 ## 组件列表
 
 ```
