@@ -27,16 +27,16 @@ export default {
     ...mapState('app', ['lang'])
   },
   methods: {
-    ...mapActions('app', ['setLanguage', 'refreshView']),
+    ...mapActions('app', ['setLanguage', 'clearKeepAliveCache', 'refreshView']),
     languageChangeHandle(lang) {
       this.$i18n.locale = lang;
       this.setLanguage(lang);
       localStorage.setItem('lang', lang);
       // 浏览器刷新，重新获取数据
-      window.history.go(0);
-      // this.refreshView({ path: this.$route.path });
-      // 可能需要重新获取基础信息
-      // ...
+      // window.history.go(0);
+      // 重新加载路由页面
+      this.clearKeepAliveCache();
+      this.refreshView({ path: this.$route.path });
     }
   }
 };
