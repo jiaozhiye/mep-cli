@@ -21,7 +21,7 @@ export default {
       list: cloneDeep(this.selectionRows),
       selection: {
         type: 'checkbox',
-        selectedRowKeys: this.selectionKeys,
+        selectedRowKeys: [...this.selectionKeys],
         onChange: val => {
           this.$$table.selectionKeys = val;
         }

@@ -41,7 +41,7 @@
     "dayjs": "1.9.7",
     "echarts": "4.9.0",
     "element-ui": "2.15.1",
-    "exceljs": "2.0.0",
+    "exceljs": "1.15.0",
     "js-cookie": "2.2.0",
     "localforage": "1.9.0",
     "lodash": "4.17.20",
