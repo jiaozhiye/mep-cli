@@ -44,7 +44,7 @@
     "exceljs": "1.15.0",
     "js-cookie": "2.2.0",
     "localforage": "1.9.0",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "mockjs": "1.1.0",
     "nprogress": "0.2.0",
     "resize-observer-polyfill": "1.5.1",
