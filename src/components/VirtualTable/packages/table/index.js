@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-02 12:25:33
+ * @Last Modified time: 2021-06-10 15:18:51
  */
 import baseProps from './props';
 import Store from '../store';
@@ -177,7 +177,7 @@ export default {
       return this.flattenColumns.filter(column => column.fixed === 'right');
     },
     showFooter() {
-      return this.flattenColumns.some(x => !!x.summation);
+      return this.showSummary && this.flattenColumns.some(x => !!x.summation);
     },
     showPagination() {
       return this.isFetch || this.webPagination;

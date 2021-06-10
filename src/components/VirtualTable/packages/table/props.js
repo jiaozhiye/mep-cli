@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-21 09:33:16
+ * @Last Modified time: 2021-06-10 15:18:23
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -145,6 +145,8 @@ export default {
   uniqueKey: PropTypes.string,
   // 是否显示表头
   showHeader: PropTypes.bool.def(true),
+  // 是否显示底部合计
+  showSummary: PropTypes.bool.def(true),
   // 设置所有内容过长时显示为省略号
   ellipsis: PropTypes.bool.def(true),
   // 给行附加样式
