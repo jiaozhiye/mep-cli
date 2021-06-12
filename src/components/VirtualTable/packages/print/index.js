@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-26 11:44:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:36:47
+ * @Last Modified time: 2021-06-12 09:25:56
  */
 import Cookies from 'js-cookie';
 import { flatten, groupBy, map, spread, mergeWith, isFunction, isObject } from 'lodash';
@@ -194,7 +194,7 @@ export default {
       return html + `</body></html>`;
     },
     _toTable(columnRows, flatColumns, dataList) {
-      const summationRows = flatColumns.some(x => !!x.summation) ? this.$$table.$refs[`tableFooter`].summationRows : [];
+      const summationRows = this.$$table.$refs[`tableFooter`]?.summationRows || [];
       let html = `<table class="v-table--print" width="100%" border="0" cellspacing="0" cellpadding="0">`;
       html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (this.showHeader) {

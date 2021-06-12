@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-02 15:58:17
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-24 08:50:11
+ * @Last Modified time: 2021-06-12 09:25:05
  */
 import dayjs from 'dayjs';
 import { get, cloneDeep, isFunction } from 'lodash';
@@ -126,7 +126,7 @@ export default {
     _toTable(options, columnRows, flatColumns, dataList) {
       const { footSummation } = options;
       const { showHeader, showFooter } = this.$$table;
-      const summationRows = flatColumns.some(x => !!x.summation) ? this.$$table.$refs[`tableFooter`].summationRows : [];
+      const summationRows = this.$$table.$refs[`tableFooter`]?.summationRows ?? [];
       let html = `<table width="100%" border="0" cellspacing="0" cellpadding="0">`;
       html += `<colgroup>${flatColumns.map(({ width, renderWidth }) => `<col style="width:${width || renderWidth || config.defaultColumnWidth}px">`).join('')}</colgroup>`;
       if (showHeader) {

@@ -1,8 +1,11 @@
 <template>
   <div>
+    <div>
+      <el-button @click="clickHandle">按钮</el-button>
+    </div>
     <VirtualTable
       ref="table"
-      maxHeight="600"
+      height="auto"
       rowKey="id"
       :columns="columns"
       :dataSource="list"
@@ -11,6 +14,7 @@
       :exportExcel="exportExcel"
       :spanMethod="spanMethod"
       :webPagination="true"
+      :showSummary="visible"
       :columnsChange="columnsChange"
     />
   </div>
@@ -144,6 +148,7 @@ export default {
   name: 'Demo3',
   data() {
     return {
+      visible: false,
       list: tableData,
       treeStructure: {
         defaultExpandAllRows: true
@@ -156,6 +161,12 @@ export default {
     };
   },
   methods: {
+    clickHandle() {
+      this.visible = !this.visible;
+      this.$nextTick(() => {
+        this.$refs.table.CALCULATE_HEIGHT();
+      });
+    },
     spanMethod({ row, column, rowIndex, columnIndex }) {
       if (this.groupSubtotal.map(x => x.titleIndex || x.dataIndex).includes(column.dataIndex)) {
         return [row._rowSpan ?? 1, 1];

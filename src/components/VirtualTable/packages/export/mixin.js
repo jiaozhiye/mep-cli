@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-11 13:04:47
+ * @Last Modified time: 2021-06-12 09:25:54
  */
 import ExcelJS from 'exceljs/dist/exceljs.min';
 import { isFunction, isObject } from 'lodash';
@@ -172,7 +172,7 @@ const exportMixin = {
       beforeRowCount += rowList.length;
 
       // 处理表尾
-      const summationRows = columns.some(column => !!column.summation) ? this.$$table.$refs[`tableFooter`].summationRows : [];
+      const summationRows = this.$$table.$refs[`tableFooter`]?.summationRows ?? [];
       if (showFooter && footSummation) {
         summationRows.forEach((row, rowIndex) => {
           const colFoot = {};
