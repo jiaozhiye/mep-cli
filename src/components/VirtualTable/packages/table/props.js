@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-10 15:18:23
+ * @Last Modified time: 2021-06-16 09:22:28
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -136,7 +136,7 @@ export default {
   // 表格的最大高度
   maxHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // 页面是否加载中
-  loading: PropTypes.bool.def(false),
+  loading: PropTypes.bool,
   // 所有列是否允许拖动列宽调整大小
   resizable: PropTypes.bool.def(true),
   // 表格尺寸
@@ -239,7 +239,7 @@ export default {
   // 是否显示列定义
   showColumnDefine: PropTypes.bool.def(true),
   // 只显示图标，不显示文字
-  onlyShowIcon: PropTypes.bool,
+  onlyShowIcon: PropTypes.bool.def(false),
   // 加载表格之前的拦截器，适用于 fetch.api 情况
   beforeLoadTable: PropTypes.func
 };

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-27 11:41:52
+ * @Last Modified time: 2021-06-16 09:30:41
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -219,7 +219,7 @@ export default {
           rowspan={rowspan}
           colspan={colspan}
           class={cls}
-          style={{ ...stys, ...trExtraStys, ...tdExtraStys, ...groupStys }}
+          style={{ ...stys, ...groupStys, ...trExtraStys, ...tdExtraStys }}
           onClick={ev => this.cellClickHandle(ev, row, column)}
           onDblclick={ev => this.cellDbclickHandle(ev, row, column)}
         >

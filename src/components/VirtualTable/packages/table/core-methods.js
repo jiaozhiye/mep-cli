@@ -2,11 +2,11 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:45:18
+ * @Last Modified time: 2021-06-16 09:23:47
  */
 import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
-import { get, cloneDeep, isFunction, isObject } from 'lodash';
+import { get, cloneDeep, isFunction, isObject, isUndefined } from 'lodash';
 
 const noop = () => {};
 const $browse = browse();
@@ -66,7 +66,7 @@ export default {
     const { beforeFetch = () => !0, xhrAbort = !1 } = fetch;
     if (!beforeFetch(fetchParams) || xhrAbort) return;
     // console.log(`ajax 请求参数：`, fetchParams);
-    this.showLoading = true;
+    isUndefined(this.loading) && (this.showLoading = !0);
     if (process.env.MOCK_DATA === 'true') {
       await sleep(500);
       const { data } = cloneDeep(require('@/mock/tableData').default);
@@ -99,7 +99,7 @@ export default {
     if (hasOwn(this.fetch, 'stopToFirst')) {
       this.fetch.stopToFirst = false;
     }
-    this.showLoading = false;
+    isUndefined(this.loading) && (this.showLoading = !1);
   },
   // 加载表格数据
   loadTableData() {
