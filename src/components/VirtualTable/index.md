@@ -175,6 +175,7 @@
 | --------------- | ------------- |
 | date            | 日期类型      |
 | datetime        | 日期-时间类型 |
+| percent         | 百分数        |
 | finance         | 金融格式      |
 | secret-name     | 姓名保密      |
 | secret-phone    | 电话保密      |

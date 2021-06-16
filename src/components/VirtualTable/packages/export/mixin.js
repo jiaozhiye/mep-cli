@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2021-04-06 13:37:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-12 09:25:54
+ * @Last Modified time: 2021-06-16 12:39:20
  */
 import ExcelJS from 'exceljs/dist/exceljs.min';
 import { isFunction, isObject } from 'lodash';
@@ -165,7 +165,7 @@ const exportMixin = {
               });
             }
           }
-          colBody[column.dataIndex] = this.renderCell(row, rowIndex, column, columnIndex);
+          colBody[column.dataIndex] = ['percent', 'finance'].includes(column.formatType) ? getCellValue(row, column.dataIndex) : this.renderCell(row, rowIndex, column, columnIndex);
         });
         return colBody;
       });
@@ -236,8 +236,18 @@ const exportMixin = {
           excelRow.eachCell(excelCell => {
             const excelCol = sheet.getColumn(excelCell.col);
             const column = deepFindColumn(headColumns, excelCol.key);
-            const { align } = column;
+            const { align, precision, formatType } = column;
             setExcelCellStyle(excelCell, align);
+            let suffix = precision >= 0 ? (precision ? `0.${new Array(precision).fill('0').join('')}` : '0') : '';
+            if (suffix) {
+              Object.assign(excelCell, { numFmt: suffix });
+            }
+            if (formatType === 'percent') {
+              Object.assign(excelCell, { numFmt: precision >= 0 ? `${suffix}%` : '0%' });
+            }
+            if (formatType === 'finance') {
+              Object.assign(excelCell, { numFmt: precision >= 0 ? `#,##${suffix}` : '#,##0' });
+            }
             if (useStyle) {
               Object.assign(excelCell, {
                 font: {
