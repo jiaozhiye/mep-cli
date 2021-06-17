@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2021-04-07 08:23:32
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 16:26:31
+ * @Last Modified time: 2021-06-17 09:13:50
  */
 import dayjs from 'dayjs';
 import { sleep } from '../utils';
@@ -116,6 +116,7 @@ export default {
           data[key] = !!data[key];
         }
       }
+      await sleep(0);
       this.$emit('change', data);
       await sleep(500);
       this.loading = !1;
