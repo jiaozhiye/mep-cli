@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 15:56:14
+ * @Last Modified time: 2021-06-21 12:20:08
  */
-import { formatNumber, setCellValue, getCellValue } from '../utils';
+import { setCellValue, getCellValue } from '../utils';
+import formatMixin from '../body/format';
 import config from '../config';
 
 const noop = () => {};
@@ -13,6 +14,7 @@ export default {
   name: 'TableFooter',
   props: ['flattenColumns'],
   inject: ['$$table'],
+  mixins: [formatMixin],
   computed: {
     summationRows() {
       const { tableFullData, selectionKeys, selectionRows, summaries, getGroupValidData, isGroupSubtotal } = this.$$table;
@@ -23,6 +25,7 @@ export default {
         const {
           dataIndex,
           precision,
+          formatType = 'finance', // 默认货币格式
           summation: { sumBySelection, displayWhenNotSelect, unit = '', onChange = noop }
         } = column;
         const tableDataList = !isGroupSubtotal ? tableFullData : getGroupValidData(tableFullData);
@@ -49,8 +52,10 @@ export default {
           result = getCellValue(summaries, dataIndex);
         }
         result = precision >= 0 ? result.toFixed(precision) : result;
+        // 处理数据格式化
+        result = this[`${formatType}Format`]?.(result) ?? result;
         // 设置合计值
-        setCellValue(res, dataIndex, `${formatNumber(result)} ${unit}`);
+        setCellValue(res, dataIndex, unit ? `${result} ${unit}` : result);
         // 触发事件
         onChange(result);
       });

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div>
-      <el-button @click="clickHandle">按钮</el-button>
-    </div>
     <VirtualTable
       ref="table"
       height="auto"
@@ -14,7 +11,6 @@
       :exportExcel="exportExcel"
       :spanMethod="spanMethod"
       :webPagination="true"
-      :showSummary="visible"
       :columnsChange="columnsChange"
     />
   </div>
@@ -247,6 +243,7 @@ export default {
           width: 200,
           align: 'right',
           precision: 2,
+          formatType: 'percent',
           summation: {
             unit: '元'
           }

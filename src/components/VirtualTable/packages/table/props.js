@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-16 09:22:28
+ * @Last Modified time: 2021-06-21 11:11:54
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -32,7 +32,7 @@ const columnItem = {
     )
   }),
   precision: PropTypes.number, // 数值类型字段的精度
-  formatType: PropTypes.oneOf(['date', 'datetime', 'dateShortTime', 'finance', 'secret-name', 'secret-phone', 'secret-IDnumber']), // 字段的格式化类型
+  formatType: PropTypes.oneOf(['date', 'datetime', 'dateShortTime', 'percent', 'finance', 'secret-name', 'secret-phone', 'secret-IDnumber']), // 字段的格式化类型
   required: PropTypes.bool, // 可编辑列是否必填
   editRender: PropTypes.func, // 可编辑单元格，参数: row, column; 返回值类型: object
   // 数据字典项
