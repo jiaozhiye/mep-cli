@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-22 08:35:47
+ * @Last Modified time: 2021-06-22 10:05:24
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -165,6 +165,11 @@ export default {
     checkStrictly: PropTypes.bool.def(true), // true -> 节点选择完全受控（父子数据选中状态不再关联）
     defaultSelectFirstRow: PropTypes.bool.def(false), // 是否默认选中第一行（单选时生效）
     clearableAfterFetched: PropTypes.bool.def(true), // 重新检索之后，是否清空已选择
+    fetch: PropTypes.shape({
+      api: PropTypes.func.isRequired, // api 接口
+      params: PropTypes.object, // 接口参数
+      dataKey: PropTypes.string // 数据路径
+    }),
     disabled: PropTypes.func, // 是否允许行选择，参数：row，返回值 bool
     onChange: PropTypes.func // 选中项发生变化时触发
   }),

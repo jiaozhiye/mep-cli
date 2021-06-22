@@ -39,7 +39,15 @@
         <el-button type="danger" icon="el-icon-delete" @click="removeHandle">删除</el-button>
       </template>
     </VirtualTable>
-    <drawer :visible.sync="actions.visible" :title="actions.title" destroy-on-close :container-style="{ height: 'calc(100% - 52px)', paddingBottom: '52px' }" @close="closeDrawerHandle">
+    <drawer
+      ref="drawer"
+      :visible.sync="actions.visible"
+      :title="actions.title"
+      destroy-on-close
+      :container-style="{ height: 'calc(100% - 52px)', paddingBottom: '52px' }"
+      :beforeClose="beforeClose"
+      @close="closeDrawerHandle"
+    >
       <add-info :type="actions.type" :initialValue="actions.data" @close="innerCloseHandle" />
     </drawer>
     <base-dialog :visible.sync="visible" title="标题" destroyOnClose>
@@ -76,7 +84,7 @@ export default {
   components: { AddInfo },
   mixins: [dictionary, language, authority],
   data() {
-    this.selectedKeys = [1, 2];
+    this.selectedKeys = [];
     return {
       filterList: this.createTopFilterList(),
       filterDefaultValue: {},
@@ -91,6 +99,11 @@ export default {
         type: 'checkbox',
         selectedRowKeys: this.selectedKeys,
         clearableAfterFetched: false,
+        fetch: {
+          api: () => {},
+          params: {},
+          dataKey: 'items'
+        },
         disabled: row => {
           return row.id === 3;
         },
@@ -142,6 +155,9 @@ export default {
     });
   },
   methods: {
+    beforeClose(cb) {
+      cb(true);
+    },
     async printHandle1() {
       await sleep(1000);
       let res = [];
@@ -691,7 +707,11 @@ export default {
     },
     // 抽屉组件子组件的关闭事件
     innerCloseHandle(visible, isReload) {
-      this.actions.visible = visible;
+      this.$refs.drawer.DO_CLOSE();
+      setTimeout(() => {
+        console.log(222, this.actions.visible);
+      });
+      // this.actions.visible = visible;
       // 重置 actions 的值
       if (isReload) {
         // 执行表格刷新

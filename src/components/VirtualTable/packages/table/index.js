@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-10 15:18:51
+ * @Last Modified time: 2021-06-22 08:45:33
  */
 import baseProps from './props';
 import Store from '../store';
@@ -195,7 +195,7 @@ export default {
       return this.flattenColumns.some(x => !!x.summation?.dataKey);
     },
     isSelectCollection() {
-      return this.isFetch && this.rowSelection?.type === 'checkbox';
+      return this.rowSelection?.type === 'checkbox';
     },
     isSuperSearch() {
       return this.showSuperSearch && this.isHeadFilter;
