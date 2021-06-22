@@ -29,6 +29,12 @@
 | viewportChange     | Drawer 组件视口大小变化时触发 | Function(state:string)    |
 | afterVisibleChange | 切换时，动画结束后的事件      | Function(visible:boolean) |
 
+### 方法
+
+| 事件名称 | 说明             | 参数 | 返回值 |
+| -------- | ---------------- | ---- | ------ |
+| DO_CLOSE | 关闭 Drawer 方法 | -    | -      |
+
 ### 插槽
 
 | 插槽名称 | 说明            |

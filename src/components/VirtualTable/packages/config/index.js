@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-02 21:21:13
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-03-29 14:41:02
+ * @Last Modified time: 2021-06-21 19:16:02
  */
 import i18n from '../locale';
 
@@ -63,6 +63,8 @@ const config = {
   selectionText: () => i18n.t('table.config.selectionText'),
   // 操作列 dataIndex
   operationColumn: '__action__',
+  // 忽略合计的数据行标记
+  summaryIgnore: 'sumIgnored',
   // 合计行第一列的文本
   summaryText: () => i18n.t('table.config.summaryText'),
   // 暂无数据

@@ -29,7 +29,8 @@ const tableData = [
     name: '速腾',
     p1: 1000,
     p2: 1500,
-    p3: 2000
+    p3: 2000,
+    sumIgnore: 1
   },
   {
     id: 2,

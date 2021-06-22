@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-21 11:11:54
+ * @Last Modified time: 2021-06-21 18:23:52
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -17,6 +17,7 @@ const columnItem = {
   printFixed: PropTypes.bool, // 打印时，是否固定列
   hidden: PropTypes.bool, // 是否隐藏列
   ellipsis: PropTypes.bool, // 超过宽度将自动省略
+  theadEllipsis: PropTypes.bool, // 表头超过宽度将自动省略
   className: PropTypes.string, // 列样式类名
   children: PropTypes.array, // 内嵌 children，以渲染分组表头
   sorter: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]), // 列排序

@@ -2,9 +2,10 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-10 15:12:30
+ * @Last Modified time: 2021-06-21 19:19:54
  */
 import { groupBy, createUidKey, getCellValue, setCellValue } from '../utils';
+import config from '../config';
 
 const groupSubtotalMixin = {
   computed: {
@@ -61,8 +62,14 @@ const groupSubtotalMixin = {
         this.summationColumns.forEach(column => {
           const { dataIndex } = column;
           const result = target.children?.reduce((prev, curr) => {
-            curr = Number(getCellValue(curr, dataIndex));
-            return prev + curr;
+            if (curr[config.summaryIgnore]) {
+              return prev;
+            }
+            let value = Number(getCellValue(curr, dataIndex));
+            if (!Number.isNaN(value)) {
+              return prev + value;
+            }
+            return prev;
           }, 0);
           setCellValue(target, dataIndex, result);
         });

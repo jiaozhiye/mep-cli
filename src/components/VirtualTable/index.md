@@ -74,31 +74,32 @@
 
 ### column
 
-| 参数         | 说明                                           | 类型                                                              | 默认值 |
-| ------------ | ---------------------------------------------- | ----------------------------------------------------------------- | ------ |
-| dataIndex    | 数据的 key，支持 `a.b.c` 的路径写法，必要参数  | string                                                            | -      |
-| title        | 列头显示文字，必要参数                         | string                                                            | -      |
-| width        | 列宽度/最小宽度                                | number                                                            | -      |
-| fixed        | 列固定（IE 下无效）                            | left \| right                                                     | -      |
-| colSpan      | 表头列合并,设置为 0 时，不渲染                 | number                                                            | -      |
-| align        | 设置列的对齐方式                               | left \| center \| right                                           | left   |
-| theadAlign   | 设置表头的对齐方式                             | left \| center \| right                                           | left   |
-| printFixed   | 打印时，是否固定列                             | boolean                                                           | false  |
-| hidden       | 是否隐藏列                                     | boolean                                                           | false  |
-| ellipsis     | 超过宽度将自动省略                             | boolean                                                           | false  |
-| className    | 列样式类名                                     | string                                                            | -      |
-| children     | 内嵌 children，以渲染分组表头                  | array                                                             |        |
-| sorter       | 列排序                                         | boolean \| func                                                   | -      |
-| filter       | 列筛选，[配置项](#filter)                      | object                                                            | -      |
-| precision    | 数值类型字段的精度                             | number                                                            | -      |
-| formatType   | 字段的格式化类型，[配置项](#formatType)        | string                                                            | -      |
-| required     | 可编辑列是否必填                               | boolean                                                           | false  |
-| editRender   | 可编辑单元格，返回值请参考 [配置项](#editable) | Function(row, column):object                                      | -      |
-| dictItems    | 数据字典配置，[配置项](#item)                  | array                                                             | -      |
-| summation    | 底部合计，[配置项](#summation)                 | object                                                            | -      |
-| groupSummary | 分组汇总，[配置项](#groupSummary)              | object \| boolean                                                 | false  |
-| render       | 列渲染方法                                     | Function(text, row, column, rowIndex, cellIndex):JSX Node         | -      |
-| extraRender  | 额外的列渲染方法，用于处理导出和打印数据       | Function(text, row, column, rowIndex, cellIndex):string \| number | -      |
+| 参数          | 说明                                           | 类型                                                              | 默认值 |
+| ------------- | ---------------------------------------------- | ----------------------------------------------------------------- | ------ |
+| dataIndex     | 数据的 key，支持 `a.b.c` 的路径写法，必要参数  | string                                                            | -      |
+| title         | 列头显示文字，必要参数                         | string                                                            | -      |
+| width         | 列宽度/最小宽度                                | number                                                            | -      |
+| fixed         | 列固定（IE 下无效）                            | left \| right                                                     | -      |
+| colSpan       | 表头列合并,设置为 0 时，不渲染                 | number                                                            | -      |
+| align         | 设置列的对齐方式                               | left \| center \| right                                           | left   |
+| theadAlign    | 设置表头的对齐方式                             | left \| center \| right                                           | left   |
+| printFixed    | 打印时，是否固定列                             | boolean                                                           | false  |
+| hidden        | 是否隐藏列                                     | boolean                                                           | false  |
+| ellipsis      | 超过宽度将自动省略                             | boolean                                                           | false  |
+| theadEllipsis | 表头超过宽度将自动省略                         | boolean                                                           | -      |
+| className     | 列样式类名                                     | string                                                            | -      |
+| children      | 内嵌 children，以渲染分组表头                  | array                                                             |        |
+| sorter        | 列排序                                         | boolean \| func                                                   | -      |
+| filter        | 列筛选，[配置项](#filter)                      | object                                                            | -      |
+| precision     | 数值类型字段的精度                             | number                                                            | -      |
+| formatType    | 字段的格式化类型，[配置项](#formatType)        | string                                                            | -      |
+| required      | 可编辑列是否必填                               | boolean                                                           | false  |
+| editRender    | 可编辑单元格，返回值请参考 [配置项](#editable) | Function(row, column):object                                      | -      |
+| dictItems     | 数据字典配置，[配置项](#item)                  | array                                                             | -      |
+| summation     | 底部合计，[配置项](#summation)                 | object                                                            | -      |
+| groupSummary  | 分组汇总，[配置项](#groupSummary)              | object \| boolean                                                 | false  |
+| render        | 列渲染方法                                     | Function(text, row, column, rowIndex, cellIndex):JSX Node         | -      |
+| extraRender   | 额外的列渲染方法，用于处理导出和打印数据       | Function(text, row, column, rowIndex, cellIndex):string \| number | -      |
 
 ### fetch
 

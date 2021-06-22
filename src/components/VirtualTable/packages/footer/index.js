@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-21 12:20:08
+ * @Last Modified time: 2021-06-21 19:28:44
  */
 import { setCellValue, getCellValue } from '../utils';
 import formatMixin from '../body/format';
@@ -31,18 +31,16 @@ export default {
         const tableDataList = !isGroupSubtotal ? tableFullData : getGroupValidData(tableFullData);
         // 未选择时，显示合计结果
         const notSelectAndDisplay = !selectionKeys.length && displayWhenNotSelect;
-        let values = [];
         // 可选择列动态合计
-        if (!sumBySelection || notSelectAndDisplay) {
-          values = tableDataList.map(x => Number(getCellValue(x, dataIndex)));
-        } else {
-          values = selectionRows.map(record => Number(getCellValue(record, dataIndex)));
-        }
+        const values = !sumBySelection || notSelectAndDisplay ? tableDataList : selectionRows;
         // 累加求和
         let result = values.reduce((prev, curr) => {
-          const value = Number(curr);
+          if (curr[config.summaryIgnore]) {
+            return prev;
+          }
+          let value = Number(getCellValue(curr, dataIndex));
           if (!Number.isNaN(value)) {
-            return prev + curr;
+            return prev + value;
           }
           return prev;
         }, 0);

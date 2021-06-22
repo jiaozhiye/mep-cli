@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 14:34:56
+ * @Last Modified time: 2021-06-21 18:28:06
  */
 import { pickBy, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -96,19 +96,21 @@ export default {
         layout: { gutterWidth },
         resizable,
         scrollY,
+        ellipsis,
         sorter,
         isIE
       } = this.$$table;
-      const { dataIndex, colSpan, rowSpan, fixed, align: tbodyAlign, theadAlign, sorter: isSorter, filter, required, lastFixedLeft, firstFixedRight } = column;
+      const { dataIndex, colSpan, rowSpan, fixed, align: tbodyAlign, theadAlign, theadEllipsis, sorter: isSorter, filter, required, lastFixedLeft, firstFixedRight } = column;
       if (colSpan === 0) {
         return null;
       }
+      const isEllipsis = theadEllipsis ?? (ellipsis || column.ellipsis);
       // 表头对齐方式
       const align = theadAlign || tbodyAlign;
       const cls = [
         `v-header--column`,
-        `col--ellipsis`,
         {
+          [`col--ellipsis`]: isEllipsis,
           [`col--center`]: align === 'center',
           [`col--right`]: align === 'right',
           [`v-column--required`]: !!required,
