@@ -442,7 +442,7 @@ export default {
               title: '性别性别性别性别性别性别',
               dataIndex: 'person.sex',
               width: 100,
-              theadEllipsis: false,
+              ellipsis: true,
               dictItems: [
                 { text: '男', value: '1' },
                 { text: '女', value: '0' }

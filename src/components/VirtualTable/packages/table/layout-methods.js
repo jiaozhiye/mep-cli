@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-29 22:17:28
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-12 09:16:50
+ * @Last Modified time: 2021-06-22 08:37:11
  */
 import addEventListener from 'add-dom-event-listener';
 import { addResizeListener, removeResizeListener } from '../../../_utils/resize-event';
@@ -47,7 +47,7 @@ export default {
   calcTableHeight(ev) {
     ev?.preventDefault();
     if (this.height !== 'auto') return;
-    const disY = this.showPagination || (this.showAlert && this.alertPosition === 'bottom') ? 40 : 10;
+    const disY = this.showPagination || (this.showAlert && this.alertPosition === 'bottom') ? 42 : 10;
     this.autoHeight = window.innerHeight - this.$vTable.getBoundingClientRect().top - disY;
     this.doLayout();
   },
