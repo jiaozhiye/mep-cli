@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-16 09:30:41
+ * @Last Modified time: 2021-06-22 11:41:28
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -185,7 +185,7 @@ export default {
       const { leftFixedColumns, rightFixedColumns, getStickyLeft, getStickyRight, ellipsis, sorter, isGroupSubtotal, isIE } = this.$$table;
       const { dataIndex, fixed, align, className } = column;
       const { rowspan, colspan } = this.getSpan(row, column, rowIndex, columnIndex);
-      const isEllipsis = ellipsis || column.ellipsis;
+      const isEllipsis = column.ellipsis ?? ellipsis;
       if (!rowspan || !colspan) {
         return null;
       }
