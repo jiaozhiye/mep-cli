@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-03 15:15:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-21 12:49:35
+ * @Last Modified time: 2021-06-23 18:34:34
  */
 export default {
   table: {
@@ -53,6 +53,11 @@ export default {
       eqPlaceholder: '等于',
       neqPlaceholder: '不等于',
       text: '筛选'
+    },
+    selection: {
+      all: '全选所有',
+      invert: '反选所有',
+      clear: '清空所有'
     },
     screen: {
       full: '全屏',

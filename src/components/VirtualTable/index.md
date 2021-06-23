@@ -250,6 +250,7 @@
 | checkStrictly         | 选择列完全受控（父子数据选中状态不再关联）                            | boolean                                | true   |
 | defaultSelectFirstRow | 是否默认选中第一行（单选时生效）                                      | boolean                                | -      |
 | clearableAfterFetched | 重新检索之后，是否清空已选择列                                        | boolean                                | true   |
+| filterable            | 是否显示筛选箭头                                                      | boolean                                | true   |
 | fetchSelectedRows     | 从服务端获取要回显的数据列表，只对后台分页+复选有效，[配置项](#fetch) | object                                 | -      |
 | fetchAllRowKeys       | 从服务端获取所有行数据 rowKey 的列表，[配置项](#fetch)                | object                                 | -      |
 | disabled              | 是否允许行选择                                                        | Function(row) => boolean               | -      |

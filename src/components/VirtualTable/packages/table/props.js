@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:04:58
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-23 15:38:24
+ * @Last Modified time: 2021-06-23 18:43:21
  */
 import PropTypes from '../../../_utils/vue-types';
 
@@ -164,6 +164,7 @@ export default {
     hideSelectAll: PropTypes.bool.def(false), // 隐藏表头全选勾选框
     checkStrictly: PropTypes.bool.def(true), // true -> 节点选择完全受控（父子数据选中状态不再关联）
     defaultSelectFirstRow: PropTypes.bool.def(false), // 是否默认选中第一行（单选时生效）
+    filterable: PropTypes.bool.def(true), // 是否显示筛选箭头
     clearableAfterFetched: PropTypes.bool.def(true), // 重新检索之后，是否清空已选择
     // 请求选中行数据并回显
     fetchSelectedRows: PropTypes.shape({
