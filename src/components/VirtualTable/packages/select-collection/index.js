@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-19 15:58:23
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-22 10:20:01
+ * @Last Modified time: 2021-06-23 15:41:58
  */
 import { cloneDeep, get } from 'lodash';
 import Locale from '../locale/mixin';
@@ -29,7 +29,7 @@ export default {
     async getSelectionRows() {
       const {
         isFetch,
-        rowSelection: { fetch, disabled = noop },
+        rowSelection: { fetchSelectedRows: fetch, disabled = noop },
         getRowKey
       } = this.$$table;
       if (!(isFetch && fetch)) return;

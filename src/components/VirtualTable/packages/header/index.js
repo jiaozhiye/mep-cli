@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-22 08:41:19
+ * @Last Modified time: 2021-06-23 15:22:17
  */
 import { pickBy, isFunction } from 'lodash';
 import Locale from '../locale/mixin';
@@ -39,6 +39,10 @@ export default {
     },
     isClientFilter() {
       return !this.$$table.isFetch;
+    },
+    showSelectAll() {
+      const { isFetch, rowSelection } = this.$$table;
+      return isFetch ? !!rowSelection?.fetchAllRowKeys : !rowSelection?.hideSelectAll;
     }
   },
   watch: {
@@ -142,13 +146,9 @@ export default {
     },
     renderCell(column) {
       const { dataIndex, type, sorter, title } = column;
-      const { selectionKeys, rowSelection } = this.$$table;
+      const { selectionKeys } = this.$$table;
       if (dataIndex === '__selection__' && type === 'checkbox') {
-        return !rowSelection?.hideSelectAll ? (
-          <div class="v-cell">
-            <AllSelection selectionKeys={selectionKeys} />
-          </div>
-        ) : null;
+        return <div class="v-cell">{this.showSelectAll ? <AllSelection selectionKeys={selectionKeys} /> : config.selectionText()}</div>;
       }
       const vNodes = [];
       vNodes.push(

@@ -99,11 +99,15 @@ export default {
         type: 'checkbox',
         selectedRowKeys: this.selectedKeys,
         clearableAfterFetched: false,
-        fetch: {
+        fetchSelectedRows: {
           api: () => {},
           params: {},
           dataKey: 'items'
         },
+        // fetchAllRowKeys: {
+        //   api: () => {},
+        //   dataKey: 'items'
+        // },
         disabled: row => {
           return row.id === 3;
         },
