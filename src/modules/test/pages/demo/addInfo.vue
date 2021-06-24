@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
     <anchor :labelList="labels">
-      <form-panel ref="formPanel" :initial-value="formDefaultValue" :list="formList" :formType="type" />
+      <form-panel ref="formPanel" :initial-value="formDefaultValue" :list="formList" :formType="type" @valuesChange="valuesChangeHandle" />
       <break-space id="aaa3" label="标题3" />
       <VirtualTable
         ref="table"
@@ -567,7 +567,16 @@ export default {
         }
       ];
     },
-    dataChangeHandle() {},
+    valuesChangeHandle() {
+      this.isFormChange = true;
+    },
+    dataChangeHandle() {
+      const { inserted, updated, removed } = this.$refs.table.GET_LOG();
+      this.isTableChange = inserted.length || updated.length || removed.length;
+    },
+    getPanelDataChange() {
+      return this.isFormChange || this.isTableChange;
+    },
     async saveHandle() {
       const [err, res] = await this.$formPanel.GET_FORM_DATA();
       if (err) return;

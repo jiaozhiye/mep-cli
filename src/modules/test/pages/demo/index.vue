@@ -48,7 +48,7 @@
       :beforeClose="beforeClose"
       @close="closeDrawerHandle"
     >
-      <add-info :type="actions.type" :initialValue="actions.data" @close="innerCloseHandle" />
+      <add-info ref="addInfo" :type="actions.type" :initialValue="actions.data" @close="innerCloseHandle" />
     </drawer>
     <base-dialog :visible.sync="visible" title="标题" destroyOnClose>
       <portal-page
@@ -160,8 +160,16 @@ export default {
     });
   },
   methods: {
-    beforeClose(cb) {
-      cb(true);
+    async beforeClose(cb) {
+      const allowClose = !this.$refs[`addInfo`].getPanelDataChange();
+      if (!allowClose) {
+        try {
+          await confirmAction();
+          cb(true);
+        } catch (err) {}
+      } else {
+        cb(true);
+      }
     },
     async printHandle1() {
       await sleep(1000);
@@ -712,7 +720,7 @@ export default {
     },
     // 抽屉组件子组件的关闭事件
     innerCloseHandle(visible, isReload) {
-      this.$refs.drawer.DO_CLOSE();
+      this.$refs[`drawer`].DO_CLOSE();
       setTimeout(() => {
         console.log(222, this.actions.visible);
       });

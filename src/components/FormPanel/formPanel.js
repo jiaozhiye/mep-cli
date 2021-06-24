@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-01 09:03:50
+ * @Last Modified time: 2021-06-24 09:37:40
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isUndefined, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -2360,6 +2360,10 @@ export default {
     VALIDATE_FIELDS(fieldNames) {
       const fields = Array.isArray(fieldNames) ? fieldNames : [fieldNames];
       fields.forEach(fieldName => this.doFormItemValidate(fieldName));
+    },
+    SET_INITIAL_VALUE(values = {}) {
+      this.initialValues = merge({}, this.initialValues, values);
+      this.SET_FIELDS_VALUE(values);
     },
     // 设置表单项的值，参数是表单值得集合 { fieldName: val, ... }
     SET_FIELDS_VALUE(values = {}) {
