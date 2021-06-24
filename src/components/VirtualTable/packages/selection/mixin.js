@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-05 10:27:24
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-05-19 15:13:08
+ * @Last Modified time: 2021-06-24 18:48:22
  */
 import { deepFindRowKey, isArrayContain } from '../utils';
 import config from '../config';
@@ -26,24 +26,28 @@ const selectionMixin = {
     createTreeSelectionKeys(key, arr) {
       const { deriveRowKeys } = this;
       const target = deepFindRowKey(deriveRowKeys, key);
+      let result = [];
+      if (!target) {
+        return result;
+      }
       const childRowKeys = this.getAllChildRowKeys(target.children ?? []);
       const parentRowKeys = this.findParentRowKeys(deriveRowKeys, key);
       // 处理后代节点
-      arr = [...new Set([...arr, ...childRowKeys])];
+      result = [...new Set([...arr, ...childRowKeys])];
       // 处理祖先节点
       parentRowKeys.forEach(x => {
         const target = deepFindRowKey(deriveRowKeys, x);
         const isContain = isArrayContain(
-          arr,
+          result,
           target.children.map(k => k.rowKey)
         );
         if (isContain) {
-          arr = [...arr, x];
+          result = [...result, x];
         } else {
-          arr = arr.filter(k => k !== x);
+          result = result.filter(k => k !== x);
         }
       });
-      return arr;
+      return result;
     },
     createSelectionRows(selectedKeys) {
       const { allTableData, allRowKeys, selectionRows, getRowKey, isFetch } = this;

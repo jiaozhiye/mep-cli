@@ -132,7 +132,7 @@ export default {
       selection: {
         type: 'checkbox',
         checkStrictly: false,
-        selectedRowKeys: [1312],
+        selectedRowKeys: [1312, 200, 201, 202, 203],
         disabled: row => {
           return row.id === 3;
         },

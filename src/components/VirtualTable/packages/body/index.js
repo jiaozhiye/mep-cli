@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-22 11:41:28
+ * @Last Modified time: 2021-06-24 18:53:43
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -397,30 +397,31 @@ export default {
     createTreeSelectionKeys(key, arr, state) {
       const { deriveRowKeys, getAllChildRowKeys, findParentRowKeys } = this.$$table;
       const target = deepFindRowKey(deriveRowKeys, key);
+      let result = [];
       // 后代节点 rowKeys
       const childRowKeys = getAllChildRowKeys(target.children ?? []);
       // 祖先节点 rowKeys
       const parentRowKeys = findParentRowKeys(deriveRowKeys, key);
       // 处理后代节点
       if (state === 'on') {
-        arr = [...new Set([...arr, key, ...childRowKeys])];
+        result = [...new Set([...arr, key, ...childRowKeys])];
       } else {
-        arr = arr.filter(x => ![key, ...childRowKeys].includes(x));
+        result = arr.filter(x => ![key, ...childRowKeys].includes(x));
       }
       // 处理祖先节点
       parentRowKeys.forEach(x => {
         const target = deepFindRowKey(deriveRowKeys, x);
         const isContain = isArrayContain(
-          arr,
+          result,
           target.children.map(k => k.rowKey)
         );
         if (isContain) {
-          arr = [...arr, x];
+          result = [...result, x];
         } else {
-          arr = arr.filter(k => k !== x);
+          result = result.filter(k => k !== x);
         }
       });
-      return arr;
+      return result;
     },
     setHighlightKey(key) {
       this.$$table.highlightKey = key;
