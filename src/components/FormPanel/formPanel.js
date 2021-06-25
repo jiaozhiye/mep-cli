@@ -629,7 +629,7 @@ export default {
     },
     RANGE_INPUT(option) {
       const { form, formType } = this;
-      const { label, fieldName, labelWidth, labelOptions, clearable, readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, clearable = !0, readonly, disabled, onChange = noop } = option;
       const [startFieldName, endFieldName] = fieldName.split('|');
       this.setViewValue(fieldName, form[fieldName].join('-'));
       return (

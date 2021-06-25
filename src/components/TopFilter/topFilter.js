@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-22 14:28:14
+ * @Last Modified time: 2021-06-25 16:17:07
  **/
 import { get, set, xor, merge, transform, cloneDeep, isEqual, isObject, isFunction } from 'lodash';
 import dayjs from 'dayjs';
@@ -565,7 +565,7 @@ export default {
     },
     RANGE_INPUT(option) {
       const { form } = this;
-      const { label, fieldName, labelWidth, labelOptions, clearable, readonly, disabled, onChange = noop } = option;
+      const { label, fieldName, labelWidth, labelOptions, clearable = !0, readonly, disabled, onChange = noop } = option;
       const [startFieldName, endFieldName] = fieldName.split('|');
       return (
         <el-form-item key={fieldName} label={label} labelWidth={labelWidth} prop={fieldName}>
