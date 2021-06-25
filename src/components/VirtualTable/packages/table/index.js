@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-25 11:34:05
+ * @Last Modified time: 2021-06-25 16:48:47
  */
 import baseProps from './props';
 import Store from '../store';
@@ -189,8 +189,9 @@ export default {
     isHeadFilter() {
       return this.flattenColumns.some(column => column.filter);
     },
-    isServerSummation() {
-      return this.flattenColumns.some(x => !!x.summation?.dataKey);
+    isServiceSummation() {
+      this.serviceSummation = this.flattenColumns.some(x => !!x.summation?.dataKey);
+      return this.serviceSummation;
     },
     isSelectCollection() {
       return this.rowSelection?.type === 'checkbox';
@@ -219,7 +220,7 @@ export default {
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
       const filter = query ? { [config.filterFieldName]: query } : null;
-      const summary = this.isServerSummation ? { [config.groupSummary.summaryFieldName]: this.createColumnSummary(), usedJH: 1 } : null;
+      const summary = this.serviceSummation ? { [config.groupSummary.summaryFieldName]: this.createColumnSummary(), usedJH: 1 } : null;
       return {
         ...sorter,
         ...filter,

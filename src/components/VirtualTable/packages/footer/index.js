@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 23:54:20
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-21 19:28:44
+ * @Last Modified time: 2021-06-25 16:48:05
  */
 import { setCellValue, getCellValue } from '../utils';
 import formatMixin from '../body/format';
@@ -45,8 +45,7 @@ export default {
           return prev;
         }, 0);
         // 服务端合计
-        const isServerSummation = Object.keys(summaries).includes(dataIndex);
-        if (isServerSummation && (!sumBySelection || notSelectAndDisplay)) {
+        if (Object.keys(summaries).includes(dataIndex) && (!sumBySelection || notSelectAndDisplay)) {
           result = getCellValue(summaries, dataIndex);
         }
         result = precision >= 0 ? result.toFixed(precision) : result;

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-25 10:41:01
+ * @Last Modified time: 2021-06-25 16:48:16
  */
 import { columnsFlatMap, debounce, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -52,7 +52,7 @@ export default {
   },
   // 服务端合计
   createServerSummation(data) {
-    if (!this.isServerSummation) return;
+    if (!this.isServiceSummation) return;
     this.flattenColumns
       .filter(x => !!x.summation?.dataKey)
       .forEach(x => {
