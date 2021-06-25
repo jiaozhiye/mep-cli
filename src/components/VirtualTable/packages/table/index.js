@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-23 16:15:49
+ * @Last Modified time: 2021-06-25 11:34:05
  */
 import baseProps from './props';
 import Store from '../store';
@@ -10,7 +10,7 @@ import TableManager from '../manager';
 import config from '../config';
 import { isEqual, cloneDeep } from 'lodash';
 
-import { columnsFlatMap, convertToRows, getAllColumns, getAllTableData, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, debounce, browse } from '../utils';
+import { columnsFlatMap, convertToRows, getAllColumns, getAllTableData, getScrollBarSize, createOrderBy, createWhereSQL, parseHeight, isEmpty, browse } from '../utils';
 import warning from '../../../_utils/warning';
 
 import sizeMixin from '../../../_utils/mixins/size';
@@ -63,8 +63,6 @@ export default {
     this.selectionRows = [];
     // 高级检索的条件
     this.superFilters = [];
-    // 列汇总条件
-    this.columnSummaryQuery = '';
     return {
       // 组件 store 仓库
       store: new Store(),
@@ -221,7 +219,7 @@ export default {
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
       const filter = query ? { [config.filterFieldName]: query } : null;
-      const summary = this.columnSummaryQuery ? { [config.groupSummary.summaryFieldName]: this.columnSummaryQuery, usedJH: 1 } : null;
+      const summary = this.isServerSummation ? { [config.groupSummary.summaryFieldName]: this.createColumnSummary(), usedJH: 1 } : null;
       return {
         ...sorter,
         ...filter,
@@ -283,7 +281,7 @@ export default {
         this.doLayout();
       });
       // 触发 dataChange 事件
-      debounce(this.dataChangeHandle)();
+      this.dataChangeDebouncer();
     },
     columns(next) {
       this.setLocalColumns(next);
@@ -312,12 +310,12 @@ export default {
       const { clearableAfterFetched = !0 } = this.rowSelection || {};
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
       if (!isOnlyPageChange) {
-        this.isFetch && clearableAfterFetched && debounce(this.clearRowSelection)();
+        this.isFetch && clearableAfterFetched && this.clearRowSelection();
       }
       if (!isOnlyPageChange && next.currentPage > 1 && !this.fetch?.stopToFirst) {
         this.toFirstPage();
       } else {
-        this.isFetch && debounce(this.getTableData)();
+        this.isFetch && this.getTableDataDebouncer();
       }
     },
     selectionKeys(next, prev) {
@@ -377,12 +375,12 @@ export default {
   created() {
     TableManager.register(this._uid, this);
     this.originColumns = cloneDeep(this.columns);
-    this.columnSummaryQuery = this.createColumnSummary();
+    this.createDebouncer();
     // 获取表格数据
     if (!this.isFetch) {
       this.createTableData(this.dataSource);
     } else {
-      this.getTableData();
+      this.getTableDataDebouncer();
     }
     // 加载表格数据
     this.loadTableData().then(() => {

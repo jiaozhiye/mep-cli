@@ -2,9 +2,9 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-16 09:23:47
+ * @Last Modified time: 2021-06-25 10:41:01
  */
-import { columnsFlatMap, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
+import { columnsFlatMap, debounce, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
 import { get, cloneDeep, isFunction, isObject, isUndefined } from 'lodash';
 
@@ -343,8 +343,14 @@ export default {
     if (!this.webPagination || currentPage >= pageCount) return;
     this.pagerChangeHandle({ currentPage: pageCount, pageSize });
   },
+  // 创建 debouncer
+  createDebouncer() {
+    this.getTableDataDebouncer = debounce(this.getTableData);
+    this.dataChangeDebouncer = debounce(this.dataChangeHandle);
+  },
   // 清空列选中
   clearRowSelection() {
+    if (!this.selectionKeys.length) return;
     this.selectionKeys = [];
   },
   // 清空行高亮
@@ -362,10 +368,6 @@ export default {
   // 清空高级检索的条件
   clearSuperSearch() {
     this.createSuperSearch([]);
-  },
-  // 清空列汇总条件
-  clearColumnSummary() {
-    this.columnSummaryQuery = '';
   },
   // 清空表格各种操作记录
   clearTableLog() {
