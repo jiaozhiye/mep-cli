@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 23:01:43
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-24 18:53:43
+ * @Last Modified time: 2021-06-26 11:41:49
  */
 import addEventListener from 'add-dom-event-listener';
 import { isEqual, isFunction, isObject } from 'lodash';
@@ -301,7 +301,8 @@ export default {
           rowspan = result.rowspan;
           colspan = result.colspan;
         }
-        if (this.$$table.webPagination && row === this.tableData[0] && rowspan === 0) {
+        // 内存分页 或 虚拟滚动 支持动态合并行
+        if (row === this.tableData[0] && rowspan === 0) {
           rowspan = 1;
           for (let i = 1; i < this.tableData.length; i++) {
             const { rowspan: rowSpan } = this.getSpan(this.tableData[i], column, this.tableData[i].index, columnIndex);

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-02-28 22:28:35
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-25 16:48:47
+ * @Last Modified time: 2021-06-26 17:42:48
  */
 import baseProps from './props';
 import Store from '../store';
@@ -190,8 +190,7 @@ export default {
       return this.flattenColumns.some(column => column.filter);
     },
     isServiceSummation() {
-      this.serviceSummation = this.flattenColumns.some(x => !!x.summation?.dataKey);
-      return this.serviceSummation;
+      return this.flattenColumns.some(x => !!x.summation?.dataKey);
     },
     isSelectCollection() {
       return this.rowSelection?.type === 'checkbox';
@@ -214,20 +213,21 @@ export default {
     isFetch() {
       return !!this.fetch;
     },
-    fetchParams() {
+    variableParams() {
       const orderby = createOrderBy(this.sorter);
       const query = createWhereSQL(this.filters, config.showFilterType) || createWhereSQL(this.superFilters, config.showFilterType);
       const params = this.isFetch ? this.fetch.params : null;
       const sorter = orderby ? { [config.sorterFieldName]: orderby } : null;
       const filter = query ? { [config.filterFieldName]: query } : null;
-      const summary = this.serviceSummation ? { [config.groupSummary.summaryFieldName]: this.createColumnSummary(), usedJH: 1 } : null;
       return {
         ...sorter,
         ...filter,
-        ...summary,
         ...params,
         ...this.pagination
       };
+    },
+    fetchParams() {
+      return Object.assign({}, this.variableParams, this.createTableParams());
     },
     bordered() {
       return this.border || this.isGroup;
@@ -307,7 +307,7 @@ export default {
       this.clearTableFilter();
       this.clearSuperSearch();
     },
-    fetchParams(next, prev) {
+    variableParams(next, prev) {
       const { clearableAfterFetched = !0 } = this.rowSelection || {};
       const isOnlyPageChange = this.onlyPaginationChange(next, prev);
       if (!isOnlyPageChange) {

@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-03-01 15:20:02
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-06-25 16:48:16
+ * @Last Modified time: 2021-06-26 17:47:01
  */
 import { columnsFlatMap, debounce, throttle, browse, difference, hasOwn, sleep, errorCapture, getCellValue, setCellValue } from '../utils';
 import config from '../config';
@@ -58,6 +58,14 @@ export default {
       .forEach(x => {
         setCellValue(this.summaries, x.dataIndex, Number(getCellValue(data, x.summation.dataKey)));
       });
+  },
+  // 表格的查询参数
+  createTableParams() {
+    const params = {};
+    if (this.isServiceSummation) {
+      Object.assign(params, { [config.groupSummary.summaryFieldName]: this.createColumnSummary(), usedJH: 1 });
+    }
+    return params;
   },
   // ajax 获取数据
   async getTableData() {
