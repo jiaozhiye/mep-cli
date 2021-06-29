@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2019-06-20 10:00:00
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-04-08 15:11:14
+ * @Last Modified time: 2021-06-28 19:49:50
  **/
 import addEventListener from 'add-dom-event-listener';
 import PropTypes from '../_utils/vue-types';
@@ -40,6 +40,7 @@ export default {
     return {
       isVisible: this.visible,
       loading: this.visible,
+      spinning: false,
       fullscreen: false
     };
   },
@@ -101,10 +102,16 @@ export default {
     },
     DO_CLOSE() {
       this.$refs[`drawer`].closeDrawer();
+    },
+    START_LOADING() {
+      this.spinning = true;
+    },
+    STOP_LOADING() {
+      this.spinning = false;
     }
   },
   render() {
-    const { isVisible, loading, title, fullscreen, contentSize, direction, showFullScreen, maskToClose, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
+    const { isVisible, title, fullscreen, contentSize, direction, showFullScreen, maskToClose, closeOnPressEscape, containerStyle, $props, $attrs, $slots } = this;
     const prefixCls = this.getPrefixCls('drawer--wrapper');
     const cls = {
       [prefixCls]: true,
@@ -150,9 +157,9 @@ export default {
             {$slots[`default`]}
           </div>
         )}
-        {loading && (
+        {(this.spinning || this.loading) && (
           <div class="drawer-loading">
-            <Spin spinning={loading} tip="Loading..." containerStyle={{ height: '100%' }} />
+            <Spin spinning={true} tip="Loading..." containerStyle={{ height: '100%' }} />
           </div>
         )}
       </el-drawer>

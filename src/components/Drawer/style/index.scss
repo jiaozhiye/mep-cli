@@ -2,7 +2,7 @@
  * @Author: 焦质晔
  * @Date: 2020-05-23 13:14:53
  * @Last Modified by: 焦质晔
- * @Last Modified time: 2021-01-29 11:02:07
+ * @Last Modified time: 2021-06-28 19:45:37
  */
 @import '../../style/index.scss';
 
@@ -50,6 +50,7 @@ $prefix-cls: '#{$v-prefix}-drawer--wrapper';
     }
   }
   .el-drawer__body {
+    position: relative;
     height: 0;
     .drawer-container {
       height: 100%;
@@ -59,10 +60,15 @@ $prefix-cls: '#{$v-prefix}-drawer--wrapper';
       word-break: normal;
     }
     .drawer-loading {
+      position: absolute;
+      top: 0;
+      width: 100%;
       height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      background-color: rgba(255, 255, 255, 0.65);
+      z-index: 9999;
     }
   }
   // small

@@ -40,7 +40,6 @@
       </template>
     </VirtualTable>
     <drawer
-      ref="drawer"
       :visible.sync="actions.visible"
       :title="actions.title"
       destroy-on-close
@@ -719,17 +718,17 @@ export default {
       } catch (err) {}
     },
     // 抽屉组件子组件的关闭事件
-    innerCloseHandle(visible, isReload) {
-      this.$refs[`drawer`].DO_CLOSE();
-      setTimeout(() => {
-        console.log(222, this.actions.visible);
-      });
-      // this.actions.visible = visible;
-      // 重置 actions 的值
-      if (isReload) {
-        // 执行表格刷新
-        this.$table.DO_REFRESH();
-      }
+    innerCloseHandle(visible, $$drawer) {
+      $$drawer.DO_CLOSE();
+      // setTimeout(() => {
+      //   console.log(222, this.actions.visible);
+      // });
+      // // this.actions.visible = visible;
+      // // 重置 actions 的值
+      // if (isReload) {
+      //   // 执行表格刷新
+      //   this.$table.DO_REFRESH();
+      // }
     },
     // 抽屉组件的关闭事件
     closeDrawerHandle(isReload) {

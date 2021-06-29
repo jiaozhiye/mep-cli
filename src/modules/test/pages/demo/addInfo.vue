@@ -90,6 +90,12 @@ export default {
       return this.$refs.formPanel;
     }
   },
+  mounted() {
+    this.$$drawer.START_LOADING();
+    setTimeout(() => {
+      this.$$drawer.STOP_LOADING();
+    }, 3000);
+  },
   methods: {
     createFormList() {
       return [
@@ -588,7 +594,7 @@ export default {
       // this.cancelHandle();
     },
     cancelHandle() {
-      this.$emit('close', false, this.$$drawer.doReload);
+      this.$emit('close', false, this.$$drawer);
     },
     insertHandle() {
       this.$table.INSERT_RECORDS({ id: createUidKey('new-'), price: this.i++ });
